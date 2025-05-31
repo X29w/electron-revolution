@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.base.json",
+  "include": ["render-thread/**/*", "types"],
+  "compilerOptions": {
+    "composite": true,
+    "baseUrl": ".",
+    "jsx": "react-jsx",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "strictPropertyInitialization": false,
+    "allowUmdGlobalAccess": true,
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "types": ["vite/client"],
+    "paths": {
+      "@render/*": ["render-thread/*"],
+      "@main/*": ["main-thread/*"]
+    }
+  }
+}

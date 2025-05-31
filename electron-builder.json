@@ -1,0 +1,27 @@
+{
+  "appId": "com.electron.example",
+  "productName": "electronest",
+  "protocols": {
+    "name": "example",
+    "schemes": ["example"]
+  },
+  "asar": true,
+  "win": {
+    "target": "nsis",
+    "icon": "resources/icons/logo@256.ico"
+  },
+  "mac": {
+    "target": "dmg",
+    "icon": "resources/icons/logo@512.png"
+  },
+  "nsis": {
+    "oneClick": true,
+    "artifactName": "${productName}-${version}.${ext}",
+    "uninstallDisplayName": "${productName}"
+  },
+  "extraResources": ["./resources/**"],
+  "directories": {
+    "output": "release/"
+  },
+  "files": ["out/**/*"]
+}

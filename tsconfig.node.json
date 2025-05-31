@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.base.json",
+  "include": [
+    "electron.vite.config.*",
+    "main-thread/**/*",
+    "preload/**/*",
+    "types"
+  ],
+  "compilerOptions": {
+    "composite": true,
+    "baseUrl": ".",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "strictPropertyInitialization": false,
+    "types": [
+      "node",
+      "electron-vite/node"
+    ],
+    "paths": {
+      "@main/*": [
+        "main-thread/*"
+      ]
+    }
+  }
+}
