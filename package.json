@@ -1,7 +1,7 @@
 {
-  "name": "electron-nestjs-react-vite-template",
+  "name": "electronest",
   "version": "0.0.1",
-  "description": "electron + react + nestjs + vite template",
+  "description": "A Basic Electron App with NestJS, React, and Vite",
   "main": "./out/main/index.js",
   "scripts": {
     "dev": "electron-vite dev -w",

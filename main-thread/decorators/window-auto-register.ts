@@ -1,5 +1,6 @@
 import { WindowManager } from "@main/windows/window-manager";
 
+/** auto register windows */
 export function AutoRegisterWindows(classes: any[]) {
   return function (_target: any) {
     for (const Clazz of classes) {

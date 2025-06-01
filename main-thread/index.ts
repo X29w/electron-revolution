@@ -4,7 +4,6 @@ import { app, BrowserWindow } from "electron";
 import { MainIpc } from "./ipc";
 import { WindowModule } from "./windows";
 import { WindowManager } from "./windows/window-manager";
-import { getRendererPath } from "./utils/config/renderer-path";
 
 app.whenReady().then(async () => {
   const nestApp = await NestFactory.create(AppModule);
@@ -14,7 +13,7 @@ app.whenReady().then(async () => {
 
   new MainIpc();
   new WindowModule();
-  console.log(getRendererPath("main"));
+
   WindowManager.createWindow("main");
 });
 
