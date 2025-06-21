@@ -6,6 +6,8 @@ const api: Electron.Preload = {
   "create-window": (name) => ipcRenderer.send("create-window", name),
   "messages-from-main-thread": (cb) =>
     ipcRenderer.on("messages-from-main-thread", (_e, arg) => cb(arg)),
+  "enable-main-send-message": () =>
+    ipcRenderer.send("enable-main-send-message"),
 };
 
 contextBridge.exposeInMainWorld("electronAPI", api);

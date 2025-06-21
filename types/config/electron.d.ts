@@ -18,6 +18,9 @@ declare namespace Electron {
     "on-example-event": {
       args: [msg: string];
     };
+    "enable-main-send-message": {
+      args: [];
+    };
   }
 
   /** renderer process invoke map */
@@ -33,6 +36,9 @@ declare namespace Electron {
     "say-hello": {};
     "create-window": {
       args: [name: string];
+    };
+    "enable-main-send-message": {
+      args: [];
     };
   }
 

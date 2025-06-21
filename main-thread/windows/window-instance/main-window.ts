@@ -24,10 +24,6 @@ export class MainWindow implements IWindow {
       win.loadURL(`${VITE_DEV_SERVER_URL}/render-thread/windows/main/`);
     else win.loadFile(getRendererPath("main"));
 
-    win.on("focus", () => {
-     win.webContents.send("messages-from-main-thread","main window focused")
-   })
-
     return win;
   }
 }
