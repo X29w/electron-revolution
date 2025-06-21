@@ -32,7 +32,7 @@
 - 🧾 **Type-safe API** between renderer and main process with auto-completion
 - 🧬 **DI-enabled IPC modules** using `@AutoRegisterIPC()`, no manual imports required
 
-### 🧱 3. Full NestJS Integration in Main Thread
+### 🧱 3. Full NestJS Integration in Main process
 
 - 💡 Uses `@Module()`, `@Controller()`, `@Injectable()` in main process
 - 🧠 Brings back structure, scalability, and clean architecture to Electron’s core logic

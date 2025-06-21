@@ -1,6 +1,6 @@
 {
   "extends": "./tsconfig.base.json",
-  "include": ["render-thread/**/*", "types"],
+  "include": ["render-process/**/*", "types"],
   "compilerOptions": {
     "composite": true,
     "baseUrl": ".",
@@ -12,8 +12,8 @@
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "types": ["vite/client"],
     "paths": {
-      "@render/*": ["render-thread/*"],
-      "@main/*": ["main-thread/*"]
+      "@render/*": ["render-process/*"],
+      "@main/*": ["main-process/*"]
     }
   }
 }

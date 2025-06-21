@@ -10,13 +10,13 @@ export default defineConfig(() => {
       plugins: [externalizeDepsPlugin(), swcPlugin()],
       resolve: {
         alias: {
-          "@main": resolve("main-thread"),
+          "@main": resolve("main-process"),
         },
       },
       build: {
         rollupOptions: {
           input: {
-            index: resolve(__dirname, "main-thread/index.ts"),
+            index: resolve(__dirname, "main-process/index.ts"),
           },
         },
       },
@@ -37,16 +37,16 @@ export default defineConfig(() => {
       plugins: [react()],
       resolve: {
         alias: {
-          "@main": resolve("main-thread"),
-          "@render": resolve("render-thread"),
+          "@main": resolve("main-process"),
+          "@render": resolve("render-process"),
         },
       },
       build: {
         sourcemap: true,
         rollupOptions: {
           input: {
-            main: resolve(__dirname, "render-thread/windows/main/index.html"),
-            "child-a": resolve(__dirname, "render-thread/windows/child-a/index.html"),
+            main: resolve(__dirname, "render-process/windows/main/index.html"),
+            "child-a": resolve(__dirname, "render-process/windows/child-a/index.html"),
           },
         },
       },

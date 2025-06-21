@@ -44,7 +44,7 @@ declare namespace Electron {
 
   /** renderer process on map */
   export interface RendererOnMap {
-    "messages-from-main-thread": {
+    "messages-from-main-process": {
       args: [msg: string];
     };
   }

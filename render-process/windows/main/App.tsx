@@ -11,10 +11,10 @@ const App: FC<AppProps> = () => {
         fetch nest
       </button>
       <button onClick={() => window.electronAPI["say-hello"]()}>
-        send say-hello event to main-thread
+        send say-hello event to main-process
       </button>
       <button onClick={() => window.electronAPI["enable-main-send-message"]()}>
-        enable main send message to renderer-thread
+        enable main send message to renderer-process
       </button>
       <button onClick={() => window.electronAPI["create-window"]("child-a")}>
         create child-a window

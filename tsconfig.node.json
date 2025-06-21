@@ -2,7 +2,7 @@
   "extends": "./tsconfig.base.json",
   "include": [
     "electron.vite.config.*",
-    "main-thread/**/*",
+    "main-process/**/*",
     "preload/**/*",
     "types"
   ],
@@ -18,7 +18,7 @@
     ],
     "paths": {
       "@main/*": [
-        "main-thread/*"
+        "main-process/*"
       ]
     }
   }

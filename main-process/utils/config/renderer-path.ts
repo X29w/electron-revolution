@@ -11,7 +11,7 @@ export const getRendererPath = (name: string) =>
     __dirname,
     "../",
     "renderer",
-    "render-thread",
+    "render-process",
     "windows",
     name,
     "index.html"

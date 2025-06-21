@@ -16,6 +16,6 @@ export class HelloIPC {
   @IPCOn("enable-main-send-message")
   onEnableMainSendMessage() {
     const win = WindowManager.getWindow("main");
-    win?.webContents.send("messages-from-main-thread", "hello from renderer");
+    win?.webContents.send("messages-from-main-process", "hello from renderer");
   }
 }

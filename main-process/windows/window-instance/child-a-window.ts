@@ -21,7 +21,7 @@ export class ChildAWindow implements IWindow {
     });
 
     if (IS_DEV)
-      win.loadURL(`${VITE_DEV_SERVER_URL}/render-thread/windows/child-a/`);
+      win.loadURL(`${VITE_DEV_SERVER_URL}/render-process/windows/child-a/`);
     else win.loadFile(getRendererPath("child-a"));
 
     return win;
