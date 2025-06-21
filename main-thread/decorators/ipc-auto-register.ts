@@ -1,4 +1,4 @@
-import { registerAllIPCHandlers } from "./ipc-handle";
+import { registerAllIPC } from "./ipc-handle";
 
 /** auto register ipc handlers */
 export function AutoRegisterIPC(classes: any[]) {
@@ -7,6 +7,6 @@ export function AutoRegisterIPC(classes: any[]) {
       new clazz();
     }
 
-    registerAllIPCHandlers();
+    registerAllIPC();
   };
 }

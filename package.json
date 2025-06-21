@@ -5,12 +5,12 @@
   "main": "./out/main/index.js",
   "scripts": {
     "dev": "electron-vite dev -w",
-    "build": "pnpm typecheck && electron-vite build && electron-builder",
+    "build": "npx pnpm typecheck && electron-vite build && electron-builder",
     "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
     "typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false",
-    "typecheck": "pnpm typecheck:node && pnpm typecheck:web",
+    "typecheck": "npx pnpm typecheck:node && npx pnpm typecheck:web",
     "tsc": "tsc --watch",
-    "electron-fix":"npx electron-fix start"
+    "electron-fix": "npx electron-fix start"
   },
   "dependencies": {
     "@electron-toolkit/utils": "^4.0.0",

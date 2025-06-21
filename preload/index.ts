@@ -1,9 +1,11 @@
 import { ipcRenderer, contextBridge } from "electron";
 
-const api: ElectronAPI = {
-  "say-hello": (name: string) => ipcRenderer.invoke("say-hello", name),
-  "create-window": (name: Electron.WindowName) =>
-    ipcRenderer.invoke("create-window", name),
+const api: Electron.Preload = {
+  "invoke-example": () => ipcRenderer.invoke("invoke-example"),
+  "say-hello": () => ipcRenderer.send("say-hello"),
+  "create-window": (name) => ipcRenderer.send("create-window", name),
+  "messages-from-main-thread": (cb) =>
+    ipcRenderer.on("messages-from-main-thread", (_e, arg) => cb(arg)),
 };
 
 contextBridge.exposeInMainWorld("electronAPI", api);

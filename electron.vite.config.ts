@@ -45,8 +45,8 @@ export default defineConfig(() => {
         sourcemap: true,
         rollupOptions: {
           input: {
-            main: resolve(__dirname, "render-thread/main/index.html"),
-            "child-a": resolve(__dirname, "render-thread/child-a/index.html"),
+            main: resolve(__dirname, "render-thread/windows/main/index.html"),
+            "child-a": resolve(__dirname, "render-thread/windows/child-a/index.html"),
           },
         },
       },

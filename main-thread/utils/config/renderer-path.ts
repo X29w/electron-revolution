@@ -7,4 +7,12 @@ import { join } from "path";
  * @returns {string}
  */
 export const getRendererPath = (name: string) =>
-  join(__dirname, "../", "renderer", "render-thread", name, "index.html");
+  join(
+    __dirname,
+    "../",
+    "renderer",
+    "render-thread",
+    "windows",
+    name,
+    "index.html"
+  );
