@@ -4,19 +4,24 @@
   "description": "A Basic Electron App with NestJS, React, and Vite",
   "main": "./out/main/index.js",
   "scripts": {
-    "dev": "electron-vite dev -w",
-    "build": "npx pnpm typecheck && electron-vite build && electron-builder",
     "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
     "typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false",
     "typecheck": "npx pnpm typecheck:node && npx pnpm typecheck:web",
     "tsc": "tsc --watch",
-    "electron-fix": "npx electron-fix start"
+    "electron-fix": "npx electron-fix start",
+    "dev": "shx cp .env.dev .env && npx prisma generate && electron-vite dev -w",
+    "build": "shx cp .env.prod .env && npx prisma generate && npx prisma migrate deploy && electron-vite build && electron-builder",
+    "prisma:migrate": "npx prisma migrate dev --name",
+    "prisma:generate": "npx prisma generate",
+    "prisma:deploy": "npx prisma migrate deploy",
+    "prisma:push": "npx prisma db push"
   },
   "dependencies": {
     "@electron-toolkit/utils": "^4.0.0",
     "@nestjs/common": "^11.1.2",
     "@nestjs/core": "^11.1.2",
     "@nestjs/platform-express": "^11.1.2",
+    "@prisma/client": "^6.10.1",
     "electron-log": "^5.4.0",
     "electron-updater": "^6.6.2",
     "reflect-metadata": "^0.2.2",
@@ -37,8 +42,10 @@
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.4.1",
     "eslint-plugin-react": "^7.37.5",
+    "prisma": "^6.10.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "shx": "^0.4.0",
     "typescript": "^5.8.3",
     "vite": "^6.3.5"
   }

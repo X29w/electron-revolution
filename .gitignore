@@ -9,3 +9,8 @@ chrome_data
 out
 release
 .env
+.env.*
+/main-process/generated/prisma-client
+/prisma/migrations/
+/prisma/generated/
+/resources/database/*.db
