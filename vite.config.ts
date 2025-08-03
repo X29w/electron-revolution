@@ -3,6 +3,11 @@ import path, { resolve } from "node:path";
 import electron from "vite-plugin-electron/simple";
 import react from "@vitejs/plugin-react";
 
+console.log(
+  "主窗口:",
+  path.resolve(__dirname, "renderer-process/window/main/index.html")
+);
+
 export default defineConfig({
   plugins: [
     react(),
@@ -48,14 +53,13 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main: path.join(__dirname, "renderer-process/window/main/index.html"),
-        setting: path.join(
+        main: resolve(__dirname, "renderer-process/window/main/index.html"),
+        setting: resolve(
           __dirname,
           "renderer-process/window/setting/index.html"
         ),
       },
       output: {
-        // 可选：定义输出结构
         entryFileNames: "assets/[name].js",
         chunkFileNames: "assets/[name]-[hash].js",
         assetFileNames: "assets/[name]-[hash][extname]",

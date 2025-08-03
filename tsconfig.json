@@ -30,6 +30,6 @@
       "@preload/*": ["preload/*"]
     }
   },
-  "include": ["src", "main-process", "preload/index.ts"],
+  "include": ["src", "main-process", "preload/index.ts", "types"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
