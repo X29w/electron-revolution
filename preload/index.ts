@@ -1,13 +1,24 @@
-import { ipcRenderer, contextBridge } from "electron";
+import { ipcRenderer, contextBridge } from 'electron'
 
-const api: Electron.Preload = {
-  "invoke-example": () => ipcRenderer.invoke("invoke-example"),
-  "say-hello": () => ipcRenderer.send("say-hello"),
-  "create-window": (name) => ipcRenderer.send("create-window", name),
-  "messages-from-main-process": (cb) =>
-    ipcRenderer.on("messages-from-main-process", (_e, arg) => cb(arg)),
-  "enable-main-send-message": () =>
-    ipcRenderer.send("enable-main-send-message"),
-};
+// --------- Expose some API to the Renderer process ---------
+contextBridge.exposeInMainWorld('ipcRenderer', {
+  on(...args: Parameters<typeof ipcRenderer.on>) {
+    const [channel, listener] = args
+    return ipcRenderer.on(channel, (event, ...args) => listener(event, ...args))
+  },
+  off(...args: Parameters<typeof ipcRenderer.off>) {
+    const [channel, ...omit] = args
+    return ipcRenderer.off(channel, ...omit)
+  },
+  send(...args: Parameters<typeof ipcRenderer.send>) {
+    const [channel, ...omit] = args
+    return ipcRenderer.send(channel, ...omit)
+  },
+  invoke(...args: Parameters<typeof ipcRenderer.invoke>) {
+    const [channel, ...omit] = args
+    return ipcRenderer.invoke(channel, ...omit)
+  },
 
-contextBridge.exposeInMainWorld("electronAPI", api);
+  // You can expose other APTs you need here.
+  // ...
+})

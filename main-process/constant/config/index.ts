@@ -1,14 +1,7 @@
-import { is } from "@electron-toolkit/utils";
-import { join } from "path";
+import path from "path";
 
-/** vite dev server url */
-export const VITE_DEV_SERVER_URL = process.env["ELECTRON_RENDERER_URL"];
+export const ROOT_PATH = path.join(__dirname, "..", "..", "..");
 
-/** is dev */
-export const IS_DEV = is.dev;
+export const MAIN_THREAD_PATH = path.join(ROOT_PATH, "src", "main");
 
-/** preload path */
-export const PRELOAD_PATH = join(__dirname, "../preload/index.js");
-
-/** main process entry path */
-export const ROOT_ENTRY_PATH = join(__dirname, "../");
+export const RENDERER_THREAD_PATH = path.join(ROOT_PATH, "src", "renderer");

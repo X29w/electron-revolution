@@ -1,25 +1,11 @@
 {
-  "extends": "./tsconfig.base.json",
-  "include": [
-    "electron.vite.config.*",
-    "main-process/**/*",
-    "preload/**/*",
-    "types"
-  ],
   "compilerOptions": {
     "composite": true,
-    "baseUrl": ".",
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "strictPropertyInitialization": false,
-    "types": [
-      "node",
-      "electron-vite/node"
-    ],
-    "paths": {
-      "@main/*": [
-        "main-process/*"
-      ]
-    }
-  }
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+  },
+  "include": ["vite.config.ts"]
 }
