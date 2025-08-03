@@ -3,17 +3,12 @@ import path, { resolve } from "node:path";
 import electron from "vite-plugin-electron/simple";
 import react from "@vitejs/plugin-react";
 
-console.log(
-  "main path",
-  path.join(__dirname, "renderer-process/window/main/index.html")
-);
-
 export default defineConfig({
   plugins: [
     react(),
     electron({
       main: {
-        entry: "dist/main.ts",
+        entry: "main-process/main.ts",
         vite: {
           build: {
             outDir: "dist/main-process",
