@@ -1,11 +1,12 @@
-import "reflect-metadata";
 import { Module } from "@nestjs/common";
-import { ExampleService } from "./example.service";
 import { ExampleController } from "./example.controller";
-import { PrismaService } from "../prisma/prisma.service";
+import { ExampleService } from "./example.service";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { ExampleEntity } from "./entities/example.entity";
 
 @Module({
+  imports: [TypeOrmModule.forFeature([ExampleEntity])],
   controllers: [ExampleController],
-  providers: [ExampleService, PrismaService],
+  providers: [ExampleService],
 })
 export class ExampleModule {}

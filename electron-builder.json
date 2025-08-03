@@ -21,10 +21,6 @@
   },
   "extraResources": [
     {
-      "from": "resources/database/prod.db",
-      "to": "resources/database/prod.db"
-    },
-    {
       "from": "resources/icons",
       "to": "resources/icons"
     }

@@ -1,4 +1,3 @@
-// windows/window-manager.ts
 import { BrowserWindow } from "electron";
 
 /** window interface */

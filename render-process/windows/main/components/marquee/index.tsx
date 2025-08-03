@@ -11,7 +11,6 @@ const Marquee: FC<MarqueeProps> = () => {
           <span>🔥 React </span>
           <span>✨ Electron</span>
           <span>🚀 Nest</span>
-          <span>🌟 Prisma</span>
           <span>🎉 TypeScript</span>
         </div>
 
@@ -19,7 +18,6 @@ const Marquee: FC<MarqueeProps> = () => {
           <span>🔥 React </span>
           <span>✨ Electron</span>
           <span>🚀 Nest</span>
-          <span>🌟 Prisma</span>
           <span>🎉 TypeScript</span>
         </div>
       </div>

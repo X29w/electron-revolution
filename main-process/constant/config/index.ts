@@ -9,3 +9,6 @@ export const IS_DEV = is.dev;
 
 /** preload path */
 export const PRELOAD_PATH = join(__dirname, "../preload/index.js");
+
+/** main process entry path */
+export const ROOT_ENTRY_PATH = join(__dirname, "../");

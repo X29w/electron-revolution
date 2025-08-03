@@ -4,12 +4,10 @@ import { app, BrowserWindow } from "electron";
 import { MainIpc } from "./ipc";
 import { WindowModule } from "./windows";
 import { WindowManager } from "./windows/window-manager";
-import { ensureProdDbIfPackaged } from "./utils/config/product-database";
 import electronLog from "./utils/config/electron-log";
 
 app.whenReady().then(async () => {
   electronLog.info("[App] Starting application...");
-  ensureProdDbIfPackaged();
 
   const nestApp = await NestFactory.create(AppModule);
   nestApp.enableCors();

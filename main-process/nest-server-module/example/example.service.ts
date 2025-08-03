@@ -1,19 +1,32 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { CreateExampleDto } from "./dto/create-example.dto";
 import { UpdateExampleDto } from "./dto/update-example.dto";
-import { PrismaService } from "../prisma/prisma.service";
+import { InjectRepository } from "@nestjs/typeorm";
+import { ExampleEntity } from "./entities/example.entity";
+import { Repository } from "typeorm";
 
 @Injectable()
 export class ExampleService {
-  @Inject()
-  private readonly prisma: PrismaService;
+  constructor(
+    @InjectRepository(ExampleEntity)
+    private readonly exampleRepository: Repository<ExampleEntity>
+  ) {}
 
-  create(createExampleDto: CreateExampleDto) {
-    return "This action adds a new example";
+  async create(createExampleDto: CreateExampleDto) {
+    const entity = this.exampleRepository.create(createExampleDto);
+    const saved = await this.exampleRepository.save(entity);
+    return {
+      message: "This action adds a new example",
+      data: saved,
+    };
   }
 
   async findAll() {
-    return await this.prisma.example.findMany();
+    const data = await this.exampleRepository.find();
+    return {
+      message: "This action returns all examples",
+      data,
+    };
   }
 
   findOne(id: number) {
