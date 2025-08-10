@@ -1,5 +1,5 @@
-import { AppDataSource } from "../../db";
 import { Context } from "koa";
+import { AppDataSource } from "../../db";
 import { ExampleEntity } from "./entity";
 
 const repo = AppDataSource.getRepository(ExampleEntity);
