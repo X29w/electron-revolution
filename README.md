@@ -1,11 +1,5 @@
 ---
-
-## README.md（英文版示例）
-
-```markdown
-# electron-revolution 🚀
-
-> **A modern Electron framework with Koa in the main process** — TypeScript powered, Vite + React UI, modular main/preload/renderer architecture, ready for mid-to-large scale desktop apps.
+A modern Electron framework with Koa in the main process — TypeScript powered, Vite + React UI, modular main/preload/renderer architecture, ready for mid-to-large scale desktop apps.
 
 [![Electron](https://img.shields.io/badge/Electron-20232A?logo=electron&logoColor=white)](https://www.electronjs.org/)
 [![Koa](https://img.shields.io/badge/Koa-33333D?logo=node.js&logoColor=green)](https://koajs.com/)
@@ -13,9 +7,8 @@
 [![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 
-**Languages:**  
+**Languages:**
 🌐 [English](./README.md) | [繁體中文](./README.zh-TW.md) | [日本語](./README.ja.md)
-
 ---
 
 ## ✨ Features
