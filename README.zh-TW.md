@@ -1,11 +1,5 @@
 ---
-
-## README.md（英文版範例）
-
-```markdown
-# electron-revolution 🚀
-
-> **一個主進程中整合 Koa 的現代 Electron 框架** — 基於 TypeScript，Vite + React UI，模組化主程式/預先載入/渲染器架構，適用於中大型桌面應用。
+一個主進程中整合 Koa 的現代 Electron 框架** — 基於 TypeScript，Vite + React UI，模組化主程式/預先載入/渲染器架構，適用於中大型桌面應用。
 
 [![Electron](https://img.shields.io/badge/Electron-20232A?logo=electron&logoColor=white)](https://www.electronjs.org/)
 [![Koa](https://img.shields.io/badge/Koa-33333D?logo=node.js&logoColor=green)](https://koajs.com/)

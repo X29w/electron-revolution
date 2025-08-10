@@ -1,11 +1,5 @@
 ---
-
-## README.md（英語版の例）
-
-```markdown
-# electronic-revolution 🚀
-
-> **メインプロセスに Koa を搭載した最新の Electron フレームワーク** — TypeScript で動作し、Vite + React UI、モジュール式のメイン/プリロード/レンダラーアーキテクチャを備え、中規模から大規模デスクトップアプリに最適です。
+メインプロセスに Koa を搭載した最新の Electron フレームワーク** — TypeScript で動作し、Vite + React UI、モジュール式のメイン/プリロード/レンダラーアーキテクチャを備え、中規模から大規模デスクトップアプリに最適です。
 
 [![Electron](https://img.shields.io/badge/Electron-20232A?logo=electron&logoColor=white)](https://www.electronjs.org/)
 [![Koa](https://img.shields.io/badge/Koa-33333D?logo=node.js&logoColor=green)](https://koajs.com/)
