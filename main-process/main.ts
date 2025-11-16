@@ -2,7 +2,6 @@ import { app, BrowserWindow } from "electron";
 import "reflect-metadata";
 import { registerGlobalShortcut } from "./global-short-cut";
 import { IpcModule } from "./ipc";
-import { startKoa } from "./koa-server/app";
 import { WindowModule } from "./windows";
 import { WindowManager } from "./windows/window-manager";
 
@@ -24,7 +23,6 @@ app.on("activate", () => {
 });
 
 app.whenReady().then(async () => {
-  await startKoa();
   registerGlobalShortcut(); // 注册全局快捷键
   new IpcModule(); // 注册IPC通信模块
   createWindow();
