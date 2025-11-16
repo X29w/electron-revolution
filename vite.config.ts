@@ -3,11 +3,6 @@ import path, { resolve } from "node:path";
 import electron from "vite-plugin-electron/simple";
 import react from "@vitejs/plugin-react";
 
-console.log(
-  "主窗口:",
-  path.resolve(__dirname, "renderer-process/window/main/index.html")
-);
-
 export default defineConfig({
   plugins: [
     react(),

@@ -1,6 +1,6 @@
 import { Context } from "koa";
-import { AppDataSource } from "../../db";
 import { ExampleEntity } from "./entity";
+import { AppDataSource } from "@main-process/koa-server/app";
 
 const repo = AppDataSource.getRepository(ExampleEntity);
 
@@ -13,12 +13,12 @@ export async function getExampleById(ctx: Context) {
 }
 
 export async function createExample(ctx: Context) {
-  const example = repo.create(ctx.request.body);
+  const example = repo.create((ctx.request as any).body);
   ctx.body = await repo.save(example);
 }
 
 export async function updateExample(ctx: Context) {
-  await repo.update(ctx.params.id, ctx.request.body);
+  await repo.update(ctx.params.id, (ctx.request as any).body);
   ctx.body = { success: true };
 }
 

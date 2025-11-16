@@ -22,7 +22,12 @@
       },
       "complexity": {
         "noStaticOnlyClass": "off",
-        "noThisInStatic": "off"
+        "noThisInStatic": "off",
+        "noBannedTypes": "off"
+      },
+      "suspicious": {
+        "noConfusingVoidType": "off",
+        "noExplicitAny": "off"
       }
     }
   },
