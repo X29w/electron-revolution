@@ -1,30 +1,26 @@
-import { useState } from "react";
+import { FC } from "react";
 import reactLogo from "../../assets/react.svg";
+import { ipcSend } from "@renderer-process/shared/services/ipc";
 
-function App() {
-  const [count, setCount] = useState(0);
-
+const App: FC = () => {
   return (
-    <>
-      <div>
-        <a href="https://react.dev" target="_blank" rel="noopener">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)} type="button">
-          count is {count}
+    <div className="w-full h-full">
+      <img
+        src={reactLogo}
+        className="w-96 h-96 mx-auto rotate-180 animate-spin [animation-duration:4000ms]"
+        alt="React logo"
+      />
+      <div className="w-full text-center">main window</div>
+      <div className="w-full flex justify-center">
+        <button
+          className="w-96 h-12 mx-auto mt-20 shadow-xl cursor-pointer"
+          onClick={() => ipcSend("window:open", "child-a")}
+        >
+          child-a
         </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
   );
-}
+};
 
 export default App;

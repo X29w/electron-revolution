@@ -2,27 +2,28 @@ import { defineConfig } from "vite";
 import path, { resolve } from "node:path";
 import electron from "vite-plugin-electron/simple";
 import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   plugins: [
+    tailwindcss(),
     react(),
     electron({
       main: {
         entry: "main-process/main.ts",
         vite: {
+          resolve: {
+            alias: {
+              "@main-process": resolve("main-process"),
+              "@preload": resolve("preload"),
+            },
+          },
           build: {
             outDir: "dist/main-process",
             rollupOptions: {
               input: {
                 index: resolve(__dirname, "main-process/main.ts"),
               },
-              external: [
-                "koa",
-                "@koa/router",
-                "typeorm",
-                "sqlite3",
-                "reflect-metadata",
-              ],
             },
           },
         },
@@ -49,15 +50,10 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, "renderer-process/window/main/index.html"),
-        setting: resolve(
+        "child-a": resolve(
           __dirname,
-          "renderer-process/window/setting/index.html"
+          "renderer-process/window/child-a/index.html"
         ),
-      },
-      output: {
-        entryFileNames: "assets/[name].js",
-        chunkFileNames: "assets/[name]-[hash].js",
-        assetFileNames: "assets/[name]-[hash][extname]",
       },
     },
   },

@@ -1,18 +1,20 @@
-import { app, BrowserWindow } from "electron";
 import "reflect-metadata";
+import { registerAppEventEmitter } from "./utils/config/main-process/event-emitter";
+import { app, BrowserWindow } from "electron";
 import { registerGlobalShortcut } from "./global-short-cut";
 import { IpcModule } from "./ipc";
+import { exitApp } from "./utils/config/main-process/exit-app";
 import { WindowModule } from "./windows";
 import { WindowManager } from "./windows/window-manager";
 
-function createWindow() {
+const createWindow = () => {
   new WindowModule();
   WindowManager.createWindow("main");
-}
+};
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
-    app.quit();
+    exitApp();
   }
 });
 

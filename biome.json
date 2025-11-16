@@ -28,6 +28,9 @@
       "suspicious": {
         "noConfusingVoidType": "off",
         "noExplicitAny": "off"
+      },
+      "a11y": {
+        "useButtonType": "off"
       }
     }
   },
