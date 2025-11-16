@@ -1,5 +1,4 @@
 import "reflect-metadata";
-import { registerAppEventEmitter } from "./utils/config/main-process/event-emitter";
 import { app, BrowserWindow } from "electron";
 import { registerGlobalShortcut } from "./global-short-cut";
 import { IpcModule } from "./ipc";

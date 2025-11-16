@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "chcp 65001 && vite",
     "build": "tsc && vite build && electron-builder",
-    "preview": "vite preview",
     "postinstall": "npx electron-fix start"
   },
   "dependencies": {
