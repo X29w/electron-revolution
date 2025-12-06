@@ -1,6 +1,6 @@
 import { AutoRegisterWindows } from "@main-process/utils/config/decorator/window-auto-register";
-import { MainWindow } from "./window-instance/main";
-import { ChildAWindow } from "./window-instance/child-a";
+import { MainWindow } from "./main";
+import { ChildAWindow } from "./child-a";
 
 /** window module */
 @AutoRegisterWindows([MainWindow, ChildAWindow])

@@ -6,7 +6,7 @@ import {
 import { RegisterWindow } from "@main-process/utils/config/decorator/window-register";
 import { getRendererPath } from "@main-process/utils/config/renderer-process/renderer-path";
 import { BrowserWindow } from "electron";
-import { IWindow } from "../window-manager";
+import { IWindow } from "../utils/config/main-process/window-manager";
 
 @RegisterWindow("child-a")
 export class ChildAWindow implements IWindow {

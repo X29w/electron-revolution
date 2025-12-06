@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.17",
+    "axios": "^1.13.2",
     "electron-log": "^5.4.3",
     "electron-store": "^11.0.2",
     "react": "^19.1.1",

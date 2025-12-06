@@ -7,7 +7,7 @@ import { RegisterWindow } from "@main-process/utils/config/decorator/window-regi
 import { exitApp } from "@main-process/utils/config/main-process/exit-app";
 import { getRendererPath } from "@main-process/utils/config/renderer-process/renderer-path";
 import { BrowserWindow } from "electron";
-import { IWindow } from "../window-manager";
+import { IWindow } from "../utils/config/main-process/window-manager";
 
 @RegisterWindow("main")
 export class MainWindow implements IWindow {

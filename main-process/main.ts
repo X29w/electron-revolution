@@ -4,7 +4,7 @@ import { registerGlobalShortcut } from "./global-short-cut";
 import { IpcModule } from "./ipc";
 import { exitApp } from "./utils/config/main-process/exit-app";
 import { WindowModule } from "./windows";
-import { WindowManager } from "./windows/window-manager";
+import { WindowManager } from "./utils/config/main-process/window-manager";
 
 const createWindow = () => {
   new WindowModule();
