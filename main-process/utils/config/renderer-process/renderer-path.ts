@@ -7,4 +7,4 @@ import { join } from "path";
  * @returns {string}
  */
 export const getRendererPath = (name: Electron.WindowName) =>
-  join(__dirname, "../", "renderer-process", "window", name, "index.html");
+  join(__dirname, "../", "renderer-process", "windows", name, "index.html");

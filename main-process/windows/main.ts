@@ -25,7 +25,7 @@ export class MainWindow implements IWindow {
     win.on("closed", () => exitApp());
 
     if (IS_DEV)
-      win.loadURL(`${VITE_DEV_SERVER_URL}renderer-process/window/main/`);
+      win.loadURL(`${VITE_DEV_SERVER_URL}renderer-process/windows/main/`);
     else win.loadFile(getRendererPath("main"));
 
     return win;

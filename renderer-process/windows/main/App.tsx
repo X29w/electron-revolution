@@ -1,6 +1,6 @@
+import { ipcSend } from "@renderer-process/shared/services/ipc";
 import { FC } from "react";
 import reactLogo from "../../assets/react.svg";
-import { ipcSend } from "@renderer-process/shared/services/ipc";
 
 const App: FC = () => {
   return (
