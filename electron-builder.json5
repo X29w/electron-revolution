@@ -14,7 +14,7 @@
   "publish": [
     {
       "provider": "generic",
-      "url": "https://your-update-server.com"
+      "url": "http://localhost:3000/static/electron/"
     }
   ],
   "mac": {
@@ -25,7 +25,7 @@
     "publish": [
       {
         "provider": "generic",
-        "url": "https://your-update-server.com"
+        "url": "http://localhost:3000/static/electron/"
       }
     ]
   },
@@ -42,7 +42,7 @@
     "publish": [
       {
         "provider": "generic",
-        "url": "https://your-update-server.com"
+        "url": "http://localhost:3000/static/electron/"
       }
     ]
   },
@@ -60,7 +60,7 @@
     "publish": [
       {
         "provider": "generic",
-        "url": "https://your-update-server.com"
+        "url": "http://localhost:3000/static/electron/"
       }
     ]
   }
