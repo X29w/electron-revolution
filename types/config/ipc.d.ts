@@ -20,6 +20,36 @@ declare namespace Ipc {
       args: [key: keyof ElectronStore.Options];
       return: ElectronStore[keyof ElectronStore.Options];
     };
+
+    /**
+     * @zh-tw: 檢查更新
+     * @en-us: Check for updates
+     * @jp: 更新を確認
+     */
+    "app-update:check-for-updates": {
+      args: [];
+      return: Promise<import("electron-updater").UpdateCheckResult | null>;
+    };
+
+    /**
+     * @zh-tw: 下載更新
+     * @en-us: Download update
+     * @jp: 更新をダウンロード
+     */
+    "app-update:download-update": {
+      args: [];
+      return: Promise<string[]>;
+    };
+
+    /**
+     * @zh-tw: 退出並安裝更新
+     * @en-us: Quit and install update
+     * @jp: 退出して更新をインストール
+     */
+    "app-update:quit-and-install": {
+      args: [];
+      return: void;
+    };
   }
 
   /** 主进程 on 路由（ipcMain.on <- 渲染 send） */
@@ -28,7 +58,7 @@ declare namespace Ipc {
     "store:set": {
       args: [
         key: keyof ElectronStore.Options,
-        value: ElectronStore[keyof ElectronStore.Options]
+        value: ElectronStore[keyof ElectronStore.Options],
       ];
     };
 
@@ -77,6 +107,22 @@ declare namespace Ipc {
   export interface Send {
     "store:init": {
       args: [value: ElectronStore[keyof ElectronStore.Options]];
+    };
+
+    "update:available": {
+      args: [];
+    };
+
+    "update:none": {
+      args: [];
+    };
+
+    "update:progress": {
+      args: [progress: import("electron-updater").ProgressInfo];
+    };
+
+    "update:ready": {
+      args: [];
     };
   }
 

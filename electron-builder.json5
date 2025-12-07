@@ -1,9 +1,9 @@
 // @see - https://www.electron.build/configuration/configuration
 {
   "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
-  "appId": "YourAppID",
+  "appId": "com.electron.nest.revolution",
   "asar": true,
-  "productName": "YourAppName",
+  "productName": "Electron Nest Revolution",
   "directories": {
     "output": "release/${version}"
   },
@@ -11,11 +11,23 @@
     "dist",
     "dist-electron"
   ],
+  "publish": [
+    {
+      "provider": "generic",
+      "url": "https://your-update-server.com"
+    }
+  ],
   "mac": {
     "target": [
       "dmg"
     ],
-    "artifactName": "${productName}-Mac-${version}-Installer.${ext}"
+    "artifactName": "${productName}-Mac-${version}-Installer.${ext}",
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "https://your-update-server.com"
+      }
+    ]
   },
   "win": {
     "target": [
@@ -26,7 +38,13 @@
         ]
       }
     ],
-    "artifactName": "${productName}-Windows-${version}-Setup.${ext}"
+    "artifactName": "${productName}-Windows-${version}-Setup.${ext}",
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "https://your-update-server.com"
+      }
+    ]
   },
   "nsis": {
     "oneClick": false,
@@ -38,6 +56,12 @@
     "target": [
       "AppImage"
     ],
-    "artifactName": "${productName}-Linux-${version}.${ext}"
+    "artifactName": "${productName}-Linux-${version}.${ext}",
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "https://your-update-server.com"
+      }
+    ]
   }
 }

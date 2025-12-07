@@ -5,10 +5,12 @@ import { IpcModule } from "./ipc";
 import { exitApp } from "./utils/config/main-process/exit-app";
 import { WindowModule } from "./windows";
 import { WindowManager } from "./utils/config/main-process/window-manager";
+import { initAutoUpdater } from "./update";
 
 const createWindow = () => {
   new WindowModule();
-  WindowManager.createWindow("main");
+  const win = WindowManager.createWindow("main");
+  initAutoUpdater();
 };
 
 app.on("window-all-closed", () => {
