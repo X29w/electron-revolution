@@ -49,8 +49,8 @@ importers:
         specifier: ^5.1.1
         version: 5.1.1(vite@6.3.5(@types/node@24.1.0)(jiti@2.6.1)(lightningcss@1.30.2))
       electron:
-        specifier: ^39.2.6
-        version: 39.2.6
+        specifier: ^37.2.5
+        version: 37.10.3
       electron-builder:
         specifier: ^26.0.12
         version: 26.0.12(electron-builder-squirrel-windows@24.13.3)
@@ -1185,8 +1185,8 @@ packages:
   electron-updater@6.6.2:
     resolution: {integrity: sha512-Cr4GDOkbAUqRHP5/oeOmH/L2Bn6+FQPxVLZtPbcmKZC63a1F3uu5EefYOssgZXG3u/zBlubbJ5PJdITdMVggbw==}
 
-  electron@39.2.6:
-    resolution: {integrity: sha512-dHBgTodWBZd+tL1Dt0PSh/CFLHeDkFCTKCTXu1dgPhlE9Z3k2zzlBQ9B2oW55CFsKanBDHiUomHJNw0XaSdQpA==}
+  electron@37.10.3:
+    resolution: {integrity: sha512-3IjCGSjQmH50IbW2PFveaTzK+KwcFX9PEhE7KXb9v5IT8cLAiryAN7qezm/XzODhDRlLu0xKG1j8xWBtZ/bx/g==}
     engines: {node: '>= 12.20.55'}
     hasBin: true
 
@@ -3636,7 +3636,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  electron@39.2.6:
+  electron@37.10.3:
     dependencies:
       '@electron/get': 2.0.3
       '@types/node': 22.17.0
