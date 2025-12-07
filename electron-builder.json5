@@ -1,9 +1,9 @@
 // @see - https://www.electron.build/configuration/configuration
 {
   "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
-  "appId": "com.electron.nest.revolution",
+  "appId": "com.electron-cli-revolution",
   "asar": true,
-  "productName": "Electron Nest Revolution",
+  "productName": "Electron Cli Revolution",
   "directories": {
     "output": "release/${version}"
   },

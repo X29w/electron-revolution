@@ -9,7 +9,7 @@ import { initAutoUpdater } from "./update";
 
 const createWindow = () => {
   new WindowModule();
-  const win = WindowManager.createWindow("main");
+  WindowManager.createWindow("main");
   initAutoUpdater();
 };
 

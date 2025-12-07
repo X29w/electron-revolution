@@ -49,10 +49,10 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main: resolve(__dirname, "renderer-process/window/main/index.html"),
+        main: resolve(__dirname, "renderer-process/windows/main/index.html"),
         "child-a": resolve(
           __dirname,
-          "renderer-process/window/child-a/index.html"
+          "renderer-process/windows/child-a/index.html"
         ),
       },
     },
