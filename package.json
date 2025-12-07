@@ -1,7 +1,7 @@
 {
   "name": "electron-cli-revolution",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "chcp 65001 && vite",
