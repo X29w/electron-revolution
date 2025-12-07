@@ -19,8 +19,14 @@ export const useAppUpdate = () => {
     };
   }, []);
 
-  const check = () => ipcInvoke("app-update:check-for-updates");
-  const download = () => ipcInvoke("app-update:download-update");
+  const check = async () => {
+    const res = await ipcInvoke("app-update:check-for-updates");
+    console.log("app-update:check-for-updates", res);
+  };
+  const download = async () => {
+    const res = await ipcInvoke("app-update:download-update");
+    console.log("app-update:download-update",res)
+  }
   const install = () => ipcInvoke("app-update:quit-and-install");
 
   return { status, progress, check, download, install };

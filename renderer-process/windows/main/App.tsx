@@ -8,7 +8,7 @@ const App: FC = () => {
 
   return (
     <div className="w-full h-full">
-      <div>0.1.0</div>
+      <div>0.0.0</div>
       <img
         src={reactLogo}
         className="w-96 h-96 mx-auto rotate-180 animate-spin [animation-duration:4000ms]"
@@ -25,13 +25,32 @@ const App: FC = () => {
       </div>
 
       <div>
-        <button onClick={check}>检查更新</button>
+        <button
+          className="w-25 h-10 grid place-items-center cursor-pointer bg-green-400"
+          onClick={check}
+        >
+          check update
+        </button>
 
-        {status === "available" && <button onClick={download}>下载更新</button>}
+        {status === "available" && (
+          <button
+            className="w-25 h-10 grid place-items-center cursor-pointer bg-blue-400"
+            onClick={download}
+          >
+            download update
+          </button>
+        )}
 
-        {status === "ready" && <button onClick={install}>立即更新</button>}
+        {status === "ready" && (
+          <button
+            className="w-25 h-10 grid place-items-center cursor-pointer bg-red-400"
+            onClick={install}
+          >
+            update immediately
+          </button>
+        )}
 
-        {status === "downloading" && <p>下载中… {progress.toFixed(1)}%</p>}
+        {status === "downloading" && <p>downloading... {progress.toFixed(1)}%</p>}
       </div>
     </div>
   );
