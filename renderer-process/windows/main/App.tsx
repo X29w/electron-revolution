@@ -8,7 +8,8 @@ const App: FC = () => {
 
   return (
     <div className="w-full h-full">
-      <div>0.1.0</div>
+      <div>0.0.0</div>
+      <div>老版本的内容，升级后应该消失</div>
       <img
         src={reactLogo}
         className="w-96 h-96 mx-auto rotate-180 animate-spin [animation-duration:4000ms]"

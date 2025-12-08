@@ -1,8 +1,15 @@
 import { autoUpdater } from "electron-updater";
 import { windowSend } from "@main-process/utils/config/main-process/window-send";
+import { tryIncrementalUpdate } from "./incremental";
+import { logger } from "@main-process/utils/config/electron-logger";
 
-export const initAutoUpdater = () => {
+export const initAutoUpdater = async () => {
   autoUpdater.autoDownload = false;
+
+  const isIncrementalSuccess = await tryIncrementalUpdate();
+  if (isIncrementalSuccess) return;
+  logger.info("No incremental update found, start auto update");
+  autoUpdater.checkForUpdates();
 
   autoUpdater.on("update-available", () => {
     windowSend("main", "update:available");
