@@ -1,9 +1,10 @@
 import { app } from "electron";
-import { patch } from "bsdiff-node";
+import bsdiff from "bsdiff-node";
 import fs from "fs";
 import path from "path";
 import axios from "axios";
 import { logger } from "@main-process/utils/config/electron-logger";
+const { patch } = bsdiff;
 
 export async function tryIncrementalUpdate() {
   const PATCH_BASE = "http://localhost:3000/static/electron";

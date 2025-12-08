@@ -24,6 +24,9 @@ export default defineConfig({
               input: {
                 index: resolve(__dirname, "main-process/main.ts"),
               },
+                external: [
+          'bsdiff-node',
+        ]
             },
           },
         },
@@ -55,6 +58,9 @@ export default defineConfig({
           "renderer-process/windows/child-a/index.html"
         ),
       },
+      external: [
+        'bsdiff-node',
+      ]
     },
   },
 });
