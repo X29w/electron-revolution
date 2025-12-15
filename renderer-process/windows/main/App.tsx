@@ -8,18 +8,11 @@ const App: FC = () => {
 
   return (
     <div className="w-full h-full">
-      <div>0.1.0</div>
-      <div>
-        This is new version content.This is new version content.This is new
-        version content.This is new version content.This is new version
-        content.This is new version content.This is new version content.This is
-        new version content.This is new version content.This is new version
-        content.This is new version content.This is new version content.This is
-        new version content.This is new version content.This is new version
-        content.This is new version content.This is new version content.This is
-        new version content.This is new version content.This is new version
-        content.This is new version content.This is new version content.
-      </div>
+      <div>new new new new new new new new new new new new new new new new new new
+        new new new new new new new new new new new new new new new new new new
+        new new new new new new new new new new new new new new new new new new
+        new new new new new new new new new new new new new new new new new new
+        new new new new new new new new new new new new new new</div>
       <img
         src={reactLogo}
         className="w-96 h-96 mx-auto rotate-180 animate-spin [animation-duration:4000ms]"
