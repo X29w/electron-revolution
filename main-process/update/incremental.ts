@@ -10,7 +10,7 @@ export async function tryIncrementalUpdate() {
   const PATCH_BASE = "http://localhost:3000/static/electron";
 
   const currentVersion = app.getVersion();
-
+  console.info("currentVersion:", currentVersion);
   try {
     // ① 读取补丁信息
     const patchJsonUrl = `${PATCH_BASE}/patch-${currentVersion}-to-0.1.0.json`;

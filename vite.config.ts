@@ -24,9 +24,7 @@ export default defineConfig({
               input: {
                 index: resolve(__dirname, "main-process/main.ts"),
               },
-                external: [
-          'bsdiff-node',
-        ]
+              external: ["bsdiff-node"],
             },
           },
         },
@@ -55,12 +53,10 @@ export default defineConfig({
         main: resolve(__dirname, "renderer-process/windows/main/index.html"),
         "child-a": resolve(
           __dirname,
-          "renderer-process/windows/child-a/index.html"
+          "renderer-process/windows/child-a/index.html",
         ),
       },
-      external: [
-        'bsdiff-node',
-      ]
+      external: ["bsdiff-node"],
     },
   },
 });
