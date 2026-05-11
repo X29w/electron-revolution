@@ -10,7 +10,7 @@
   },
   "formatter": {
     "enabled": true,
-    "indentStyle": "tab"
+    "indentStyle": "space"
   },
   "linter": {
     "enabled": true,
@@ -22,7 +22,15 @@
       },
       "complexity": {
         "noStaticOnlyClass": "off",
-        "noThisInStatic": "off"
+        "noThisInStatic": "off",
+        "noBannedTypes": "off"
+      },
+      "suspicious": {
+        "noConfusingVoidType": "off",
+        "noExplicitAny": "off"
+      },
+      "a11y": {
+        "useButtonType": "off"
       }
     }
   },
