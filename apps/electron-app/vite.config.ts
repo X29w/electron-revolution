@@ -23,6 +23,7 @@ export default defineConfig({
               input: {
                 index: resolve(__dirname, "main-process/main.ts"),
               },
+              external: ["electron-log", "electron-store"],
             },
           },
         },
