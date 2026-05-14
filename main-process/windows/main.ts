@@ -1,33 +1,29 @@
-import {
-  IS_DEV,
-  PRELOAD_PATH,
-  VITE_DEV_SERVER_URL,
-} from "@main-process/constant/config";
-import { RegisterWindow } from "@main-process/utils/config/decorator/window-register";
-import { exitApp } from "@main-process/utils/config/main-process/exit-app";
-import { getRendererPath } from "@main-process/utils/config/renderer-process/renderer-path";
+/**
+ * @description [zh-CN] 主窗口工厂函数
+ * @description [zh-TW] 主視窗工廠函數
+ * @description [en] Main window factory function
+ * @description [ja] メインウィンドウファクトリ関数
+ */
+
 import { BrowserWindow } from "electron";
-import { IWindow } from "../utils/config/main-process/window-manager";
+import { IS_DEV, PRELOAD_PATH, VITE_DEV_SERVER_URL } from "../constant";
+import { getRendererPath } from "../utils/renderer-path";
 
-@RegisterWindow("main")
-export class MainWindow implements IWindow {
-  create() {
-    const win = new BrowserWindow({
-      width: 1280,
-      height: 800,
-      webPreferences: {
-        preload: PRELOAD_PATH,
-        contextIsolation: true,
-      },
-    });
+export const createMainWindow = (): BrowserWindow => {
+  const win = new BrowserWindow({
+    width: 1280,
+    height: 800,
+    webPreferences: {
+      preload: PRELOAD_PATH,
+      contextIsolation: true,
+    },
+  });
 
-    // 窗口关闭时程序退出
-    win.on("closed", () => exitApp());
-
-    if (IS_DEV)
-      win.loadURL(`${VITE_DEV_SERVER_URL}renderer-process/windows/main/`);
-    else win.loadFile(getRendererPath("main"));
-
-    return win;
+  if (IS_DEV) {
+    win.loadURL(`${VITE_DEV_SERVER_URL}renderer-process/windows/main/`);
+  } else {
+    win.loadFile(getRendererPath("main"));
   }
-}
+
+  return win;
+};

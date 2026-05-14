@@ -1,24 +1,26 @@
 {
-  "name": "electron-cli-revolution",
+  "name": "electron-revolution",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "scripts": {
     "dev": "chcp 65001 && vite",
     "build": "tsc && vite build && electron-builder",
-    "postinstall": "npx electron-fix start",
-    "rebuild": "electron-rebuild"
+    "gen:ipc": "npx tsx cli/generate-ipc-types.ts",
+    "cli": "npx tsx cli/index.ts",
+    "add:window": "npx tsx cli/index.ts add window",
+    "add:plugin": "npx tsx cli/index.ts add plugin",
+    "add:ipc": "npx tsx cli/index.ts add ipc"
+  },
+  "bin": {
+    "revolution": "./cli/index.ts"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.17",
-    "axios": "^1.13.2",
-    "bsdiff-node": "^2.5.0",
     "electron-log": "^5.4.3",
     "electron-store": "^11.0.2",
-    "electron-updater": "^6.6.2",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
-    "reflect-metadata": "^0.2.2",
     "tailwindcss": "^4.1.17"
   },
   "devDependencies": {
@@ -28,7 +30,7 @@
     "@vitejs/plugin-react": "^5.1.1",
     "electron": "^37.2.5",
     "electron-builder": "^26.0.12",
-    "electron-rebuild": "^3.2.9",
+    "tsx": "^4.19.0",
     "typescript": "^5.9.3",
     "vite": "^6.3.5",
     "vite-plugin-electron": "^0.29.0",

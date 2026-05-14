@@ -1,32 +1,42 @@
-import "reflect-metadata";
-import { app, BrowserWindow } from "electron";
-import { registerGlobalShortcut } from "./global-short-cut";
-import { IpcModule } from "./ipc";
-import { exitApp } from "./utils/config/main-process/exit-app";
-import { WindowModule } from "./windows";
-import { WindowManager } from "./utils/config/main-process/window-manager";
-import { initAutoUpdater } from "./update";
+/**
+ * @description [zh-CN] 应用入口 — 注册窗口、IPC、快捷键，启动主窗口
+ * @description [zh-TW] 應用入口 — 註冊視窗、IPC、快捷鍵，啟動主視窗
+ * @description [en] App entry — register windows, IPC, shortcuts, and launch main window
+ * @description [ja] アプリエントリ — ウィンドウ、IPC、ショートカットを登録し、メインウィンドウを起動
+ */
 
-const createWindow = () => {
-  new WindowModule();
-  WindowManager.createWindow("main");
-  initAutoUpdater();
+import { app, BrowserWindow } from "electron";
+import { registerWindows, createWindow, installPlugin } from "./core";
+import { registerAllIpc } from "./ipc";
+import { registerGlobalShortcut } from "./global-short-cut";
+import { windows } from "./windows";
+import { devtoolsPlugin } from "./plugins/devtools";
+import { IS_DEV } from "./constant";
+
+const bootstrap = async () => {
+  registerWindows(windows);
+  registerAllIpc();
+
+  if (IS_DEV) {
+    await installPlugin(devtoolsPlugin);
+  }
+
+  createWindow("main");
 };
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
-    exitApp();
+    app.quit();
   }
 });
 
 app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
+    bootstrap();
   }
 });
 
-app.whenReady().then(async () => {
-  registerGlobalShortcut(); // 注册全局快捷键
-  new IpcModule(); // 注册IPC通信模块
-  createWindow();
+app.whenReady().then(() => {
+  registerGlobalShortcut();
+  bootstrap();
 });

@@ -20,16 +20,12 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-
     "baseUrl": ".",
     "paths": {
       "@main-process/*": ["main-process/*"],
-      "@renderer-process/*": ["renderer-process/*"],
-      "@preload/*": ["preload/*"]
+      "@renderer-process/*": ["renderer-process/*"]
     }
   },
-  "include": ["main-process", "renderer-process", "preload", "types"],
+  "include": ["main-process", "renderer-process", "preload", "types", "cli"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

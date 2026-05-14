@@ -1,6 +1,13 @@
-import { IS_DEV, ROOT_PATH } from "@main-process/constant/config";
+/**
+ * @description [zh-CN] Electron Store 实例 — 应用持久化配置
+ * @description [zh-TW] Electron Store 實例 — 應用持久化配置
+ * @description [en] Electron Store instance — app persistent configuration
+ * @description [ja] Electron Store インスタンス — アプリの永続設定
+ */
+
+import { IS_DEV, ROOT_PATH } from "../constant";
 import { app } from "electron";
-import Store, { Options } from "electron-store";
+import Store, { type Options } from "electron-store";
 import { join } from "node:path";
 
 const storeConfig: Options<ElectronStore.Options> = {
@@ -20,7 +27,6 @@ const storeConfig: Options<ElectronStore.Options> = {
 };
 
 if (IS_DEV) {
-  // 如果是开发环境，将配置文件存储在项目的 debug 文件夹中
   storeConfig.cwd = join(ROOT_PATH, "debug");
 }
 

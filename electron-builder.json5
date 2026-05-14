@@ -1,33 +1,20 @@
 // @see - https://www.electron.build/configuration/configuration
 {
   "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
-  "appId": "com.electron-cli-revolution",
+  "appId": "com.electron-revolution",
   "asar": true,
-  "productName": "Electron Cli Revolution",
+  "productName": "Revolution",
   "directories": {
     "output": "release/${version}"
   },
   "files": [
-    "dist",
-    "dist-electron"
-  ],
-  "publish": [
-    {
-      "provider": "generic",
-      "url": "http://localhost:3000/static/electron/"
-    }
+    "dist"
   ],
   "mac": {
     "target": [
       "dmg"
     ],
-    "artifactName": "${productName}-Mac-${version}-Installer.${ext}",
-    "publish": [
-      {
-        "provider": "generic",
-        "url": "http://localhost:3000/static/electron/"
-      }
-    ]
+    "artifactName": "${productName}-Mac-${version}-Installer.${ext}"
   },
   "win": {
     "target": [
@@ -38,13 +25,7 @@
         ]
       }
     ],
-    "artifactName": "${productName}-Windows-${version}-Setup.${ext}",
-    "publish": [
-      {
-        "provider": "generic",
-        "url": "http://localhost:3000/static/electron/"
-      }
-    ]
+    "artifactName": "${productName}-Windows-${version}-Setup.${ext}"
   },
   "nsis": {
     "oneClick": false,
@@ -56,12 +37,6 @@
     "target": [
       "AppImage"
     ],
-    "artifactName": "${productName}-Linux-${version}.${ext}",
-    "publish": [
-      {
-        "provider": "generic",
-        "url": "http://localhost:3000/static/electron/"
-      }
-    ]
+    "artifactName": "${productName}-Linux-${version}.${ext}"
   }
 }

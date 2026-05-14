@@ -1,27 +1,9 @@
-/** handle (invoke) */
-export const ipcInvoke = async <K extends keyof Ipc.Handle>(
-  channel: K,
-  ...args: Ipc.Handle[K]["args"]
-): Promise<Ipc.Handle[K]["return"]> => {
-  return window.ipcRenderer.invoke(channel, ...args);
-};
+/**
+ * @description [zh-CN] IPC 服务 — 从自动生成的类型文件中导出
+ * @description [zh-TW] IPC 服務 — 從自動生成的型別檔案中匯出
+ * @description [en] IPC service — re-exports from auto-generated type file
+ * @description [ja] IPC サービス — 自動生成された型ファイルから再エクスポート
+ */
 
-/** send */
-export const ipcSend = <K extends keyof Ipc.On>(
-  channel: K,
-  ...args: Ipc.On[K]["args"]
-) => {
-  window.ipcRenderer.send(channel, ...args);
-};
-
-/** on (监听主进程 send) */
-export const ipcOn = <K extends keyof Ipc.Send>(
-  channel: K,
-  listener: (
-    event: Electron.IpcRendererEvent,
-    ...args: Ipc.Send[K]["args"]
-  ) => void
-) => {
-  window.ipcRenderer.on(channel, listener);
-  return () => window.ipcRenderer.removeListener(channel, listener);
-};
+export { ipcInvoke, ipcSend, ipcOn } from "./ipc.generated";
+export type { IpcHandleMap, IpcOnMap, IpcSendMap } from "./ipc.generated";

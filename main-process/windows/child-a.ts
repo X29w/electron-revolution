@@ -1,29 +1,29 @@
-import {
-  IS_DEV,
-  PRELOAD_PATH,
-  VITE_DEV_SERVER_URL,
-} from "@main-process/constant/config";
-import { RegisterWindow } from "@main-process/utils/config/decorator/window-register";
-import { getRendererPath } from "@main-process/utils/config/renderer-process/renderer-path";
+/**
+ * @description [zh-CN] 子窗口 A 工厂函数
+ * @description [zh-TW] 子視窗 A 工廠函數
+ * @description [en] Child window A factory function
+ * @description [ja] 子ウィンドウ A ファクトリ関数
+ */
+
 import { BrowserWindow } from "electron";
-import { IWindow } from "../utils/config/main-process/window-manager";
+import { IS_DEV, PRELOAD_PATH, VITE_DEV_SERVER_URL } from "../constant";
+import { getRendererPath } from "../utils/renderer-path";
 
-@RegisterWindow("child-a")
-export class ChildAWindow implements IWindow {
-  create() {
-    const win = new BrowserWindow({
-      width: 1280,
-      height: 800,
-      webPreferences: {
-        preload: PRELOAD_PATH,
-        contextIsolation: true,
-      },
-    });
+export const createChildAWindow = (): BrowserWindow => {
+  const win = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      preload: PRELOAD_PATH,
+      contextIsolation: true,
+    },
+  });
 
-    if (IS_DEV)
-      win.loadURL(`${VITE_DEV_SERVER_URL}renderer-process/windows/child-a/`);
-    else win.loadFile(getRendererPath("child-a"));
-
-    return win;
+  if (IS_DEV) {
+    win.loadURL(`${VITE_DEV_SERVER_URL}renderer-process/windows/child-a/`);
+  } else {
+    win.loadFile(getRendererPath("child-a"));
   }
-}
+
+  return win;
+};

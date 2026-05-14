@@ -1,11 +1,17 @@
-import { logger } from "@main-process/utils/config/electron-logger";
+/**
+ * @description [zh-CN] 全局快捷键注册
+ * @description [zh-TW] 全域快捷鍵註冊
+ * @description [en] Global shortcut registration
+ * @description [ja] グローバルショートカット登録
+ */
+
 import { BrowserWindow, globalShortcut } from "electron";
+import { logger } from "../core/logger";
 
 export const registerGlobalShortcut = () => {
-  // 打开开发者工具
   globalShortcut.register("CommandOrControl+Shift+I", () => {
     BrowserWindow.getFocusedWindow()?.webContents.openDevTools();
   });
 
-  logger.info("Global shortcut registered successfully");
+  logger.info("[shortcut] registered");
 };

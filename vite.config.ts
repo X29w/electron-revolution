@@ -15,7 +15,6 @@ export default defineConfig({
           resolve: {
             alias: {
               "@main-process": resolve("main-process"),
-              "@preload": resolve("preload"),
             },
           },
           build: {
@@ -24,7 +23,6 @@ export default defineConfig({
               input: {
                 index: resolve(__dirname, "main-process/main.ts"),
               },
-              external: ["bsdiff-node"],
             },
           },
         },
@@ -43,7 +41,6 @@ export default defineConfig({
   resolve: {
     alias: {
       "@main-process": resolve("main-process"),
-      "@preload": resolve("preload"),
       "@renderer-process": resolve("renderer-process"),
     },
   },
@@ -55,8 +52,11 @@ export default defineConfig({
           __dirname,
           "renderer-process/windows/child-a/index.html",
         ),
+        devtools: resolve(
+          __dirname,
+          "renderer-process/windows/devtools/index.html",
+        ),
       },
-      external: ["bsdiff-node"],
     },
   },
 });
