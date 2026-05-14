@@ -1,18 +1,17 @@
 /**
- * @description [zh-CN] DevTools 插件 — 可视化调试面板，显示 IPC 通信、插件状态、窗口状态
- * @description [zh-TW] DevTools 插件 — 可視化除錯面板，顯示 IPC 通訊、插件狀態、視窗狀態
- * @description [en] DevTools plugin — visual debug panel showing IPC traffic, plugin state, window state
- * @description [ja] DevTools プラグイン — IPC 通信、プラグイン状態、ウィンドウ状態を表示するビジュアルデバッグパネル
+ * @description [zh-CN] DevTools 插件 — 可视化调试面板，记录所有 IPC 调用
+ * @description [zh-TW] DevTools 插件 — 可視化除錯面板，記錄所有 IPC 呼叫
+ * @description [en] DevTools plugin — visual debug panel, records all IPC calls
+ * @description [ja] DevTools プラグイン — ビジュアルデバッグパネル、全 IPC 呼び出しを記録
  */
 
-import { definePlugin, defineHandlers } from "../../core";
+import { definePlugin, defineHandlers, addIpcInterceptor } from "../../core";
 import { getInstalledPlugins } from "../../core/plugin";
 import { getRegisteredWindows } from "../../core/window";
-import { EventBus } from "../../core/event-bus";
 
 interface IpcLogEntry {
   timestamp: number;
-  direction: "invoke" | "send" | "emit";
+  direction: "handle" | "on";
   channel: string;
 }
 
@@ -50,27 +49,18 @@ export const devtoolsPlugin = definePlugin({
     description: "Built-in visual debug panel for Revolution",
   },
 
-  api: {
-    getIpcLog: () => [...ipcLog],
-    addLog,
-  },
+  api: { getIpcLog: () => [...ipcLog] },
 
   setup(ctx) {
     ctx.ipc(handlers.routes);
 
-    const originalEmit = EventBus.emit;
-
-    EventBus.emit = (event: string, ...args: any[]) => {
-      if (!event.startsWith("devtools:")) {
-        addLog({ timestamp: Date.now(), direction: "emit", channel: event });
+    // 拦截所有 IPC 调用（包括插件注册的）
+    addIpcInterceptor((channel, type) => {
+      if (!channel.startsWith("devtools:")) {
+        addLog({ timestamp: Date.now(), direction: type, channel });
       }
-      originalEmit(event, ...args);
-    };
+    });
 
-    ctx.log.info("DevTools panel ready");
-
-    return () => {
-      EventBus.emit = originalEmit;
-    };
+    ctx.log.info("DevTools ready → ipcSend('window:open', 'devtools')");
   },
 });

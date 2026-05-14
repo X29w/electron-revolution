@@ -8,9 +8,12 @@
 export {
   defineHandlers,
   defineListeners,
+  defineSenders,
   registerRoutes,
   unregisterRoutes,
+  addIpcInterceptor,
   type IpcRoute,
+  type IpcInterceptor,
   type ExtractArgs,
   type ExtractReturn,
 } from "./ipc";

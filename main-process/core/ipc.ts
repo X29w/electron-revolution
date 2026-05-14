@@ -39,10 +39,30 @@ export interface IpcRoute {
 }
 
 /**
- * @description [zh-CN] 定义 handle 路由（invoke/handle 模式）
- * @description [zh-TW] 定義 handle 路由（invoke/handle 模式）
- * @description [en] Define handle routes (invoke/handle pattern)
- * @description [ja] handle ルートを定義（invoke/handle パターン）
+ * @description [zh-CN] IPC 调用拦截器（用于 DevTools 等调试工具）
+ * @description [zh-TW] IPC 呼叫攔截器（用於 DevTools 等除錯工具）
+ * @description [en] IPC call interceptor (for DevTools and debugging tools)
+ * @description [ja] IPC 呼び出しインターセプター（DevTools などのデバッグツール用）
+ */
+export type IpcInterceptor = (channel: string, type: "handle" | "on") => void;
+
+const interceptors: IpcInterceptor[] = [];
+
+/**
+ * @description [zh-CN] 添加 IPC 拦截器（每次 IPC 被调用时触发）
+ * @description [zh-TW] 新增 IPC 攔截器（每次 IPC 被呼叫時觸發）
+ * @description [en] Add IPC interceptor (fires on every IPC call)
+ * @description [ja] IPC インターセプターを追加（IPC 呼び出しごとに発火）
+ */
+export const addIpcInterceptor = (interceptor: IpcInterceptor) => {
+  interceptors.push(interceptor);
+};
+
+/**
+ * @description [zh-CN] 定义 handle 路由（invoke/handle 模式，渲染进程 → 主进程，有返回值）
+ * @description [zh-TW] 定義 handle 路由（invoke/handle 模式，渲染程序 → 主程序，有回傳值）
+ * @description [en] Define handle routes (invoke/handle pattern, renderer → main, with return value)
+ * @description [ja] handle ルートを定義（invoke/handle パターン、レンダラー → メイン、戻り値あり）
  */
 export const defineHandlers = <T extends Record<string, HandleFn>>(handlers: T) => {
   const routes: IpcRoute[] = Object.entries(handlers).map(([channel, handler]) => ({
@@ -54,10 +74,10 @@ export const defineHandlers = <T extends Record<string, HandleFn>>(handlers: T) 
 };
 
 /**
- * @description [zh-CN] 定义 on 路由（send/on 模式）
- * @description [zh-TW] 定義 on 路由（send/on 模式）
- * @description [en] Define on routes (send/on pattern)
- * @description [ja] on ルートを定義（send/on パターン）
+ * @description [zh-CN] 定义 on 路由（send/on 模式，渲染进程 → 主进程，无返回值）
+ * @description [zh-TW] 定義 on 路由（send/on 模式，渲染程序 → 主程序，無回傳值）
+ * @description [en] Define on routes (send/on pattern, renderer → main, no return value)
+ * @description [ja] on ルートを定義（send/on パターン、レンダラー → メイン、戻り値なし）
  */
 export const defineListeners = <T extends Record<string, OnFn>>(listeners: T) => {
   const routes: IpcRoute[] = Object.entries(listeners).map(([channel, handler]) => ({
@@ -69,17 +89,23 @@ export const defineListeners = <T extends Record<string, OnFn>>(listeners: T) =>
 };
 
 /**
- * @description [zh-CN] 注册路由到 ipcMain
- * @description [zh-TW] 註冊路由到 ipcMain
- * @description [en] Register routes to ipcMain
- * @description [ja] ipcMain にルートを登録
+ * @description [zh-CN] 注册路由到 ipcMain（带拦截器通知）
+ * @description [zh-TW] 註冊路由到 ipcMain（帶攔截器通知）
+ * @description [en] Register routes to ipcMain (with interceptor notification)
+ * @description [ja] ipcMain にルートを登録（インターセプター通知付き）
  */
 export const registerRoutes = (routes: IpcRoute[]) => {
   for (const route of routes) {
     if (route.type === "handle") {
-      ipcMain.handle(route.channel, route.handler);
+      ipcMain.handle(route.channel, (...args) => {
+        interceptors.forEach((fn) => fn(route.channel, "handle"));
+        return route.handler(...args);
+      });
     } else {
-      ipcMain.on(route.channel, route.handler);
+      ipcMain.on(route.channel, (...args) => {
+        interceptors.forEach((fn) => fn(route.channel, "on"));
+        route.handler(...args);
+      });
     }
   }
 };
@@ -99,3 +125,11 @@ export const unregisterRoutes = (routes: IpcRoute[]) => {
     }
   }
 };
+
+/**
+ * @description [zh-CN] 定义主进程 → 渲染进程的发送通道（纯类型声明，用于 gen:ipc 生成渲染端类型）
+ * @description [zh-TW] 定義主程序 → 渲染程序的發送通道（純型別宣告，用於 gen:ipc 生成渲染端型別）
+ * @description [en] Define main → renderer send channels (type declaration only, used by gen:ipc for renderer types)
+ * @description [ja] メイン → レンダラーの送信チャンネルを定義（型宣言のみ、gen:ipc がレンダラー型を生成するために使用）
+ */
+export const defineSenders = <T extends Record<string, (...args: any[]) => void>>(senders: T) => senders;

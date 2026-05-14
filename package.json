@@ -13,7 +13,7 @@
     "add:ipc": "npx tsx cli/index.ts add ipc"
   },
   "bin": {
-    "revolution": "./cli/index.ts"
+    "revolution": "./cli/bin.mjs"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.17",
@@ -36,5 +36,12 @@
     "vite-plugin-electron": "^0.29.0",
     "vite-plugin-electron-renderer": "^0.14.6"
   },
-  "main": "dist/main-process/index.js"
+  "main": "dist/main-process/index.js",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "electron",
+      "electron-winstaller",
+      "esbuild"
+    ]
+  }
 }

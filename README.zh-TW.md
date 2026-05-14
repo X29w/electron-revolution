@@ -13,115 +13,151 @@
 
 ---
 
-### 💡 這是什麼
+## Revolution 是什麼
 
-Revolution 是一個**函數式、插件化**的 Electron 應用框架。
+Revolution 是一個 Electron 應用框架，採用不同的方式：
 
-不同於傳統 Electron 模板專案，Revolution 的核心創新在於：
+- **沒有類別，沒有裝飾器** — 純函數 + 檔案模組
+- **IPC 型別從程式碼生成** — 寫一個 handler，跑一條命令，渲染程序自動獲得完整型別
+- **插件系統** — 把功能封裝為可安裝/卸載的獨立單元
+- **CLI 鷹架** — 一條命令生成視窗、插件、IPC 模組
 
-1. **🔌 插件化架構** — 所有功能以插件形式存在，支援熱插拔、依賴管理、插件間通訊
-2. **🧠 IPC 型別零手寫** — 主程序寫 handler，一條命令自動生成渲染程序的完整型別
-3. **🛠 CLI 程式碼生成** — 視窗、插件、IPC 模組一鍵生成，結構統一
-4. **📦 純函數式設計** — 沒有類別，沒有裝飾器，模組化靠檔案組織而非語法糖
+---
 
-### 🚀 創新點
+## 快速開始
 
-| 特性 | 傳統方案 | Revolution |
-|------|----------|------------|
-| IPC 型別 | 手寫 `.d.ts` 宣告檔，容易和實作不同步 | `pnpm gen:ipc` 從 handler 自動推導，零手寫 |
-| 功能擴展 | 直接改主程序程式碼，耦合嚴重 | 插件系統，`definePlugin` + `setup` 函數 |
-| 新增視窗 | 手動建立 5+ 個檔案，容易遺漏 | `pnpm add:window settings` 一條命令 |
-| 程式碼組織 | 裝飾器 + 類別繼承，為了模式而模式 | 純函數 + 檔案模組，簡單直接 |
-| 插件通訊 | 無標準方案 | EventBus + 插件 API 暴露 |
-
-### 📁 專案結構
-
-```
-main-process/
-├── core/                 # 🧱 框架核心
-│   ├── ipc.ts            #    defineHandlers / defineListeners
-│   ├── window.ts         #    視窗註冊與管理
-│   ├── plugin.ts         #    插件生命週期
-│   ├── event-bus.ts      #    事件匯流排
-│   └── logger.ts         #    日誌
-├── ipc/                  # 📡 IPC 模組（按功能拆分）
-├── windows/              # 🪟 視窗工廠函數
-├── plugins/              # 🔌 插件目錄
-└── main.ts               # 🚪 入口
-
-renderer-process/
-├── shared/services/
-│   └── ipc.generated.ts  # ⚙️ 自動生成的型別安全 IPC
-└── windows/              # 📄 各視窗頁面
-
-cli/                      # 🛠 CLI 工具
-```
-
-### 🔧 快速開始
+### 建立新專案
 
 ```bash
+npx electron-revolution create my-app
+cd my-app
 pnpm install
 pnpm dev
 ```
 
-### 📋 CLI 命令
+---
 
-```bash
-pnpm add:window settings      # 🪟 新增視窗
-pnpm add:plugin file-manager  # 🔌 新增插件
-pnpm add:ipc auth             # 📡 新增 IPC 模組
-pnpm gen:ipc                  # ⚙️ 生成渲染程序 IPC 型別
-pnpm cli create my-app        # 📦 建立新專案
-```
+## CLI 命令
 
-### 🧩 核心用法
+| 命令 | 作用 |
+|------|------|
+| `pnpm dev` | 啟動開發伺服器 |
+| `pnpm build` | 生產建置 + electron-builder 打包 |
+| `pnpm gen:ipc` | 從主程序 handler 生成渲染程序 IPC 型別 |
+| `pnpm add:window <name>` | 生成新視窗（主程序 + 渲染程序） |
+| `pnpm add:plugin <name>` | 生成新插件 |
+| `pnpm add:ipc <name>` | 生成新 IPC 模組 |
 
-**定義 IPC（主程序）**
+---
+
+## IPC 工作原理
+
+| 方向 | 主程序 API | 渲染程序 API | 定義方式 |
+|------|-----------|-------------|---------|
+| 渲染 → 主（有回傳值） | `ipcMain.handle` | `ipcInvoke(channel, ...args)` | `defineHandlers` |
+| 渲染 → 主（無回傳值） | `ipcMain.on` | `ipcSend(channel, ...args)` | `defineListeners` |
+| 主 → 渲染 | `webContents.send` | `ipcOn(channel, listener)` | `defineSenders` |
+
+### 定義 handler
 
 ```ts
-import { defineHandlers } from "../core/ipc";
+import { defineHandlers, defineListeners } from "../core/ipc";
 
 export const userHandlers = defineHandlers({
-  "user:get": (_, id: string) => ({ id, name: "test" }),
-  "user:list": () => [{ id: "1", name: "test" }],
+  "user:get": (_, id: string) => ({ id, name: "Alice" }),
+});
+
+export const userListeners = defineListeners({
+  "user:delete": (_, id: string) => { console.log("delete:", id); },
 });
 ```
 
-**渲染程序呼叫（自動生成型別）**
+### 生成型別 & 呼叫
+
+```bash
+pnpm gen:ipc
+```
 
 ```ts
 import { ipcInvoke } from "@renderer-process/shared/services/ipc";
-
 const user = await ipcInvoke("user:get", "123");
-// ✅ user 型別自動推導為 { id: string; name: string }
-```
-
-**定義插件**
-
-```ts
-import { definePlugin, defineHandlers } from "../../core";
-
-export const myPlugin = definePlugin({
-  meta: { name: "my-plugin", version: "1.0.0" },
-  setup(ctx) {
-    ctx.ipc(handlers.routes);
-    ctx.command("my-plugin:run", () => ctx.log.info("running"));
-    ctx.on("some-event", (data) => ctx.log.info(data));
-  },
-});
-```
-
-### 📖 開發流程
-
-```
-1. 寫 handler  →  defineHandlers({ "channel": handler })
-2. 註冊        →  ipc/index.ts 中 registerRoutes()
-3. 生成型別    →  pnpm gen:ipc
-4. 渲染程序呼叫 →  ipcInvoke("channel", args) ← 完整型別提示
+// ✅ user: { id: string; name: string }
 ```
 
 ---
 
-## 📄 License
+## 插件系統
+
+插件是**獨立的功能模組**，可以註冊 IPC 路由、視窗、命令。
+
+```ts
+import { definePlugin, defineHandlers } from "../../core";
+
+const handlers = defineHandlers({
+  "screenshot:capture": () => "/path/to/file.png",
+});
+
+export const screenshotPlugin = definePlugin({
+  meta: { name: "screenshot", version: "1.0.0" },
+  setup(ctx) {
+    ctx.ipc(handlers.routes);
+    ctx.log.info("ready");
+  },
+});
+```
+
+安裝：
+
+```ts
+import { installPlugin } from "./core";
+await installPlugin(screenshotPlugin);
+```
+
+### 插件上下文 API
+
+| 方法 | 作用 |
+|------|------|
+| `ctx.ipc(routes)` | 註冊 IPC 路由（所有視窗都能呼叫） |
+| `ctx.window(name, factory)` | 註冊新視窗 |
+| `ctx.command(id, handler)` | 註冊命名命令 |
+| `ctx.on / ctx.emit` | 內部事件通訊 |
+| `ctx.use<T>(name)` | 存取其他插件的 API |
+| `ctx.log` | 帶作用域的日誌 |
+
+---
+
+## 新增視窗
+
+```bash
+pnpm add:window settings
+```
+
+自動生成視窗工廠函數 + React 頁面 + HTML 範本。
+
+---
+
+## DevTools（僅開發環境）
+
+內建除錯面板，記錄所有 IPC 呼叫（包括插件的），顯示插件狀態、視窗列表、記憶體使用。
+
+---
+
+## 技術棧
+
+Electron 37 · Vite 6 · React 19 · TypeScript 5.9 · Tailwind CSS 4 · Biome · electron-builder
+
+---
+
+## 本地測試 CLI
+
+```bash
+pnpm link --global
+revolution create test-app
+cd test-app && pnpm install && pnpm dev
+```
+
+---
+
+## License
 
 MIT

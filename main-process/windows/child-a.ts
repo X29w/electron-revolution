@@ -13,6 +13,7 @@ export const createChildAWindow = (): BrowserWindow => {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
+    frame:false,
     webPreferences: {
       preload: PRELOAD_PATH,
       contextIsolation: true,

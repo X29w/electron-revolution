@@ -190,12 +190,10 @@ const App: FC = () => {
                   </span>
                   <span
                     className={`
-                      w-12 shrink-0 text-center rounded px-1 py-0.5 text-[9px] font-bold uppercase
-                      ${entry.direction === "invoke"
+                      w-14 shrink-0 text-center rounded px-1 py-0.5 text-[9px] font-bold uppercase
+                      ${entry.direction === "handle"
                         ? "bg-blue-500/10 text-blue-400"
-                        : entry.direction === "send"
-                          ? "bg-green-500/10 text-green-400"
-                          : "bg-purple-500/10 text-purple-400"
+                        : "bg-green-500/10 text-green-400"
                       }
                     `}
                   >

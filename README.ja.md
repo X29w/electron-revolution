@@ -13,115 +13,151 @@
 
 ---
 
-### 💡 これは何か
+## Revolution とは
 
-Revolution は**関数型・プラグインベース**の Electron アプリケーションフレームワークです。
+Revolution は Electron アプリケーションフレームワークで、異なるアプローチを取ります：
 
-従来の Electron テンプレートとは異なり、以下の点で革新しています：
+- **クラスなし、デコレータなし** — 純粋関数 + ファイルベースモジュール
+- **IPC 型はコードから生成** — handler を書いてコマンド一つ実行すれば、レンダラーに完全な型が付く
+- **プラグインシステム** — 機能をインストール/アンインストール可能な独立ユニットとして封装
+- **CLI スキャフォールディング** — コマンド一つでウィンドウ、プラグイン、IPC モジュールを生成
 
-1. **🔌 プラグインアーキテクチャ** — 全機能がプラグインとして存在し、ホットスワップ・依存管理・プラグイン間通信をサポート
-2. **🧠 IPC 型の自動推論** — メインプロセスで handler を書くだけで、コマンド一つでレンダラーの型を自動生成
-3. **🛠 CLI コード生成** — ウィンドウ、プラグイン、IPC モジュールをコマンド一つで生成
-4. **📦 純粋関数型設計** — クラスなし、デコレータなし、ファイル構成によるモジュール化
+---
 
-### 🚀 イノベーション
+## クイックスタート
 
-| 機能 | 従来の方法 | Revolution |
-|------|-----------|------------|
-| IPC 型 | `.d.ts` を手書き、実装と乖離しやすい | `pnpm gen:ipc` で handler から自動推論 |
-| 機能拡張 | メインプロセスを直接変更、密結合 | プラグインシステム `definePlugin` + `setup` |
-| ウィンドウ追加 | 5つ以上のファイルを手動作成 | `pnpm add:window settings` コマンド一つ |
-| コード構成 | デコレータ + クラス継承 | 純粋関数 + ファイルモジュール |
-| プラグイン通信 | 標準的な方法なし | EventBus + プラグイン API 公開 |
-
-### 📁 プロジェクト構造
-
-```
-main-process/
-├── core/                 # 🧱 フレームワークコア
-│   ├── ipc.ts            #    defineHandlers / defineListeners
-│   ├── window.ts         #    ウィンドウ登録・管理
-│   ├── plugin.ts         #    プラグインライフサイクル
-│   ├── event-bus.ts      #    イベントバス
-│   └── logger.ts         #    ログ
-├── ipc/                  # 📡 IPC モジュール（機能別）
-├── windows/              # 🪟 ウィンドウファクトリ関数
-├── plugins/              # 🔌 プラグインディレクトリ
-└── main.ts               # 🚪 エントリーポイント
-
-renderer-process/
-├── shared/services/
-│   └── ipc.generated.ts  # ⚙️ 自動生成された型安全 IPC
-└── windows/              # 📄 各ウィンドウページ
-
-cli/                      # 🛠 CLI ツール
-```
-
-### 🔧 クイックスタート
+### 新規プロジェクト作成
 
 ```bash
+npx electron-revolution create my-app
+cd my-app
 pnpm install
 pnpm dev
 ```
 
-### 📋 CLI コマンド
+---
 
-```bash
-pnpm add:window settings      # 🪟 ウィンドウ追加
-pnpm add:plugin file-manager  # 🔌 プラグイン追加
-pnpm add:ipc auth             # 📡 IPC モジュール追加
-pnpm gen:ipc                  # ⚙️ レンダラー IPC 型生成
-pnpm cli create my-app        # 📦 新規プロジェクト作成
-```
+## CLI コマンド
 
-### 🧩 基本的な使い方
+| コマンド | 機能 |
+|---------|------|
+| `pnpm dev` | 開発サーバー起動 |
+| `pnpm build` | プロダクションビルド + electron-builder パッケージング |
+| `pnpm gen:ipc` | メインプロセスの handler からレンダラー IPC 型を生成 |
+| `pnpm add:window <name>` | 新しいウィンドウを生成（メイン + レンダラー） |
+| `pnpm add:plugin <name>` | 新しいプラグインを生成 |
+| `pnpm add:ipc <name>` | 新しい IPC モジュールを生成 |
 
-**IPC 定義（メインプロセス）**
+---
+
+## IPC の仕組み
+
+| 方向 | メインプロセス API | レンダラー API | 定義方法 |
+|------|-------------------|---------------|---------|
+| レンダラー → メイン（戻り値あり） | `ipcMain.handle` | `ipcInvoke(channel, ...args)` | `defineHandlers` |
+| レンダラー → メイン（戻り値なし） | `ipcMain.on` | `ipcSend(channel, ...args)` | `defineListeners` |
+| メイン → レンダラー | `webContents.send` | `ipcOn(channel, listener)` | `defineSenders` |
+
+### handler の定義
 
 ```ts
-import { defineHandlers } from "../core/ipc";
+import { defineHandlers, defineListeners } from "../core/ipc";
 
 export const userHandlers = defineHandlers({
-  "user:get": (_, id: string) => ({ id, name: "test" }),
-  "user:list": () => [{ id: "1", name: "test" }],
+  "user:get": (_, id: string) => ({ id, name: "Alice" }),
+});
+
+export const userListeners = defineListeners({
+  "user:delete": (_, id: string) => { console.log("delete:", id); },
 });
 ```
 
-**レンダラーから呼び出し（型は自動生成）**
+### 型の生成 & 呼び出し
+
+```bash
+pnpm gen:ipc
+```
 
 ```ts
 import { ipcInvoke } from "@renderer-process/shared/services/ipc";
-
 const user = await ipcInvoke("user:get", "123");
-// ✅ user の型は { id: string; name: string } と自動推論
-```
-
-**プラグイン定義**
-
-```ts
-import { definePlugin, defineHandlers } from "../../core";
-
-export const myPlugin = definePlugin({
-  meta: { name: "my-plugin", version: "1.0.0" },
-  setup(ctx) {
-    ctx.ipc(handlers.routes);
-    ctx.command("my-plugin:run", () => ctx.log.info("running"));
-    ctx.on("some-event", (data) => ctx.log.info(data));
-  },
-});
-```
-
-### 📖 開発フロー
-
-```
-1. handler を書く  →  defineHandlers({ "channel": handler })
-2. 登録する        →  ipc/index.ts で registerRoutes()
-3. 型を生成する    →  pnpm gen:ipc
-4. レンダラーで呼ぶ →  ipcInvoke("channel", args) ← 完全な型ヒント
+// ✅ user: { id: string; name: string }
 ```
 
 ---
 
-## 📄 License
+## プラグインシステム
+
+プラグインは**独立した機能モジュール**で、IPC ルート、ウィンドウ、コマンドを登録できます。
+
+```ts
+import { definePlugin, defineHandlers } from "../../core";
+
+const handlers = defineHandlers({
+  "screenshot:capture": () => "/path/to/file.png",
+});
+
+export const screenshotPlugin = definePlugin({
+  meta: { name: "screenshot", version: "1.0.0" },
+  setup(ctx) {
+    ctx.ipc(handlers.routes);
+    ctx.log.info("ready");
+  },
+});
+```
+
+インストール：
+
+```ts
+import { installPlugin } from "./core";
+await installPlugin(screenshotPlugin);
+```
+
+### プラグインコンテキスト API
+
+| メソッド | 機能 |
+|---------|------|
+| `ctx.ipc(routes)` | IPC ルートを登録（全ウィンドウから呼び出し可能） |
+| `ctx.window(name, factory)` | 新しいウィンドウを登録 |
+| `ctx.command(id, handler)` | 名前付きコマンドを登録 |
+| `ctx.on / ctx.emit` | 内部イベント通信 |
+| `ctx.use<T>(name)` | 他のプラグインの API にアクセス |
+| `ctx.log` | スコープ付きログ |
+
+---
+
+## ウィンドウの追加
+
+```bash
+pnpm add:window settings
+```
+
+ウィンドウファクトリ関数 + React ページ + HTML テンプレートを自動生成。
+
+---
+
+## DevTools（開発環境のみ）
+
+組み込みデバッグパネル。全 IPC 呼び出し（プラグインのものを含む）を記録し、プラグイン状態、ウィンドウ一覧、メモリ使用量を表示。
+
+---
+
+## 技術スタック
+
+Electron 37 · Vite 6 · React 19 · TypeScript 5.9 · Tailwind CSS 4 · Biome · electron-builder
+
+---
+
+## ローカル CLI テスト
+
+```bash
+pnpm link --global
+revolution create test-app
+cd test-app && pnpm install && pnpm dev
+```
+
+---
+
+## License
 
 MIT
