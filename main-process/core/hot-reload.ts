@@ -1,32 +1,37 @@
 /**
- * @description [zh-CN] 插件热加载 — 开发时监听插件目录变化，触发重载回调
- * @description [zh-TW] 插件熱載入 — 開發時監聽插件目錄變化，觸發重載回呼
- * @description [en] Plugin hot-reload — watches plugin directory in dev, triggers reload callback
- * @description [ja] プラグインホットリロード — 開発時にプラグインディレクトリを監視し、リロードコールバックをトリガー
+ * @description [zh-CN] 插件热加载 — 开发时监听插件目录变化，触发重载
+ * @description [zh-TW] 插件熱載入 — 開發時監聽插件目錄變化，觸發重載
+ * @description [en] Plugin hot-reload — watches plugin directory in dev, triggers reload
+ * @description [ja] プラグインホットリロード — 開発時にプラグインディレクトリを監視し、リロードをトリガー
  */
 
 import { watch, type FSWatcher } from "node:fs";
 import { resolve, relative } from "node:path";
 import { uninstallPlugin, installPlugin, type PluginDef } from "./plugin";
 import { logger } from "./logger";
-import { IS_DEV } from "../constant";
 
 const watchers = new Map<string, FSWatcher>();
 
 /**
- * @description [zh-CN] 注册插件并启用热加载（仅开发环境）
- * @description [zh-TW] 註冊插件並啟用熱載入（僅開發環境）
- * @description [en] Install plugin with hot-reload watching (dev only)
- * @description [ja] プラグインをインストールしホットリロード監視を有効化（開発環境のみ）
+ * @description [zh-CN] 注册插件并启用热加载
+ * @description [zh-TW] 註冊插件並啟用熱載入
+ * @description [en] Install plugin with hot-reload watching
+ * @description [ja] プラグインをインストールしホットリロード監視を有効化
+ *
+ * @param pluginDir - 插件目录路径
+ * @param def - 插件定义
+ * @param reloadFn - 重载时调用的函数，返回新的 PluginDef
+ * @param enabled - 是否启用热加载（传入 IS_DEV 等环境判断）
  */
 export const installPluginHot = async (
   pluginDir: string,
   def: PluginDef,
-  reloadFn: () => PluginDef
+  reloadFn: () => PluginDef,
+  enabled = true
 ): Promise<void> => {
   await installPlugin(def);
 
-  if (!IS_DEV) return;
+  if (!enabled) return;
 
   const absolutePath = resolve(pluginDir);
   const { name } = def.meta;

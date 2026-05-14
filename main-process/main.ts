@@ -6,12 +6,19 @@
  */
 
 import { app, BrowserWindow } from "electron";
-import { registerWindows, createWindow, installPlugin } from "@revolution/core";
+import { registerWindows, createWindow, installPlugin, logger } from "@revolution/core";
 import { registerAllIpc } from "./ipc";
 import { registerGlobalShortcut } from "./global-short-cut";
 import { windows } from "./windows";
 import { devtoolsPlugin } from "./plugins/devtools";
 import { IS_DEV } from "./constant";
+
+// 日志配置
+if (IS_DEV) {
+  logger.transports.console.level = "debug";
+  logger.transports.console.format = "[{level}] {y-MM-dd HH:mm:ss} {text}";
+}
+logger.transports.file.level = "info";
 
 const bootstrap = async () => {
   registerWindows(windows);

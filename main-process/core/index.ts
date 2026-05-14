@@ -11,8 +11,10 @@ export {
   defineSenders,
   registerRoutes,
   unregisterRoutes,
+  useIpcMiddleware,
   addIpcInterceptor,
   type IpcRoute,
+  type IpcMiddleware,
   type IpcInterceptor,
   type ExtractArgs,
   type ExtractReturn,
@@ -26,14 +28,20 @@ export {
   getWindow,
   hasWindow,
   getRegisteredWindows,
+  getAllWindows,
   sendToWindow,
+  broadcastToWindows,
+  onWindowCreated,
+  onWindowClosed,
   type WindowFactory,
+  type WindowHook,
 } from "./window";
 
 export {
   definePlugin,
   installPlugin,
   uninstallPlugin,
+  extendPluginContext,
   getPluginState,
   getInstalledPlugins,
   executeCommand,
@@ -44,5 +52,5 @@ export {
 } from "./plugin";
 
 export { EventBus } from "./event-bus";
-export { logger } from "./logger";
+export { logger, setLogger, type Logger } from "./logger";
 export { installPluginHot, stopAllHotReload } from "./hot-reload";

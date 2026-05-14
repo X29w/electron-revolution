@@ -20,8 +20,29 @@ const args = process.argv.slice(2);
 const command = args[0];
 const subCommand = args[1];
 const name = args[2];
+const flags = args.filter((a) => a.startsWith("--"));
 
-// ---- 工具函数 ----
+// ---- 终端颜色 ----
+
+const c = {
+  reset: "\x1b[0m",
+  bold: "\x1b[1m",
+  dim: "\x1b[2m",
+  green: "\x1b[32m",
+  cyan: "\x1b[36m",
+  yellow: "\x1b[33m",
+  red: "\x1b[31m",
+  magenta: "\x1b[35m",
+};
+
+const log = {
+  title: (msg: string) => console.log(`\n${c.bold}${c.cyan}  ⚡ ${msg}${c.reset}\n`),
+  step: (msg: string) => console.log(`${c.green}  ✓${c.reset} ${msg}`),
+  warn: (msg: string) => console.log(`${c.yellow}  ⚠${c.reset} ${msg}`),
+  error: (msg: string) => console.error(`${c.red}  ✗${c.reset} ${msg}`),
+  info: (msg: string) => console.log(`${c.dim}  ${msg}${c.reset}`),
+  blank: () => console.log(),
+};
 
 function toPascalCase(str: string): string {
   return str
@@ -39,10 +60,12 @@ function ensureDir(dir: string) {
   if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
 }
 
+let silent = false;
+
 function write(path: string, content: string) {
   ensureDir(resolve(path, ".."));
   writeFileSync(path, content);
-  console.log(`  ✓ ${path}`);
+  if (!silent) console.log(`  ${c.green}✓${c.reset} ${path}`);
 }
 
 // ---- 生成器 ----
@@ -275,75 +298,70 @@ export const ${listenersName} = defineListeners({
  * @description [ja] 新規プロジェクトを生成 — テンプレートから完全に実行可能なプロジェクトをコピー
  */
 function generateProject(projectName: string) {
-  console.log(`\n  ⚡ Creating project: ${projectName}\n`);
+  log.title(`Creating project: ${c.bold}${projectName}`);
 
   const dir = resolve(process.cwd(), projectName);
   if (existsSync(dir)) {
-    console.error(`  ✗ Directory "${projectName}" already exists`);
+    log.error(`Directory "${projectName}" already exists`);
     process.exit(1);
   }
 
-  // 找到模板根目录（cli/index.ts 所在目录的上一级）
   const templateRoot = resolve(__dirname, "..");
+  let fileCount = 0;
+  silent = true;
 
-  // 复制所有模板文件
   for (const file of TEMPLATE_FILES) {
     const src = resolve(templateRoot, file);
-    if (!existsSync(src)) {
-      console.log(`  ⚠ skip (not found): ${file}`);
-      continue;
-    }
+    if (!existsSync(src)) continue;
     let content = readFileSync(src, "utf-8");
 
-    // 替换项目名，移除 CLI 相关配置，修正 @revolution/core 版本
     if (file === "package.json") {
       const pkg = JSON.parse(content);
       pkg.name = projectName;
       pkg.version = "0.1.0";
       delete pkg.bin;
-      // 只保留用户需要的 scripts
-      pkg.scripts = {
-        dev: pkg.scripts.dev,
-        build: pkg.scripts.build,
-      };
-      // workspace:* → 真实版本号
-      if (pkg.dependencies?.["@revolution/core"]) {
+      pkg.scripts = { dev: pkg.scripts.dev, build: pkg.scripts.build };
+      if (flags.includes("--local")) {
+        pkg.dependencies["@revolution/core"] = `link:${resolve(templateRoot, "main-process/core")}`;
+      } else {
         pkg.dependencies["@revolution/core"] = "^0.2.0";
       }
       content = JSON.stringify(pkg, null, 2);
     }
 
     write(resolve(dir, file), content);
+    fileCount++;
   }
 
-  console.log(`
-  ✓ Project "${projectName}" created!
-
-  Next steps:
-    cd ${projectName}
-    pnpm install
-    pnpm dev
-  `);
+  silent = false;
+  log.blank();
+  log.step(`Scaffolded ${c.bold}${fileCount}${c.reset} files into ${c.cyan}./${projectName}${c.reset}`);
+  log.blank();
+  console.log(`  ${c.dim}Next steps:${c.reset}`);
+  log.blank();
+  console.log(`    ${c.cyan}$${c.reset} cd ${projectName}`);
+  console.log(`    ${c.cyan}$${c.reset} pnpm install`);
+  console.log(`    ${c.cyan}$${c.reset} pnpm dev`);
+  log.blank();
 }
 
 // ---- 帮助 ----
 
 function printHelp() {
   console.log(`
-  ⚡ Revolution CLI
+  ${c.bold}${c.cyan}⚡ Revolution CLI${c.reset}
 
-  Usage:
-    revolution create <name>         Create a new project
-    revolution add window <name>     Add a window
-    revolution add plugin <name>     Add a plugin
-    revolution add ipc <name>        Add an IPC module
-    revolution gen:ipc               Generate renderer IPC types
+  ${c.dim}Usage:${c.reset}
+    ${c.cyan}revolution create${c.reset} <name>         Create a new project
+    ${c.cyan}revolution add window${c.reset} <name>     Add a window
+    ${c.cyan}revolution add plugin${c.reset} <name>     Add a plugin
+    ${c.cyan}revolution add ipc${c.reset} <name>        Add an IPC module
+    ${c.cyan}revolution gen:ipc${c.reset}               Generate renderer IPC types
 
-  Examples:
-    revolution create my-app
-    revolution add window settings
-    revolution add plugin file-manager
-    revolution add ipc auth
+  ${c.dim}Examples:${c.reset}
+    ${c.dim}$${c.reset} revolution create my-app
+    ${c.dim}$${c.reset} revolution add window settings
+    ${c.dim}$${c.reset} revolution add plugin file-manager
   `);
 }
 

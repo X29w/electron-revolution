@@ -1,8 +1,8 @@
 /**
- * @description [zh-CN] 插件系统 — 插件 = 一个函数，接收 context，返回清理函数（可选）
- * @description [zh-TW] 插件系統 — 插件 = 一個函數，接收 context，回傳清理函數（可選）
- * @description [en] Plugin system — plugin = a function that receives context and optionally returns a cleanup function
- * @description [ja] プラグインシステム — プラグイン = context を受け取り、オプションでクリーンアップ関数を返す関数
+ * @description [zh-CN] 插件系统 — 支持 context 扩展和自定义 logger
+ * @description [zh-TW] 插件系統 — 支援 context 擴展和自訂 logger
+ * @description [en] Plugin system — supports context extension and custom logger
+ * @description [ja] プラグインシステム — コンテキスト拡張とカスタムロガーをサポート
  */
 
 import type { IpcRoute } from "./ipc";
@@ -11,12 +11,6 @@ import { registerWindow, unregisterWindow, type WindowFactory } from "./window";
 import { EventBus } from "./event-bus";
 import { logger } from "./logger";
 
-/**
- * @description [zh-CN] 插件元信息
- * @description [zh-TW] 插件元資訊
- * @description [en] Plugin metadata
- * @description [ja] プラグインメタ情報
- */
 export interface PluginMeta {
   name: string;
   version: string;
@@ -26,12 +20,6 @@ export interface PluginMeta {
 
 export type PluginState = "active" | "inactive" | "error";
 
-/**
- * @description [zh-CN] 插件上下文 — 插件通过此对象与宿主交互
- * @description [zh-TW] 插件上下文 — 插件透過此物件與宿主互動
- * @description [en] Plugin context — plugins interact with the host through this object
- * @description [ja] プラグインコンテキスト — プラグインはこのオブジェクトを通じてホストと対話
- */
 export interface PluginContext {
   ipc(routes: IpcRoute[]): void;
   window(name: string, factory: WindowFactory): void;
@@ -44,6 +32,8 @@ export interface PluginContext {
     warn: (...args: any[]) => void;
     error: (...args: any[]) => void;
   };
+  /** @description [zh-CN] 扩展字段，用户可通过 extendPluginContext 注入 */
+  [key: string]: any;
 }
 
 export type PluginSetup = (ctx: PluginContext) => void | (() => void) | Promise<void | (() => void)>;
@@ -67,19 +57,34 @@ const plugins = new Map<string, PluginRuntime>();
 const apis = new Map<string, any>();
 
 /**
- * @description [zh-CN] 定义一个插件（纯声明，不执行）
- * @description [zh-TW] 定義一個插件（純宣告，不執行）
- * @description [en] Define a plugin (declaration only, not executed)
- * @description [ja] プラグインを定義（宣言のみ、実行しない）
+ * @description [zh-CN] Context 扩展器列表 — 用户可注入自定义字段到所有插件的 ctx
+ * @description [zh-TW] Context 擴展器列表 — 使用者可注入自訂欄位到所有插件的 ctx
+ * @description [en] Context extenders — inject custom fields into all plugin contexts
+ * @description [ja] コンテキスト拡張 — 全プラグインの ctx にカスタムフィールドを注入
  */
-export const definePlugin = (def: PluginDef): PluginDef => def;
+type ContextExtender = (ctx: PluginContext, meta: PluginMeta) => void;
+const contextExtenders: ContextExtender[] = [];
 
 /**
- * @description [zh-CN] 安装并激活插件
- * @description [zh-TW] 安裝並啟動插件
- * @description [en] Install and activate a plugin
- * @description [ja] プラグインをインストールして有効化
+ * @description [zh-CN] 扩展插件 context（所有后续安装的插件都会获得扩展字段）
+ * @description [zh-TW] 擴展插件 context（所有後續安裝的插件都會獲得擴展欄位）
+ * @description [en] Extend plugin context (all subsequently installed plugins will receive the extension)
+ * @description [ja] プラグインコンテキストを拡張（以降インストールされる全プラグインが拡張を受け取る）
+ *
+ * @example
+ * ```ts
+ * extendPluginContext((ctx, meta) => {
+ *   ctx.store = electronStore;
+ *   ctx.dialog = dialog;
+ * });
+ * ```
  */
+export const extendPluginContext = (extender: ContextExtender) => {
+  contextExtenders.push(extender);
+};
+
+export const definePlugin = (def: PluginDef): PluginDef => def;
+
 export const installPlugin = async (def: PluginDef): Promise<void> => {
   const { name } = def.meta;
 
@@ -134,6 +139,9 @@ export const installPlugin = async (def: PluginDef): Promise<void> => {
     },
   };
 
+  // 应用所有 context 扩展
+  for (const extender of contextExtenders) extender(ctx, def.meta);
+
   plugins.set(name, runtime);
 
   try {
@@ -156,12 +164,6 @@ export const installPlugin = async (def: PluginDef): Promise<void> => {
   }
 };
 
-/**
- * @description [zh-CN] 卸载插件
- * @description [zh-TW] 卸載插件
- * @description [en] Uninstall a plugin
- * @description [ja] プラグインをアンインストール
- */
 export const uninstallPlugin = async (name: string): Promise<void> => {
   const runtime = plugins.get(name);
   if (!runtime) return;
@@ -179,20 +181,8 @@ export const uninstallPlugin = async (name: string): Promise<void> => {
   logger.info(`[plugin] uninstalled: ${name}`);
 };
 
-/**
- * @description [zh-CN] 获取插件状态
- * @description [zh-TW] 取得插件狀態
- * @description [en] Get plugin state
- * @description [ja] プラグインの状態を取得
- */
 export const getPluginState = (name: string): PluginState | undefined => plugins.get(name)?.state;
 
-/**
- * @description [zh-CN] 获取所有已安装插件
- * @description [zh-TW] 取得所有已安裝插件
- * @description [en] Get all installed plugins
- * @description [ja] インストール済みの全プラグインを取得
- */
 export const getInstalledPlugins = (): { name: string; version: string; state: PluginState }[] =>
   Array.from(plugins.entries()).map(([name, rt]) => ({
     name,
@@ -200,12 +190,6 @@ export const getInstalledPlugins = (): { name: string; version: string; state: P
     state: rt.state,
   }));
 
-/**
- * @description [zh-CN] 执行命令
- * @description [zh-TW] 執行命令
- * @description [en] Execute a command
- * @description [ja] コマンドを実行
- */
 export const executeCommand = (id: string) => {
   EventBus.emit(`command:${id}`);
 };
