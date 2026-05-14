@@ -1,3 +1,6 @@
+packages:
+  - "main-process/core"
+
 allowBuilds:
   electron: true
   electron-winstaller: true

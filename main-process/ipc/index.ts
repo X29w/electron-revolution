@@ -5,7 +5,7 @@
  * @description [ja] IPC モジュールエントリ — 全 IPC ルートの一括登録
  */
 
-import { registerRoutes } from "../core/ipc";
+import { registerRoutes } from "@revolution/core";
 import { windowListeners } from "./window";
 import { storeHandlers, storeListeners } from "./store";
 

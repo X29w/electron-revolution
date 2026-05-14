@@ -25,6 +25,7 @@ export {
   createWindow,
   getWindow,
   hasWindow,
+  getRegisteredWindows,
   sendToWindow,
   type WindowFactory,
 } from "./window";

@@ -5,7 +5,7 @@
  * @description [ja] メイン → レンダラーの送信チャンネル定義（型生成用）
  */
 
-import { defineSenders } from "../core/ipc";
+import { defineSenders } from "@revolution/core";
 
 /**
  * @description [zh-CN] 通过 webContents.send 发送到渲染进程的通道

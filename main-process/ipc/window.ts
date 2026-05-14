@@ -5,8 +5,8 @@
  * @description [ja] IPC: ウィンドウ管理 — 開く、閉じる、最小化、最大化
  */
 
-import { defineListeners } from "../core/ipc";
-import { createWindow, getWindow } from "../core/window";
+import { defineListeners } from "@revolution/core";
+import { createWindow, getWindow } from "@revolution/core";
 
 export const windowListeners = defineListeners({
   "window:open": (_, name: string) => {

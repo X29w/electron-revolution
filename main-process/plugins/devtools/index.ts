@@ -5,9 +5,7 @@
  * @description [ja] DevTools プラグイン — ビジュアルデバッグパネル、全 IPC 呼び出しを記録
  */
 
-import { definePlugin, defineHandlers, addIpcInterceptor } from "../../core";
-import { getInstalledPlugins } from "../../core/plugin";
-import { getRegisteredWindows } from "../../core/window";
+import { definePlugin, defineHandlers, addIpcInterceptor, getInstalledPlugins, getRegisteredWindows } from "@revolution/core";
 
 interface IpcLogEntry {
   timestamp: number;

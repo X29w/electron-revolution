@@ -16,6 +16,7 @@
     "revolution": "./cli/bin.mjs"
   },
   "dependencies": {
+    "@revolution/core": "workspace:*",
     "@tailwindcss/vite": "^4.1.17",
     "electron-log": "^5.4.3",
     "electron-store": "^11.0.2",

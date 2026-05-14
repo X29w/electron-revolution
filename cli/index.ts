@@ -7,8 +7,14 @@
  * @description [ja] Revolution CLI — プロジェクト、ウィンドウ、プラグイン、IPC モジュールを生成するコードジェネレーター
  */
 
-import { resolve } from "node:path";
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { resolve, dirname } from "node:path";
+import { existsSync, mkdirSync, writeFileSync, readFileSync } from "node:fs";
+import { execSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
+import { TEMPLATE_FILES } from "./template-files";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const args = process.argv.slice(2);
 const command = args[0];
@@ -263,10 +269,10 @@ export const ${listenersName} = defineListeners({
 }
 
 /**
- * @description [zh-CN] 生成新项目
- * @description [zh-TW] 生成新專案
- * @description [en] Generate a new project
- * @description [ja] 新規プロジェクトを生成
+ * @description [zh-CN] 生成新项目 — 从当前模板复制完整可运行项目
+ * @description [zh-TW] 生成新專案 — 從當前範本複製完整可執行專案
+ * @description [en] Generate a new project — copies full runnable project from template
+ * @description [ja] 新規プロジェクトを生成 — テンプレートから完全に実行可能なプロジェクトをコピー
  */
 function generateProject(projectName: string) {
   console.log(`\n  ⚡ Creating project: ${projectName}\n`);
@@ -277,281 +283,38 @@ function generateProject(projectName: string) {
     process.exit(1);
   }
 
-  write(
-    resolve(dir, "package.json"),
-    JSON.stringify(
-      {
-        name: projectName,
-        private: true,
-        version: "0.1.0",
-        type: "module",
-        scripts: {
-          dev: "chcp 65001 && vite",
-          build: "tsc && vite build && electron-builder",
-          "gen:ipc": "npx tsx cli/generate-ipc-types.ts",
-          cli: "npx tsx cli/index.ts",
-          "add:window": "npx tsx cli/index.ts add window",
-          "add:plugin": "npx tsx cli/index.ts add plugin",
-          "add:ipc": "npx tsx cli/index.ts add ipc",
-        },
-        dependencies: {
-          "@tailwindcss/vite": "^4.1.17",
-          "electron-log": "^5.4.3",
-          "electron-store": "^11.0.2",
-          react: "^19.2.1",
-          "react-dom": "^19.2.1",
-          tailwindcss: "^4.1.17",
-        },
-        devDependencies: {
-          "@biomejs/biome": "2.3.8",
-          "@types/react": "^19.2.7",
-          "@types/react-dom": "^19.2.3",
-          "@vitejs/plugin-react": "^5.1.1",
-          electron: "^37.2.5",
-          "electron-builder": "^26.0.12",
-          tsx: "^4.19.0",
-          typescript: "^5.9.3",
-          vite: "^6.3.5",
-          "vite-plugin-electron": "^0.29.0",
-          "vite-plugin-electron-renderer": "^0.14.6",
-        },
-        main: "dist/main-process/index.js",
-      },
-      null,
-      2
-    )
-  );
+  // 找到模板根目录（cli/index.ts 所在目录的上一级）
+  const templateRoot = resolve(__dirname, "..");
 
-  const dirs = [
-    "main-process/core",
-    "main-process/ipc",
-    "main-process/windows",
-    "main-process/plugins",
-    "main-process/constant/config",
-    "main-process/utils",
-    "main-process/electron-store",
-    "renderer-process/windows/main",
-    "renderer-process/shared/styles",
-    "renderer-process/shared/services",
-    "preload",
-    "cli",
-    "types/config",
-  ];
+  // 复制所有模板文件
+  for (const file of TEMPLATE_FILES) {
+    const src = resolve(templateRoot, file);
+    if (!existsSync(src)) {
+      console.log(`  ⚠ skip (not found): ${file}`);
+      continue;
+    }
+    let content = readFileSync(src, "utf-8");
 
-  for (const d of dirs) {
-    ensureDir(resolve(dir, d));
+    // 替换项目名，移除 CLI 相关配置，修正 @revolution/core 版本
+    if (file === "package.json") {
+      const pkg = JSON.parse(content);
+      pkg.name = projectName;
+      pkg.version = "0.1.0";
+      delete pkg.bin;
+      // 只保留用户需要的 scripts
+      pkg.scripts = {
+        dev: pkg.scripts.dev,
+        build: pkg.scripts.build,
+      };
+      // workspace:* → 真实版本号
+      if (pkg.dependencies?.["@revolution/core"]) {
+        pkg.dependencies["@revolution/core"] = "^0.2.0";
+      }
+      content = JSON.stringify(pkg, null, 2);
+    }
+
+    write(resolve(dir, file), content);
   }
-
-  write(
-    resolve(dir, "main-process/main.ts"),
-    `import { app, BrowserWindow } from "electron";
-import { registerWindows, createWindow } from "./core/window";
-import { registerAllIpc } from "./ipc";
-import { windows } from "./windows";
-
-const bootstrap = () => {
-  registerWindows(windows);
-  registerAllIpc();
-  createWindow("main");
-};
-
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    app.quit();
-  }
-});
-
-app.on("activate", () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    bootstrap();
-  }
-});
-
-app.whenReady().then(() => {
-  bootstrap();
-});
-`
-  );
-
-  // core/ipc.ts
-  write(
-    resolve(dir, "main-process/core/ipc.ts"),
-    `import { ipcMain, type IpcMainInvokeEvent, type IpcMainEvent } from "electron";
-
-type HandleFn = (event: IpcMainInvokeEvent, ...args: any[]) => any;
-type OnFn = (event: IpcMainEvent, ...args: any[]) => void;
-
-export interface IpcRoute {
-  type: "handle" | "on";
-  channel: string;
-  handler: (...args: any[]) => any;
-}
-
-export const defineHandlers = <T extends Record<string, HandleFn>>(handlers: T) => {
-  const routes: IpcRoute[] = Object.entries(handlers).map(([channel, handler]) => ({
-    type: "handle", channel, handler,
-  }));
-  return { handlers, routes };
-};
-
-export const defineListeners = <T extends Record<string, OnFn>>(listeners: T) => {
-  const routes: IpcRoute[] = Object.entries(listeners).map(([channel, handler]) => ({
-    type: "on", channel, handler,
-  }));
-  return { listeners, routes };
-};
-
-export const registerRoutes = (routes: IpcRoute[]) => {
-  for (const route of routes) {
-    if (route.type === "handle") ipcMain.handle(route.channel, route.handler);
-    else ipcMain.on(route.channel, route.handler);
-  }
-};
-`
-  );
-
-  // core/window.ts
-  write(
-    resolve(dir, "main-process/core/window.ts"),
-    `import { BrowserWindow } from "electron";
-
-export type WindowFactory = () => BrowserWindow;
-
-const registry = new Map<string, WindowFactory>();
-const instances = new Map<string, BrowserWindow>();
-
-export const registerWindow = (name: string, factory: WindowFactory) => {
-  registry.set(name, factory);
-};
-
-export const registerWindows = (windows: Record<string, WindowFactory>) => {
-  for (const [name, factory] of Object.entries(windows)) {
-    registerWindow(name, factory);
-  }
-};
-
-export const createWindow = (name: string): BrowserWindow => {
-  const factory = registry.get(name);
-  if (!factory) throw new Error(\`[window] "\${name}" not registered\`);
-  const win = factory();
-  instances.set(name, win);
-  win.on("closed", () => instances.delete(name));
-  return win;
-};
-
-export const getWindow = (name: string) => instances.get(name);
-`
-  );
-
-  // windows/main.ts
-  write(
-    resolve(dir, "main-process/windows/main.ts"),
-    `import { BrowserWindow } from "electron";
-
-export const createMainWindow = (): BrowserWindow => {
-  const win = new BrowserWindow({
-    width: 1280,
-    height: 800,
-    webPreferences: {
-      contextIsolation: true,
-    },
-  });
-
-  if (process.env.VITE_DEV_SERVER_URL) {
-    win.loadURL(\`\${process.env.VITE_DEV_SERVER_URL}renderer-process/windows/main/\`);
-  }
-
-  return win;
-};
-`
-  );
-
-  // windows/index.ts
-  write(
-    resolve(dir, "main-process/windows/index.ts"),
-    `import { createMainWindow } from "./main";
-
-export const windows = {
-  main: createMainWindow,
-} as const;
-`
-  );
-
-  // ipc/index.ts
-  write(
-    resolve(dir, "main-process/ipc/index.ts"),
-    `import { registerRoutes } from "../core/ipc";
-
-export const registerAllIpc = () => {
-  // Register your IPC routes here
-};
-`
-  );
-
-  // renderer main page
-  write(
-    resolve(dir, "renderer-process/windows/main/App.tsx"),
-    `const App = () => {
-  return (
-    <div style={{ padding: 32 }}>
-      <h1>⚡ ${projectName}</h1>
-      <p>Built with Revolution</p>
-    </div>
-  );
-};
-
-export default App;
-`
-  );
-
-  write(
-    resolve(dir, "renderer-process/windows/main/main.tsx"),
-    `import ReactDOM from "react-dom/client";
-import App from "./App";
-
-ReactDOM.createRoot(document.getElementById("root")!).render(<App />);
-`
-  );
-
-  write(
-    resolve(dir, "renderer-process/windows/main/index.html"),
-    `<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>${projectName}</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="./main.tsx"></script>
-  </body>
-</html>
-`
-  );
-
-  // tsconfig.json
-  write(
-    resolve(dir, "tsconfig.json"),
-    JSON.stringify({
-      compilerOptions: {
-        target: "ES2020",
-        module: "ESNext",
-        moduleResolution: "bundler",
-        allowImportingTsExtensions: true,
-        noEmit: true,
-        jsx: "react-jsx",
-        strict: true,
-        skipLibCheck: true,
-        baseUrl: ".",
-        paths: {
-          "@main-process/*": ["main-process/*"],
-          "@renderer-process/*": ["renderer-process/*"],
-        },
-      },
-      include: ["main-process", "renderer-process", "preload", "types"],
-    }, null, 2)
-  );
 
   console.log(`
   ✓ Project "${projectName}" created!
@@ -617,7 +380,7 @@ switch (command) {
     break;
 
   case "gen:ipc":
-    import("./generate-ipc-types.js");
+    execSync(`npx tsx "${resolve(__dirname, "generate-ipc-types.ts")}"`, { stdio: "inherit", cwd: process.cwd() });
     break;
 
   case "help":

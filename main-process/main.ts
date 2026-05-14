@@ -6,7 +6,7 @@
  */
 
 import { app, BrowserWindow } from "electron";
-import { registerWindows, createWindow, installPlugin } from "./core";
+import { registerWindows, createWindow, installPlugin } from "@revolution/core";
 import { registerAllIpc } from "./ipc";
 import { registerGlobalShortcut } from "./global-short-cut";
 import { windows } from "./windows";
