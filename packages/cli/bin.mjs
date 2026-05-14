@@ -12,7 +12,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const cliPath = resolve(__dirname, "index.ts");
+const cliPath = resolve(__dirname, "./index.ts");
 const args = process.argv.slice(2).join(" ");
 
 try {

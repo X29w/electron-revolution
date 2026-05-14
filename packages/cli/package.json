@@ -1,0 +1,27 @@
+{
+  "name": "@revolution/cli",
+  "version": "0.2.0",
+  "description": "Revolution CLI — scaffold Electron projects with plugin architecture",
+  "type": "module",
+  "bin": {
+    "revolution": "./bin.mjs"
+  },
+  "files": [
+    "bin.mjs",
+    "index.ts",
+    "generate-ipc-types.ts",
+    "template-files.ts"
+  ],
+  "keywords": [
+    "electron",
+    "cli",
+    "scaffold",
+    "revolution",
+    "plugin"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.9.3"
+  }
+}

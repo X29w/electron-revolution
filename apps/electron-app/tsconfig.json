@@ -22,11 +22,10 @@
 
     "baseUrl": ".",
     "paths": {
-      "@revolution/core": ["main-process/core/index.ts"],
       "@main-process/*": ["main-process/*"],
       "@renderer-process/*": ["renderer-process/*"]
     }
   },
-  "include": ["main-process", "renderer-process", "preload", "types", "cli"],
+  "include": ["main-process", "renderer-process", "preload", "types"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

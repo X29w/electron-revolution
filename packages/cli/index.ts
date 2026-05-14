@@ -306,7 +306,7 @@ function generateProject(projectName: string) {
     process.exit(1);
   }
 
-  const templateRoot = resolve(__dirname, "..");
+  const templateRoot = resolve(__dirname, "../../apps/electron-app");
   let fileCount = 0;
   silent = true;
 
@@ -322,7 +322,7 @@ function generateProject(projectName: string) {
       delete pkg.bin;
       pkg.scripts = { dev: pkg.scripts.dev, build: pkg.scripts.build };
       if (flags.includes("--local")) {
-        pkg.dependencies["@revolution/core"] = `link:${resolve(templateRoot, "main-process/core")}`;
+        pkg.dependencies["@revolution/core"] = `link:${resolve(templateRoot, "../../packages/core")}`;
       } else {
         pkg.dependencies["@revolution/core"] = "^0.2.0";
       }
@@ -339,9 +339,9 @@ function generateProject(projectName: string) {
   log.blank();
   console.log(`  ${c.dim}Next steps:${c.reset}`);
   log.blank();
-  console.log(`    ${c.cyan}$${c.reset} cd ${projectName}`);
-  console.log(`    ${c.cyan}$${c.reset} pnpm install`);
-  console.log(`    ${c.cyan}$${c.reset} pnpm dev`);
+  console.log(`    ${c.cyan}${c.reset} cd ${projectName}`);
+  console.log(`    ${c.cyan}${c.reset} pnpm install`);
+  console.log(`    ${c.cyan}${c.reset} pnpm dev`);
   log.blank();
 }
 
@@ -359,9 +359,9 @@ function printHelp() {
     ${c.cyan}revolution gen:ipc${c.reset}               Generate renderer IPC types
 
   ${c.dim}Examples:${c.reset}
-    ${c.dim}$${c.reset} revolution create my-app
-    ${c.dim}$${c.reset} revolution add window settings
-    ${c.dim}$${c.reset} revolution add plugin file-manager
+    ${c.dim}${c.reset} revolution create my-app
+    ${c.dim}${c.reset} revolution add window settings
+    ${c.dim}${c.reset} revolution add plugin file-manager
   `);
 }
 

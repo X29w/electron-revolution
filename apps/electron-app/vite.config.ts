@@ -14,7 +14,6 @@ export default defineConfig({
         vite: {
           resolve: {
             alias: {
-              "@revolution/core": resolve("main-process/core/index.ts"),
               "@main-process": resolve("main-process"),
             },
           },
