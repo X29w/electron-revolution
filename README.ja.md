@@ -1,163 +1,347 @@
-# ⚡ Revolution
-
 <p align="center">
-  <strong>関数型・プラグインベースの Electron フレームワーク。ゼロ設定で型安全な IPC。</strong>
+  <h1 align="center">⚡ Electron Revolution</h1>
+  <p align="center">純粋関数型・プラグインベースの Electron フレームワーク。型安全な IPC、ボイラープレートゼロ。</p>
 </p>
 
 <p align="center">
-  <a href="./README.md">English</a> ·
-  <a href="./README.zh-CN.md">简体中文</a> ·
-  <a href="./README.zh-TW.md">繁體中文</a> ·
+  <a href="./README.md">English</a> |
+  <a href="./README.zh-CN.md">简体中文</a> |
+  <a href="./README.zh-TW.md">繁體中文</a> |
   <a href="./README.ja.md">日本語</a>
 </p>
 
----
-
-## Revolution とは
-
-Revolution は Electron アプリケーションフレームワークで、異なるアプローチを取ります：
-
-- **クラスなし、デコレータなし** — 純粋関数 + ファイルベースモジュール
-- **IPC 型はコードから生成** — handler を書いてコマンド一つ実行すれば、レンダラーに完全な型が付く
-- **プラグインシステム** — 機能をインストール/アンインストール可能な独立ユニットとして封装
-- **CLI スキャフォールディング** — コマンド一つでウィンドウ、プラグイン、IPC モジュールを生成
+<p align="center">
+  <img src="https://img.shields.io/badge/Electron-37-47848F?logo=electron" alt="Electron 37" />
+  <img src="https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript" alt="TypeScript 5.9" />
+  <img src="https://img.shields.io/badge/Vite-6-646CFF?logo=vite" alt="Vite 6" />
+  <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react" alt="React 19" />
+  <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License" />
+</p>
 
 ---
+
+## なぜ Revolution？
+
+Electron アプリの構築は、ボイラープレート、安全でない IPC チャンネル、複雑なクラス階層との格闘であるべきではありません。Revolution は実際の開発の痛みから生まれました：
+
+| 課題 | Revolution の解決策 |
+|---|---|
+| IPC チャンネルが文字列型で間違いやすい | **ハンドラーを一度書く → 型がレンダラーに自動生成** |
+| クラスベースのフレームワークは硬直的でテストしにくい | **純粋関数型 — すべてアロー関数** |
+| 機能追加に 5 つ以上のファイル変更が必要 | **プラグインシステム — 自己完結型、ホットリロード可能** |
+| プロジェクトのセットアップに何時間もかかる | **1 コマンド → 完全に実行可能なプロジェクト** |
+| 開発中に IPC トラフィックが見えない | **組み込み DevTools パネル（IPC 呼び出し、プラグイン状態、メモリ表示）** |
 
 ## クイックスタート
 
-### 新規プロジェクト作成
-
 ```bash
-npx electron-revolution create my-app
+npx @revolution/cli create my-app
 cd my-app
 pnpm install
 pnpm dev
 ```
 
----
+これだけです。React、Vite HMR、型安全な IPC、プラグインシステムを備えた Electron アプリが動作しています。
 
-## CLI コマンド
+## コアコンセプト
 
-| コマンド | 機能 |
-|---------|------|
-| `pnpm dev` | 開発サーバー起動 |
-| `pnpm build` | プロダクションビルド + electron-builder パッケージング |
-| `pnpm gen:ipc` | メインプロセスの handler からレンダラー IPC 型を生成 |
-| `pnpm add:window <name>` | 新しいウィンドウを生成（メイン + レンダラー） |
-| `pnpm add:plugin <name>` | 新しいプラグインを生成 |
-| `pnpm add:ipc <name>` | 新しい IPC モジュールを生成 |
+### 型安全な IPC（一度書けば、型はどこでも）
 
----
-
-## IPC の仕組み
-
-| 方向 | メインプロセス API | レンダラー API | 定義方法 |
-|------|-------------------|---------------|---------|
-| レンダラー → メイン（戻り値あり） | `ipcMain.handle` | `ipcInvoke(channel, ...args)` | `defineHandlers` |
-| レンダラー → メイン（戻り値なし） | `ipcMain.on` | `ipcSend(channel, ...args)` | `defineListeners` |
-| メイン → レンダラー | `webContents.send` | `ipcOn(channel, listener)` | `defineSenders` |
-
-### handler の定義
+メインプロセスでハンドラーを定義：
 
 ```ts
-import { defineHandlers, defineListeners } from "../core/ipc";
+// main-process/ipc/user.ts
+import { defineHandlers, defineListeners } from "@revolution/core";
 
 export const userHandlers = defineHandlers({
-  "user:get": (_, id: string) => ({ id, name: "Alice" }),
+  "user:get": (event, id: string) => {
+    return { id, name: "Alice", email: "alice@example.com" };
+  },
+  "user:list": (event, page: number, limit: number) => {
+    return { users: [], total: 0 };
+  },
 });
 
 export const userListeners = defineListeners({
-  "user:delete": (_, id: string) => { console.log("delete:", id); },
+  "user:logout": (event) => {
+    console.log("ユーザーがログアウトしました");
+  },
 });
 ```
 
-### 型の生成 & 呼び出し
+ルートを登録：
+
+```ts
+// main-process/main.ts
+import { registerRoutes } from "@revolution/core";
+import { userHandlers, userListeners } from "./ipc/user";
+
+registerRoutes(userHandlers.routes);
+registerRoutes(userListeners.routes);
+```
+
+レンダラーの型を生成：
 
 ```bash
 pnpm gen:ipc
 ```
 
+レンダラーで完全な型安全性を享受：
+
 ```ts
-import { ipcInvoke } from "@renderer-process/shared/services/ipc";
+// renderer — 型は自動生成済み！
 const user = await ipcInvoke("user:get", "123");
-// ✅ user: { id: string; name: string }
+//    ^? { id: string; name: string; email: string }
 ```
 
----
+### プラグインシステム
 
-## プラグインシステム
-
-プラグインは**独立した機能モジュール**で、IPC ルート、ウィンドウ、コマンドを登録できます。
+プラグインは自己完結型のユニットで、IPC ルート、ウィンドウ、コマンドを登録し、イベントで通信できます：
 
 ```ts
-import { definePlugin, defineHandlers } from "../../core";
+import { definePlugin, defineHandlers } from "@revolution/core";
 
 const handlers = defineHandlers({
-  "screenshot:capture": () => "/path/to/file.png",
+  "notes:create": (_, title: string, content: string) => {
+    return { id: crypto.randomUUID(), title, content };
+  },
 });
 
-export const screenshotPlugin = definePlugin({
-  meta: { name: "screenshot", version: "1.0.0" },
+export const notesPlugin = definePlugin({
+  meta: {
+    name: "notes",
+    version: "1.0.0",
+    description: "ノートプラグイン",
+  },
   setup(ctx) {
     ctx.ipc(handlers.routes);
-    ctx.log.info("ready");
+
+    ctx.command("notes:clear-all", () => {
+      ctx.log.info("すべてのノートをクリアしました");
+    });
+
+    ctx.on("app:ready", () => {
+      ctx.log.info("ノートプラグイン準備完了");
+    });
+
+    // クリーンアップ関数（アンインストール時に呼ばれる）
+    return () => {
+      ctx.log.info("ノートプラグインを無効化しました");
+    };
   },
 });
 ```
 
-インストール：
+メインプロセスでプラグインをインストール：
 
 ```ts
-import { installPlugin } from "./core";
-await installPlugin(screenshotPlugin);
+import { installPlugin } from "@revolution/core";
+import { notesPlugin } from "./plugins/notes";
+
+await installPlugin(notesPlugin);
 ```
 
-### プラグインコンテキスト API
+### ウィンドウ管理
 
-| メソッド | 機能 |
-|---------|------|
-| `ctx.ipc(routes)` | IPC ルートを登録（全ウィンドウから呼び出し可能） |
-| `ctx.window(name, factory)` | 新しいウィンドウを登録 |
-| `ctx.command(id, handler)` | 名前付きコマンドを登録 |
-| `ctx.on / ctx.emit` | 内部イベント通信 |
-| `ctx.use<T>(name)` | 他のプラグインの API にアクセス |
-| `ctx.log` | スコープ付きログ |
+```ts
+import { registerWindows, createWindow, sendToWindow, broadcastToWindows } from "@revolution/core";
 
----
+// ウィンドウファクトリを登録
+registerWindows({
+  main: createMainWindow,
+  settings: createSettingsWindow,
+});
 
-## ウィンドウの追加
+// オンデマンドでウィンドウを作成
+const mainWin = createWindow("main");
+const settingsWin = createWindow("settings");
 
-```bash
-pnpm add:window settings
+// 特定のウィンドウにメッセージを送信
+sendToWindow("main", "notification", { message: "こんにちは！" });
+
+// すべてのウィンドウにブロードキャスト
+broadcastToWindows("theme:changed", "dark");
 ```
 
-ウィンドウファクトリ関数 + React ページ + HTML テンプレートを自動生成。
+### IPC ミドルウェアとインターセプター
 
----
+```ts
+import { useIpcMiddleware, addIpcInterceptor } from "@revolution/core";
 
-## DevTools（開発環境のみ）
+// ミドルウェア — 呼び出しを傍受、変更、または中止可能
+useIpcMiddleware((channel, type, args, next) => {
+  const start = Date.now();
+  const result = next();
+  console.log(`[${channel}] ${Date.now() - start}ms かかりました`);
+  return result;
+});
 
-組み込みデバッグパネル。全 IPC 呼び出し（プラグインのものを含む）を記録し、プラグイン状態、ウィンドウ一覧、メモリ使用量を表示。
+// インターセプター — 軽量オブザーバー（変更不可）
+const remove = addIpcInterceptor((channel, type) => {
+  console.log(`IPC 呼び出し: ${channel} (${type})`);
+});
 
----
+// 後でインターセプターを削除
+remove();
+```
+
+### EventBus（プラグイン間通信）
+
+```ts
+import { EventBus } from "@revolution/core";
+
+EventBus.on("user:login", (user) => {
+  console.log(`${user.name} がログインしました`);
+});
+
+EventBus.emit("user:login", { name: "Alice" });
+
+EventBus.once("app:first-launch", () => {
+  // 一度だけ実行
+});
+```
+
+## CLI コマンド
+
+| コマンド | 説明 |
+|---|---|
+| `revolution create <name>` | 完全なプロジェクトを作成 |
+| `revolution create <name> --local` | ローカル core リンクでプロジェクトを作成（開発用） |
+| `revolution add window <name>` | ウィンドウを生成（メインファクトリ + レンダラーページ） |
+| `revolution add plugin <name>` | プラグインスキャフォールドを生成 |
+| `revolution add ipc <name>` | IPC モジュールを生成（handlers + listeners） |
+| `revolution gen:ipc` | ハンドラーからレンダラー IPC 型を自動生成 |
+
+## プロジェクト構造（`create` 後）
+
+```
+my-app/
+├── main-process/
+│   ├── main.ts                  # エントリーポイント
+│   ├── constant/index.ts        # 定数（IS_DEV、パスなど）
+│   ├── ipc/
+│   │   ├── index.ts             # IPC 登録
+│   │   ├── store.ts             # Store ハンドラー
+│   │   └── window.ts            # Window ハンドラー
+│   ├── plugins/
+│   │   ├── devtools/index.ts    # 組み込み DevTools プラグイン
+│   │   └── example-plugin/      # サンプルプラグイン
+│   ├── windows/
+│   │   ├── index.ts             # ウィンドウレジストリ
+│   │   ├── main.ts              # メインウィンドウファクトリ
+│   │   └── devtools.ts          # DevTools ウィンドウファクトリ
+│   └── utils/
+├── renderer-process/
+│   ├── shared/
+│   │   ├── services/
+│   │   │   ├── ipc.ts           # IPC invoke/send ヘルパー
+│   │   │   └── ipc.generated.ts # 自動生成された型
+│   │   └── styles/index.css     # Tailwind CSS
+│   └── windows/
+│       ├── main/                # メインウィンドウ UI
+│       └── devtools/            # DevTools パネル UI
+├── preload/index.ts             # プリロードスクリプト
+├── types/                       # グローバル型宣言
+├── vite.config.ts               # Vite マルチページ設定
+├── tsconfig.json
+└── package.json
+```
+
+## 拡張性
+
+### Context 拡張
+
+すべてのプラグインの context にカスタムフィールドを注入：
+
+```ts
+import { extendPluginContext } from "@revolution/core";
+import Store from "electron-store";
+import { dialog } from "electron";
+
+const store = new Store();
+
+extendPluginContext((ctx, meta) => {
+  ctx.store = store;
+  ctx.dialog = dialog;
+});
+
+// すべてのプラグインが ctx.store と ctx.dialog にアクセス可能
+```
+
+### カスタム Logger
+
+組み込みの console logger を任意の実装に置換：
+
+```ts
+import { setLogger } from "@revolution/core";
+import log from "electron-log";
+
+setLogger(log);
+// すべてのフレームワークとプラグインのログが electron-log を通じて出力
+```
+
+### プラグインホットリロード（開発モード）
+
+```ts
+import { installPluginHot } from "@revolution/core";
+import { myPlugin } from "./plugins/my-plugin";
+
+await installPluginHot(
+  "./main-process/plugins/my-plugin",
+  myPlugin,
+  () => require("./plugins/my-plugin").myPlugin,
+  process.env.NODE_ENV === "development"
+);
+// ファイル変更で自動的にプラグインがリロード
+```
+
+### ウィンドウライフサイクルフック
+
+```ts
+import { onWindowCreated, onWindowClosed } from "@revolution/core";
+
+onWindowCreated((name, win) => {
+  console.log(`ウィンドウ "${name}" が作成されました`);
+  // すべてのウィンドウに動作を注入
+});
+
+onWindowClosed((name, win) => {
+  console.log(`ウィンドウ "${name}" が閉じられました`);
+});
+```
 
 ## 技術スタック
 
-Electron 37 · Vite 6 · React 19 · TypeScript 5.9 · Tailwind CSS 4 · Biome · electron-builder
+| レイヤー | 技術 |
+|---|---|
+| ランタイム | Electron 37 |
+| バンドラー | Vite 6 |
+| UI | React 19 |
+| 言語 | TypeScript 5.9 |
+| スタイリング | Tailwind CSS 4 |
+| リンター | Biome |
+| パッケージング | electron-builder |
+| モノレポ | Turborepo + pnpm workspaces |
 
----
+## モノレポ構造
 
-## ローカル CLI テスト
-
-```bash
-pnpm link --global
-revolution create test-app
-cd test-app && pnpm install && pnpm dev
+```
+electron-revolution/
+├── packages/
+│   ├── core/     → @revolution/core（ランタイムフレームワーク）
+│   └── cli/      → @revolution/cli（スキャフォールディングツール）
+├── apps/
+│   └── electron-app/  → サンプルアプリ & CLI テンプレート
+├── docs/              → ドキュメント
+├── turbo.json
+├── pnpm-workspace.yaml
+└── package.json
 ```
 
----
+## コントリビューション
 
-## License
+ローカル開発、コード規約、パブリッシュについては [docs/guide.md](./docs/guide.md) のコントリビューターガイドを参照してください。
 
-MIT
+## ライセンス
+
+[MIT](./LICENSE)

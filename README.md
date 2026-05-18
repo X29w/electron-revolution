@@ -1,328 +1,347 @@
-# ⚡ Revolution
-
 <p align="center">
-  <strong>A functional, plugin-based Electron framework with zero-config type-safe IPC.</strong>
+  <h1 align="center">⚡ Electron Revolution</h1>
+  <p align="center">A purely functional, plugin-based Electron framework with type-safe IPC and zero boilerplate.</p>
 </p>
 
 <p align="center">
-  <a href="./README.md">English</a> ·
-  <a href="./README.zh-CN.md">简体中文</a> ·
-  <a href="./README.zh-TW.md">繁體中文</a> ·
+  <a href="./README.md">English</a> |
+  <a href="./README.zh-CN.md">简体中文</a> |
+  <a href="./README.zh-TW.md">繁體中文</a> |
   <a href="./README.ja.md">日本語</a>
 </p>
 
----
-
-## What is Revolution
-
-Revolution is an Electron application framework that takes a different approach:
-
-- **No classes, no decorators** — pure functions and file-based modules
-- **IPC types generated from code** — write a handler, run one command, renderer gets full type safety
-- **Plugin system** — encapsulate features as installable/uninstable units
-- **CLI scaffolding** — generate windows, plugins, IPC modules with one command
+<p align="center">
+  <img src="https://img.shields.io/badge/Electron-37-47848F?logo=electron" alt="Electron 37" />
+  <img src="https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript" alt="TypeScript 5.9" />
+  <img src="https://img.shields.io/badge/Vite-6-646CFF?logo=vite" alt="Vite 6" />
+  <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react" alt="React 19" />
+  <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License" />
+</p>
 
 ---
 
-## Getting Started
+## Why Revolution?
 
-### Create a new project
+Building Electron apps shouldn't mean wrestling with boilerplate, unsafe IPC channels, or tangled class hierarchies. Revolution was born from real frustration:
+
+| Pain Point | Revolution's Answer |
+|---|---|
+| IPC channels are stringly-typed and error-prone | **Write handlers once → types auto-generated for renderer** |
+| Class-based frameworks are rigid and hard to test | **Purely functional — arrow functions all the way** |
+| Adding features means touching 5+ files | **Plugin system — self-contained, hot-reloadable units** |
+| Project setup takes hours | **One command → complete runnable project** |
+| No visibility into IPC traffic during dev | **Built-in DevTools panel showing IPC calls, plugin state, memory** |
+
+## Quick Start
 
 ```bash
-npx electron-revolution create my-app
+npx @revolution/cli create my-app
 cd my-app
 pnpm install
 pnpm dev
 ```
 
-### Or clone this repo
+That's it. You have a running Electron app with React, Vite HMR, type-safe IPC, and a plugin system ready to go.
 
-```bash
-git clone https://github.com/user/electron-revolution.git
-cd electron-revolution
-pnpm install
-pnpm dev
-```
+## Core Concepts
 
----
+### Type-Safe IPC (Write Once, Types Everywhere)
 
-## CLI Commands
-
-| Command | What it does |
-|---------|-------------|
-| `pnpm dev` | Start dev server with hot-reload |
-| `pnpm build` | Production build + electron-builder packaging |
-| `pnpm gen:ipc` | Generate renderer IPC types from main process handlers |
-| `pnpm add:window <name>` | Scaffold a new window (main + renderer files) |
-| `pnpm add:plugin <name>` | Scaffold a new plugin |
-| `pnpm add:ipc <name>` | Scaffold a new IPC module |
-
----
-
-## How IPC Works
-
-Revolution has 3 IPC directions, all type-safe:
-
-| Direction | Main process API | Renderer API | Define with |
-|-----------|-----------------|--------------|-------------|
-| Renderer → Main (with return) | `ipcMain.handle` | `ipcInvoke(channel, ...args)` | `defineHandlers` |
-| Renderer → Main (fire & forget) | `ipcMain.on` | `ipcSend(channel, ...args)` | `defineListeners` |
-| Main → Renderer | `webContents.send` | `ipcOn(channel, listener)` | `defineSenders` |
-
-### Step 1: Define handlers in main process
+Define handlers in the main process:
 
 ```ts
 // main-process/ipc/user.ts
-import { defineHandlers, defineListeners } from "../core/ipc";
+import { defineHandlers, defineListeners } from "@revolution/core";
 
-// Renderer calls, main responds with return value
 export const userHandlers = defineHandlers({
-  "user:get": (_, id: string) => ({ id, name: "Alice" }),
-  "user:list": () => [{ id: "1", name: "Alice" }],
+  "user:get": (event, id: string) => {
+    return { id, name: "Alice", email: "alice@example.com" };
+  },
+  "user:list": (event, page: number, limit: number) => {
+    return { users: [], total: 0 };
+  },
 });
 
-// Renderer sends, main receives (no return)
 export const userListeners = defineListeners({
-  "user:delete": (_, id: string) => {
-    console.log("deleting user:", id);
+  "user:logout": (event) => {
+    console.log("User logged out");
   },
 });
 ```
 
-### Step 2: Register
+Register them:
 
 ```ts
-// main-process/ipc/index.ts
-import { registerRoutes } from "../core/ipc";
-import { userHandlers, userListeners } from "./user";
+// main-process/main.ts
+import { registerRoutes } from "@revolution/core";
+import { userHandlers, userListeners } from "./ipc/user";
 
-export const registerAllIpc = () => {
-  registerRoutes(userHandlers.routes);
-  registerRoutes(userListeners.routes);
-};
+registerRoutes(userHandlers.routes);
+registerRoutes(userListeners.routes);
 ```
 
-### Step 3: Generate types
+Generate renderer types:
 
 ```bash
 pnpm gen:ipc
 ```
 
-This reads your handler code and generates `renderer-process/shared/services/ipc.generated.ts` with full types.
-
-### Step 4: Call from renderer
+Use in renderer with full type safety:
 
 ```ts
-import { ipcInvoke, ipcSend } from "@renderer-process/shared/services/ipc";
-
+// renderer — types are auto-generated!
 const user = await ipcInvoke("user:get", "123");
-//    ^? { id: string; name: string }  ← auto-inferred
-
-ipcSend("user:delete", "123");
-//                      ^? string  ← type-checked
+//    ^? { id: string; name: string; email: string }
 ```
 
-### Main → Renderer
+### Plugin System
+
+Plugins are self-contained units that can register IPC routes, windows, commands, and communicate via events:
 
 ```ts
-// main-process/ipc/senders.ts
-import { defineSenders } from "../core/ipc";
-
-export const senders = defineSenders({
-  "store:changed": (_value: StoreOptions) => {},
-});
-
-// Usage in main process:
-import { sendToWindow } from "./core/window";
-sendToWindow("main", "store:changed", newValue);
-
-// Renderer listens:
-import { ipcOn } from "@renderer-process/shared/services/ipc";
-ipcOn("store:changed", (_, value) => { /* ... */ });
-```
-
----
-
-## How Plugins Work
-
-A plugin is a **self-contained feature module**. It can register IPC routes, windows, and commands — then be installed or uninstalled at runtime.
-
-### When to use a plugin
-
-- You want to add a feature that can be toggled on/off
-- You want to share a feature across projects
-- You want to isolate a feature's code from the rest of the app
-
-### Defining a plugin
-
-```ts
-// main-process/plugins/screenshot/index.ts
-import { definePlugin, defineHandlers } from "../../core";
+import { definePlugin, defineHandlers } from "@revolution/core";
 
 const handlers = defineHandlers({
-  "screenshot:capture": () => { /* capture logic */ return "/path/to/file.png"; },
+  "notes:create": (_, title: string, content: string) => {
+    return { id: crypto.randomUUID(), title, content };
+  },
 });
 
-export const screenshotPlugin = definePlugin({
-  meta: { name: "screenshot", version: "1.0.0" },
+export const notesPlugin = definePlugin({
+  meta: {
+    name: "notes",
+    version: "1.0.0",
+    description: "Note-taking plugin",
+  },
   setup(ctx) {
     ctx.ipc(handlers.routes);
-    ctx.log.info("screenshot plugin ready");
 
-    // Optional: return cleanup function
-    return () => ctx.log.info("screenshot plugin removed");
+    ctx.command("notes:clear-all", () => {
+      ctx.log.info("All notes cleared");
+    });
+
+    ctx.on("app:ready", () => {
+      ctx.log.info("Notes plugin ready");
+    });
+
+    // Cleanup function (called on uninstall)
+    return () => {
+      ctx.log.info("Notes plugin deactivated");
+    };
   },
 });
 ```
 
-### Installing a plugin
+Install plugins in your main process:
 
 ```ts
-// main-process/main.ts
-import { installPlugin } from "./core";
-import { screenshotPlugin } from "./plugins/screenshot";
+import { installPlugin } from "@revolution/core";
+import { notesPlugin } from "./plugins/notes";
 
-await installPlugin(screenshotPlugin);
+await installPlugin(notesPlugin);
 ```
 
-### Plugin context API
-
-| Method | What it does |
-|--------|-------------|
-| `ctx.ipc(routes)` | Register IPC routes (available to all windows) |
-| `ctx.window(name, factory)` | Register a new window |
-| `ctx.command(id, handler)` | Register a named command |
-| `ctx.on(event, handler)` | Listen to internal events |
-| `ctx.emit(event, ...args)` | Emit internal events |
-| `ctx.use<T>(pluginName)` | Access another plugin's exposed API |
-| `ctx.log.info/warn/error` | Scoped logging |
-
-### Plugin communication
+### Window Management
 
 ```ts
-// Plugin A exposes API
-export const pluginA = definePlugin({
-  meta: { name: "plugin-a", version: "1.0.0" },
-  api: { getData: () => [1, 2, 3] },
-  setup(ctx) { /* ... */ },
-});
+import { registerWindows, createWindow, sendToWindow, broadcastToWindows } from "@revolution/core";
 
-// Plugin B uses Plugin A's API
-export const pluginB = definePlugin({
-  meta: { name: "plugin-b", version: "1.0.0", dependencies: ["plugin-a"] },
-  setup(ctx) {
-    const a = ctx.use<{ getData: () => number[] }>("plugin-a");
-    console.log(a?.getData()); // [1, 2, 3]
-  },
-});
-```
-
----
-
-## Adding a Window
-
-```bash
-pnpm add:window settings
-```
-
-This generates:
-
-```
-main-process/windows/settings.ts          ← window factory function
-renderer-process/windows/settings/
-├── App.tsx                                ← React component
-├── main.tsx                               ← entry point
-└── index.html                             ← HTML template
-```
-
-Then register it:
-
-```ts
-// main-process/windows/index.ts
-import { createSettingsWindow } from "./settings";
-
-export const windows = {
+// Register window factories
+registerWindows({
   main: createMainWindow,
-  settings: createSettingsWindow,  // ← add this
-};
+  settings: createSettingsWindow,
+});
+
+// Create windows on demand
+const mainWin = createWindow("main");
+const settingsWin = createWindow("settings");
+
+// Send to specific window
+sendToWindow("main", "notification", { message: "Hello!" });
+
+// Broadcast to all windows
+broadcastToWindows("theme:changed", "dark");
 ```
 
-And add to vite config:
+### IPC Middleware & Interceptors
 
 ```ts
-// vite.config.ts → build.rollupOptions.input
-settings: resolve(__dirname, "renderer-process/windows/settings/index.html"),
+import { useIpcMiddleware, addIpcInterceptor } from "@revolution/core";
+
+// Middleware — can intercept, modify, or abort calls
+useIpcMiddleware((channel, type, args, next) => {
+  const start = Date.now();
+  const result = next();
+  console.log(`[${channel}] took ${Date.now() - start}ms`);
+  return result;
+});
+
+// Interceptor — lightweight observer (cannot modify)
+const remove = addIpcInterceptor((channel, type) => {
+  console.log(`IPC called: ${channel} (${type})`);
+});
+
+// Later: remove the interceptor
+remove();
 ```
 
----
+### EventBus (Inter-Plugin Communication)
 
-## DevTools (Development Only)
+```ts
+import { EventBus } from "@revolution/core";
 
-In dev mode, a built-in DevTools plugin loads automatically. Open it from the main window's **🛠 DevTools** button.
+EventBus.on("user:login", (user) => {
+  console.log(`${user.name} logged in`);
+});
 
-It shows:
-- **Overview** — memory, uptime, counts
-- **Plugins** — installed plugins and their state
-- **IPC Log** — every IPC call with timestamp, direction (handle/on), and channel name
-- **Windows** — all registered windows
+EventBus.emit("user:login", { name: "Alice" });
 
-All IPC calls (including those from plugins) are recorded.
-
----
-
-## Project Structure
-
-```
-main-process/
-├── core/               Framework core (ipc, window, plugin, logger, hot-reload)
-├── ipc/                IPC modules (one file per feature)
-├── windows/            Window factory functions
-├── plugins/            Plugin directory
-├── electron-store/     Persistent config
-├── constant/           App constants
-└── main.ts             Entry point
-
-renderer-process/
-├── shared/services/    IPC client (auto-generated types)
-└── windows/            Window UIs (React + Tailwind)
-
-cli/                    Code generator
+EventBus.once("app:first-launch", () => {
+  // Runs only once
+});
 ```
 
----
+## CLI Commands
+
+| Command | Description |
+|---|---|
+| `revolution create <name>` | Scaffold a complete project |
+| `revolution create <name> --local` | Scaffold with local core link (for development) |
+| `revolution add window <name>` | Generate window (main factory + renderer page) |
+| `revolution add plugin <name>` | Generate plugin scaffold |
+| `revolution add ipc <name>` | Generate IPC module with handlers & listeners |
+| `revolution gen:ipc` | Auto-generate renderer IPC types from handlers |
+
+## Project Structure (After `create`)
+
+```
+my-app/
+├── main-process/
+│   ├── main.ts                  # Entry point
+│   ├── constant/index.ts        # Constants (IS_DEV, paths)
+│   ├── ipc/
+│   │   ├── index.ts             # IPC registration
+│   │   ├── store.ts             # Store handlers
+│   │   └── window.ts            # Window handlers
+│   ├── plugins/
+│   │   ├── devtools/index.ts    # Built-in DevTools plugin
+│   │   └── example-plugin/      # Example plugin
+│   ├── windows/
+│   │   ├── index.ts             # Window registry
+│   │   ├── main.ts              # Main window factory
+│   │   └── devtools.ts          # DevTools window factory
+│   └── utils/
+├── renderer-process/
+│   ├── shared/
+│   │   ├── services/
+│   │   │   ├── ipc.ts           # IPC invoke/send helpers
+│   │   │   └── ipc.generated.ts # Auto-generated types
+│   │   └── styles/index.css     # Tailwind CSS
+│   └── windows/
+│       ├── main/                # Main window UI
+│       └── devtools/            # DevTools panel UI
+├── preload/index.ts             # Preload script
+├── types/                       # Global type declarations
+├── vite.config.ts               # Vite multi-page config
+├── tsconfig.json
+└── package.json
+```
+
+## Extensibility
+
+### Context Extension
+
+Inject custom fields into all plugin contexts:
+
+```ts
+import { extendPluginContext } from "@revolution/core";
+import Store from "electron-store";
+import { dialog } from "electron";
+
+const store = new Store();
+
+extendPluginContext((ctx, meta) => {
+  ctx.store = store;
+  ctx.dialog = dialog;
+});
+
+// Now every plugin has access to ctx.store and ctx.dialog
+```
+
+### Custom Logger
+
+Replace the built-in console logger with any implementation:
+
+```ts
+import { setLogger } from "@revolution/core";
+import log from "electron-log";
+
+setLogger(log);
+// All framework and plugin logs now go through electron-log
+```
+
+### Plugin Hot-Reload (Dev Mode)
+
+```ts
+import { installPluginHot } from "@revolution/core";
+import { myPlugin } from "./plugins/my-plugin";
+
+await installPluginHot(
+  "./main-process/plugins/my-plugin",
+  myPlugin,
+  () => require("./plugins/my-plugin").myPlugin,
+  process.env.NODE_ENV === "development"
+);
+// File changes trigger automatic plugin reload
+```
+
+### Window Lifecycle Hooks
+
+```ts
+import { onWindowCreated, onWindowClosed } from "@revolution/core";
+
+onWindowCreated((name, win) => {
+  console.log(`Window "${name}" created`);
+  // Inject behavior into all windows
+});
+
+onWindowClosed((name, win) => {
+  console.log(`Window "${name}" closed`);
+});
+```
 
 ## Tech Stack
 
-Electron 37 · Vite 6 · React 19 · TypeScript 5.9 · Tailwind CSS 4 · Biome · electron-builder
+| Layer | Technology |
+|---|---|
+| Runtime | Electron 37 |
+| Bundler | Vite 6 |
+| UI | React 19 |
+| Language | TypeScript 5.9 |
+| Styling | Tailwind CSS 4 |
+| Linting | Biome |
+| Packaging | electron-builder |
+| Monorepo | Turborepo + pnpm workspaces |
 
----
+## Monorepo Structure
 
-## Local CLI Testing
-
-To test the CLI as if you were a user:
-
-```bash
-# Link globally
-pnpm link --global
-
-# In any directory
-revolution create test-app
-cd test-app
-pnpm install
-pnpm dev
-
-# Unlink when done
-pnpm unlink --global
+```
+electron-revolution/
+├── packages/
+│   ├── core/     → @revolution/core (runtime framework)
+│   └── cli/      → @revolution/cli (scaffolding tool)
+├── apps/
+│   └── electron-app/  → Example app & CLI template
+├── docs/              → Documentation
+├── turbo.json
+├── pnpm-workspace.yaml
+└── package.json
 ```
 
-Or without global link:
+## Contributing
 
-```bash
-npx tsx cli/index.ts create test-app
-```
-
----
+See [docs/guide.md](./docs/guide.md) for the contributor guide covering local development, code conventions, and publishing.
 
 ## License
 
-MIT
+[MIT](./LICENSE)

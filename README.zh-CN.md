@@ -1,304 +1,347 @@
-# ⚡ Revolution
-
 <p align="center">
-  <strong>函数式、插件化的 Electron 框架，零配置类型安全 IPC。</strong>
+  <h1 align="center">⚡ Electron Revolution</h1>
+  <p align="center">纯函数式、插件化的 Electron 框架，类型安全的 IPC，零样板代码。</p>
 </p>
 
 <p align="center">
-  <a href="./README.md">English</a> ·
-  <a href="./README.zh-CN.md">简体中文</a> ·
-  <a href="./README.zh-TW.md">繁體中文</a> ·
+  <a href="./README.md">English</a> |
+  <a href="./README.zh-CN.md">简体中文</a> |
+  <a href="./README.zh-TW.md">繁體中文</a> |
   <a href="./README.ja.md">日本語</a>
 </p>
 
----
-
-## Revolution 是什么
-
-Revolution 是一个 Electron 应用框架，采用不同的方式：
-
-- **没有类，没有装饰器** — 纯函数 + 文件模块
-- **IPC 类型从代码生成** — 写一个 handler，跑一条命令，渲染进程自动获得完整类型
-- **插件系统** — 把功能封装为可安装/卸载的独立单元
-- **CLI 脚手架** — 一条命令生成窗口、插件、IPC 模块
+<p align="center">
+  <img src="https://img.shields.io/badge/Electron-37-47848F?logo=electron" alt="Electron 37" />
+  <img src="https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript" alt="TypeScript 5.9" />
+  <img src="https://img.shields.io/badge/Vite-6-646CFF?logo=vite" alt="Vite 6" />
+  <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react" alt="React 19" />
+  <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License" />
+</p>
 
 ---
+
+## 为什么选择 Revolution？
+
+构建 Electron 应用不应该意味着与样板代码、不安全的 IPC 通道或纠缠的类层次结构作斗争。Revolution 诞生于真实的开发痛点：
+
+| 痛点 | Revolution 的解决方案 |
+|---|---|
+| IPC 通道是字符串类型，容易出错 | **写一次 handler → 类型自动生成到渲染进程** |
+| 基于类的框架僵硬且难以测试 | **纯函数式 — 全程箭头函数** |
+| 添加功能需要修改 5+ 个文件 | **插件系统 — 自包含、可热重载的单元** |
+| 项目搭建需要数小时 | **一条命令 → 完整可运行项目** |
+| 开发时无法观察 IPC 流量 | **内置 DevTools 面板，展示 IPC 调用、插件状态、内存** |
 
 ## 快速开始
 
-### 创建新项目
-
 ```bash
-npx electron-revolution create my-app
+npx @revolution/cli create my-app
 cd my-app
 pnpm install
 pnpm dev
 ```
 
-### 或者克隆仓库
+就这样。你已经拥有一个运行中的 Electron 应用，包含 React、Vite HMR、类型安全的 IPC 和即用的插件系统。
 
-```bash
-git clone https://github.com/user/electron-revolution.git
-cd electron-revolution
-pnpm install
-pnpm dev
-```
+## 核心概念
 
----
+### 类型安全的 IPC（写一次，类型到处用）
 
-## CLI 命令
-
-| 命令 | 作用 |
-|------|------|
-| `pnpm dev` | 启动开发服务器 |
-| `pnpm build` | 生产构建 + electron-builder 打包 |
-| `pnpm gen:ipc` | 从主进程 handler 生成渲染进程 IPC 类型 |
-| `pnpm add:window <name>` | 生成新窗口（主进程 + 渲染进程） |
-| `pnpm add:plugin <name>` | 生成新插件 |
-| `pnpm add:ipc <name>` | 生成新 IPC 模块 |
-
----
-
-## IPC 工作原理
-
-Revolution 有 3 个 IPC 方向，全部类型安全：
-
-| 方向 | 主进程 API | 渲染进程 API | 定义方式 |
-|------|-----------|-------------|---------|
-| 渲染 → 主（有返回值） | `ipcMain.handle` | `ipcInvoke(channel, ...args)` | `defineHandlers` |
-| 渲染 → 主（无返回值） | `ipcMain.on` | `ipcSend(channel, ...args)` | `defineListeners` |
-| 主 → 渲染 | `webContents.send` | `ipcOn(channel, listener)` | `defineSenders` |
-
-### 第 1 步：在主进程定义 handler
+在主进程中定义 handler：
 
 ```ts
 // main-process/ipc/user.ts
-import { defineHandlers, defineListeners } from "../core/ipc";
+import { defineHandlers, defineListeners } from "@revolution/core";
 
-// 渲染进程调用，主进程返回结果
 export const userHandlers = defineHandlers({
-  "user:get": (_, id: string) => ({ id, name: "Alice" }),
-  "user:list": () => [{ id: "1", name: "Alice" }],
+  "user:get": (event, id: string) => {
+    return { id, name: "Alice", email: "alice@example.com" };
+  },
+  "user:list": (event, page: number, limit: number) => {
+    return { users: [], total: 0 };
+  },
 });
 
-// 渲染进程发送，主进程接收（无返回）
 export const userListeners = defineListeners({
-  "user:delete": (_, id: string) => {
-    console.log("deleting user:", id);
+  "user:logout": (event) => {
+    console.log("用户已登出");
   },
 });
 ```
 
-### 第 2 步：注册
+注册路由：
 
 ```ts
-// main-process/ipc/index.ts
-import { registerRoutes } from "../core/ipc";
-import { userHandlers, userListeners } from "./user";
+// main-process/main.ts
+import { registerRoutes } from "@revolution/core";
+import { userHandlers, userListeners } from "./ipc/user";
 
-export const registerAllIpc = () => {
-  registerRoutes(userHandlers.routes);
-  registerRoutes(userListeners.routes);
-};
+registerRoutes(userHandlers.routes);
+registerRoutes(userListeners.routes);
 ```
 
-### 第 3 步：生成类型
+生成渲染进程类型：
 
 ```bash
 pnpm gen:ipc
 ```
 
-读取 handler 代码，生成 `renderer-process/shared/services/ipc.generated.ts`。
-
-### 第 4 步：渲染进程调用
+在渲染进程中使用，享受完整类型安全：
 
 ```ts
-import { ipcInvoke, ipcSend } from "@renderer-process/shared/services/ipc";
-
+// renderer — 类型已自动生成！
 const user = await ipcInvoke("user:get", "123");
-//    ^? { id: string; name: string }  ← 自动推导
-
-ipcSend("user:delete", "123");
-//                      ^? string  ← 类型检查
+//    ^? { id: string; name: string; email: string }
 ```
 
-### 主 → 渲染
+### 插件系统
+
+插件是自包含的单元，可以注册 IPC 路由、窗口、命令，并通过事件通信：
 
 ```ts
-// 定义
-import { defineSenders } from "../core/ipc";
-export const senders = defineSenders({
-  "store:changed": (_value: StoreOptions) => {},
-});
-
-// 主进程发送
-import { sendToWindow } from "./core/window";
-sendToWindow("main", "store:changed", newValue);
-
-// 渲染进程监听
-import { ipcOn } from "@renderer-process/shared/services/ipc";
-ipcOn("store:changed", (_, value) => { /* ... */ });
-```
-
----
-
-## 插件系统
-
-插件是一个**独立的功能模块**。它可以注册 IPC 路由、窗口、命令，然后在运行时安装或卸载。
-
-### 什么时候用插件
-
-- 你想添加一个可以开关的功能
-- 你想跨项目共享一个功能
-- 你想把某个功能的代码和其他代码隔离
-
-### 定义插件
-
-```ts
-import { definePlugin, defineHandlers } from "../../core";
+import { definePlugin, defineHandlers } from "@revolution/core";
 
 const handlers = defineHandlers({
-  "screenshot:capture": () => "/path/to/file.png",
+  "notes:create": (_, title: string, content: string) => {
+    return { id: crypto.randomUUID(), title, content };
+  },
 });
 
-export const screenshotPlugin = definePlugin({
-  meta: { name: "screenshot", version: "1.0.0" },
+export const notesPlugin = definePlugin({
+  meta: {
+    name: "notes",
+    version: "1.0.0",
+    description: "笔记插件",
+  },
   setup(ctx) {
     ctx.ipc(handlers.routes);
-    ctx.log.info("screenshot ready");
-    return () => ctx.log.info("screenshot removed");
+
+    ctx.command("notes:clear-all", () => {
+      ctx.log.info("所有笔记已清除");
+    });
+
+    ctx.on("app:ready", () => {
+      ctx.log.info("笔记插件就绪");
+    });
+
+    // 清理函数（卸载时调用）
+    return () => {
+      ctx.log.info("笔记插件已停用");
+    };
   },
 });
 ```
 
-### 安装插件
+在主进程中安装插件：
 
 ```ts
-import { installPlugin } from "./core";
-import { screenshotPlugin } from "./plugins/screenshot";
+import { installPlugin } from "@revolution/core";
+import { notesPlugin } from "./plugins/notes";
 
-await installPlugin(screenshotPlugin);
+await installPlugin(notesPlugin);
 ```
 
-### 插件上下文 API
-
-| 方法 | 作用 |
-|------|------|
-| `ctx.ipc(routes)` | 注册 IPC 路由（所有窗口都能调用） |
-| `ctx.window(name, factory)` | 注册新窗口 |
-| `ctx.command(id, handler)` | 注册命名命令 |
-| `ctx.on(event, handler)` | 监听内部事件 |
-| `ctx.emit(event, ...args)` | 发布内部事件 |
-| `ctx.use<T>(pluginName)` | 访问其他插件暴露的 API |
-| `ctx.log.info/warn/error` | 带作用域的日志 |
-
-### 插件间通信
+### 窗口管理
 
 ```ts
-// 插件 A 暴露 API
-export const pluginA = definePlugin({
-  meta: { name: "plugin-a", version: "1.0.0" },
-  api: { getData: () => [1, 2, 3] },
-  setup(ctx) { /* ... */ },
+import { registerWindows, createWindow, sendToWindow, broadcastToWindows } from "@revolution/core";
+
+// 注册窗口工厂
+registerWindows({
+  main: createMainWindow,
+  settings: createSettingsWindow,
 });
 
-// 插件 B 使用插件 A 的 API
-export const pluginB = definePlugin({
-  meta: { name: "plugin-b", version: "1.0.0", dependencies: ["plugin-a"] },
-  setup(ctx) {
-    const a = ctx.use<{ getData: () => number[] }>("plugin-a");
-    console.log(a?.getData()); // [1, 2, 3]
-  },
+// 按需创建窗口
+const mainWin = createWindow("main");
+const settingsWin = createWindow("settings");
+
+// 向指定窗口发送消息
+sendToWindow("main", "notification", { message: "你好！" });
+
+// 向所有窗口广播
+broadcastToWindows("theme:changed", "dark");
+```
+
+### IPC 中间件与拦截器
+
+```ts
+import { useIpcMiddleware, addIpcInterceptor } from "@revolution/core";
+
+// 中间件 — 可以拦截、修改或终止调用
+useIpcMiddleware((channel, type, args, next) => {
+  const start = Date.now();
+  const result = next();
+  console.log(`[${channel}] 耗时 ${Date.now() - start}ms`);
+  return result;
+});
+
+// 拦截器 — 轻量观察者（不能修改调用）
+const remove = addIpcInterceptor((channel, type) => {
+  console.log(`IPC 调用: ${channel} (${type})`);
+});
+
+// 之后移除拦截器
+remove();
+```
+
+### EventBus（插件间通信）
+
+```ts
+import { EventBus } from "@revolution/core";
+
+EventBus.on("user:login", (user) => {
+  console.log(`${user.name} 已登录`);
+});
+
+EventBus.emit("user:login", { name: "Alice" });
+
+EventBus.once("app:first-launch", () => {
+  // 只执行一次
 });
 ```
 
----
+## CLI 命令
 
-## 添加窗口
+| 命令 | 描述 |
+|---|---|
+| `revolution create <name>` | 创建完整项目 |
+| `revolution create <name> --local` | 创建项目并链接本地 core（开发用） |
+| `revolution add window <name>` | 生成窗口（主进程工厂 + 渲染进程页面） |
+| `revolution add plugin <name>` | 生成插件骨架 |
+| `revolution add ipc <name>` | 生成 IPC 模块（handlers + listeners） |
+| `revolution gen:ipc` | 从 handlers 自动生成渲染进程 IPC 类型 |
 
-```bash
-pnpm add:window settings
-```
-
-生成：
-
-```
-main-process/windows/settings.ts          ← 窗口工厂函数
-renderer-process/windows/settings/
-├── App.tsx                                ← React 组件
-├── main.tsx                               ← 入口
-└── index.html                             ← HTML 模板
-```
-
-然后注册到 `windows/index.ts` 和 `vite.config.ts`。
-
----
-
-## DevTools（仅开发环境）
-
-开发模式自动加载 DevTools 插件。主窗口点击 **🛠 DevTools** 按钮打开。
-
-显示内容：
-- **Overview** — 内存、运行时间、计数
-- **Plugins** — 已安装插件及状态
-- **IPC Log** — 每次 IPC 调用的时间戳、方向（handle/on）、channel 名
-- **Windows** — 所有已注册窗口
-
-所有 IPC 调用（包括插件注册的）都会被记录。
-
----
-
-## 项目结构
+## 项目结构（`create` 之后）
 
 ```
-main-process/
-├── core/               框架核心（ipc、window、plugin、logger、hot-reload）
-├── ipc/                IPC 模块（按功能拆分）
-├── windows/            窗口工厂函数
-├── plugins/            插件目录
-├── electron-store/     持久化配置
-├── constant/           应用常量
-└── main.ts             入口
-
-renderer-process/
-├── shared/services/    IPC 客户端（自动生成类型）
-└── windows/            窗口 UI（React + Tailwind）
-
-cli/                    代码生成器
+my-app/
+├── main-process/
+│   ├── main.ts                  # 入口文件
+│   ├── constant/index.ts        # 常量（IS_DEV、路径等）
+│   ├── ipc/
+│   │   ├── index.ts             # IPC 注册
+│   │   ├── store.ts             # Store handlers
+│   │   └── window.ts            # Window handlers
+│   ├── plugins/
+│   │   ├── devtools/index.ts    # 内置 DevTools 插件
+│   │   └── example-plugin/      # 示例插件
+│   ├── windows/
+│   │   ├── index.ts             # 窗口注册表
+│   │   ├── main.ts              # 主窗口工厂
+│   │   └── devtools.ts          # DevTools 窗口工厂
+│   └── utils/
+├── renderer-process/
+│   ├── shared/
+│   │   ├── services/
+│   │   │   ├── ipc.ts           # IPC invoke/send 辅助函数
+│   │   │   └── ipc.generated.ts # 自动生成的类型
+│   │   └── styles/index.css     # Tailwind CSS
+│   └── windows/
+│       ├── main/                # 主窗口 UI
+│       └── devtools/            # DevTools 面板 UI
+├── preload/index.ts             # 预加载脚本
+├── types/                       # 全局类型声明
+├── vite.config.ts               # Vite 多页面配置
+├── tsconfig.json
+└── package.json
 ```
 
----
+## 可扩展性
+
+### Context 扩展
+
+向所有插件的 context 注入自定义字段：
+
+```ts
+import { extendPluginContext } from "@revolution/core";
+import Store from "electron-store";
+import { dialog } from "electron";
+
+const store = new Store();
+
+extendPluginContext((ctx, meta) => {
+  ctx.store = store;
+  ctx.dialog = dialog;
+});
+
+// 现在每个插件都可以访问 ctx.store 和 ctx.dialog
+```
+
+### 自定义 Logger
+
+用任意实现替换内置的 console logger：
+
+```ts
+import { setLogger } from "@revolution/core";
+import log from "electron-log";
+
+setLogger(log);
+// 所有框架和插件日志现在通过 electron-log 输出
+```
+
+### 插件热重载（开发模式）
+
+```ts
+import { installPluginHot } from "@revolution/core";
+import { myPlugin } from "./plugins/my-plugin";
+
+await installPluginHot(
+  "./main-process/plugins/my-plugin",
+  myPlugin,
+  () => require("./plugins/my-plugin").myPlugin,
+  process.env.NODE_ENV === "development"
+);
+// 文件变化自动触发插件重载
+```
+
+### 窗口生命周期钩子
+
+```ts
+import { onWindowCreated, onWindowClosed } from "@revolution/core";
+
+onWindowCreated((name, win) => {
+  console.log(`窗口 "${name}" 已创建`);
+  // 向所有窗口注入行为
+});
+
+onWindowClosed((name, win) => {
+  console.log(`窗口 "${name}" 已关闭`);
+});
+```
 
 ## 技术栈
 
-Electron 37 · Vite 6 · React 19 · TypeScript 5.9 · Tailwind CSS 4 · Biome · electron-builder
+| 层级 | 技术 |
+|---|---|
+| 运行时 | Electron 37 |
+| 构建工具 | Vite 6 |
+| UI 框架 | React 19 |
+| 语言 | TypeScript 5.9 |
+| 样式 | Tailwind CSS 4 |
+| 代码检查 | Biome |
+| 打包 | electron-builder |
+| Monorepo | Turborepo + pnpm workspaces |
 
----
+## Monorepo 结构
 
-## 本地测试 CLI
-
-```bash
-# 全局链接
-pnpm link --global
-
-# 在任意目录
-revolution create test-app
-cd test-app
-pnpm install
-pnpm dev
-
-# 测试完取消链接
-pnpm unlink --global
+```
+electron-revolution/
+├── packages/
+│   ├── core/     → @revolution/core（运行时框架）
+│   └── cli/      → @revolution/cli（脚手架工具）
+├── apps/
+│   └── electron-app/  → 示例应用 & CLI 模板
+├── docs/              → 文档
+├── turbo.json
+├── pnpm-workspace.yaml
+└── package.json
 ```
 
-或者不全局链接：
+## 贡献
 
-```bash
-npx tsx cli/index.ts create test-app
-```
+请参阅 [docs/guide.md](./docs/guide.md) 了解贡献者指南，包括本地开发、代码规范和发布流程。
 
----
+## 许可证
 
-## License
-
-MIT
+[MIT](./LICENSE)
