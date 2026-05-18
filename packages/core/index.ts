@@ -42,6 +42,7 @@ export {
   installPlugin,
   uninstallPlugin,
   extendPluginContext,
+  pluginRef,
   getPluginState,
   getInstalledPlugins,
   executeCommand,

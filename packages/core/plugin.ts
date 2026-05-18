@@ -13,7 +13,7 @@ import { logger } from "./logger";
 
 export interface PluginMeta {
   name: string;
-  version: string;
+  version?: string;
   description?: string;
   dependencies?: string[];
 }
@@ -26,6 +26,7 @@ export interface PluginContext {
   command(id: string, handler: () => void | Promise<void>): void;
   on(event: string, handler: (...args: any[]) => void): void;
   emit(event: string, ...args: any[]): void;
+  use<T = any>(ref: { __name: string; __type: T }): T | undefined;
   use<T = any>(pluginName: string): T | undefined;
   log: {
     info: (...args: any[]) => void;
@@ -129,7 +130,8 @@ export const installPlugin = async (def: PluginDef): Promise<void> => {
     emit: (event, ...args) => {
       EventBus.emit(event, ...args);
     },
-    use: <T>(pluginName: string): T | undefined => {
+    use: <T>(nameOrRef: string | { __name: string; __type: T }): T | undefined => {
+      const pluginName = typeof nameOrRef === "string" ? nameOrRef : nameOrRef.__name;
       return apis.get(pluginName) as T | undefined;
     },
     log: {
@@ -156,7 +158,7 @@ export const installPlugin = async (def: PluginDef): Promise<void> => {
 
     runtime.state = "active";
     EventBus.emit("plugin:activated", name);
-    logger.info(`[plugin] ✓ ${name}@${def.meta.version}`);
+    logger.info(`[plugin] ✓ ${name}`);
   } catch (err) {
     runtime.state = "error";
     logger.error(`[plugin] ✗ ${name} failed:`, err);
@@ -183,7 +185,7 @@ export const uninstallPlugin = async (name: string): Promise<void> => {
 
 export const getPluginState = (name: string): PluginState | undefined => plugins.get(name)?.state;
 
-export const getInstalledPlugins = (): { name: string; version: string; state: PluginState }[] =>
+export const getInstalledPlugins = (): { name: string; version?: string; state: PluginState }[] =>
   Array.from(plugins.entries()).map(([name, rt]) => ({
     name,
     version: rt.def.meta.version,
@@ -192,4 +194,24 @@ export const getInstalledPlugins = (): { name: string; version: string; state: P
 
 export const executeCommand = (id: string) => {
   EventBus.emit(`command:${id}`);
+};
+
+/**
+ * @description [zh-CN] 创建插件引用标识（带类型的插件名，避免手写字符串）
+ * @description [zh-TW] 建立插件參考標識（帶型別的插件名，避免手寫字串）
+ * @description [en] Create a typed plugin reference (avoids hand-written string names)
+ * @description [ja] 型付きプラグイン参照を作成（手書き文字列を回避）
+ *
+ * @example
+ * ```ts
+ * // todo/index.ts
+ * export const todoRef = pluginRef<TodoPluginApi>("todo");
+ *
+ * // statistics/index.ts
+ * import { todoRef } from "../todo";
+ * const api = ctx.use(todoRef); // 类型自动推导，名字不用手写
+ * ```
+ */
+export const pluginRef = <T>(name: string): { __name: string; __type: T } => {
+  return { __name: name } as any;
 };
