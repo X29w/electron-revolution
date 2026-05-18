@@ -349,9 +349,6 @@ electron-revolution/
 └── package.json
 ````
 
-## コントリビューション
-
-ローカル開発、コード規約、パブリッシュについては [docs/guide.md](./docs/guide.md) のコントリビューターガイドを参照してください。
 
 ## ライセンス
 

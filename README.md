@@ -349,9 +349,6 @@ electron-revolution/
 └── package.json
 ````
 
-## Contributing
-
-See [docs/guide.md](./docs/guide.md) for the contributor guide covering local development, code conventions, and publishing.
 
 ## License
 

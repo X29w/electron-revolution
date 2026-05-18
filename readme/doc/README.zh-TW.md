@@ -349,9 +349,6 @@ electron-revolution/
 └── package.json
 ````
 
-## 貢獻
-
-請參閱 [docs/guide.md](./docs/guide.md) 了解貢獻者指南，包括本地開發、程式碼規範和發佈流程。
 
 ## 授權條款
 
