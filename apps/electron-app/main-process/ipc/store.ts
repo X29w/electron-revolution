@@ -5,7 +5,7 @@
  * @description [ja] IPC: 永続ストレージ — electron-store ベースの設定読み書き
  */
 
-import { defineHandlers, defineListeners } from "@revolution/core";
+import { defineHandlers, defineListeners } from "@x-elevolution/core";
 import { electronStore } from "../electron-store";
 
 export const storeHandlers = defineHandlers({

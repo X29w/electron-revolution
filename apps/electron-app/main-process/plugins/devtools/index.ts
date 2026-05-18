@@ -3,7 +3,7 @@
  * @description [en] DevTools plugin — visual debug panel
  */
 
-import { definePlugin, defineHandlers, useIpcMiddleware, getInstalledPlugins, getRegisteredWindows, EventBus } from "@revolution/core";
+import { definePlugin, defineHandlers, useIpcMiddleware, getInstalledPlugins, getRegisteredWindows, EventBus } from "@x-elevolution/core";
 
 interface IpcLogEntry {
   timestamp: number;

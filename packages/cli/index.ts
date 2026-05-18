@@ -210,7 +210,7 @@ function generatePlugin(pluginName: string) {
  * @description [ja] プラグイン: ${pluginName}
  */
 
-import { definePlugin, defineHandlers, defineListeners } from "@revolution/core";
+import { definePlugin, defineHandlers, defineListeners } from "@x-elevolution/core";
 
 const handlers = defineHandlers({
   "${pluginName}:hello": (_, name: string) => {
@@ -298,7 +298,7 @@ function generateIpc(moduleName: string) {
  * @description [ja] IPC: ${toPascalCase(moduleName)}
  */
 
-import { defineHandlers, defineListeners } from "@revolution/core";
+import { defineHandlers, defineListeners } from "@x-elevolution/core";
 
 export const ${handlersName} = defineHandlers({
   "${moduleName}:get": (_, id: string) => {
@@ -324,7 +324,7 @@ export const ${listenersName} = defineListeners({
 `
   );
 
-  // 2. 自动注册到 ipc/index.ts
+  // 2. 自動注册到 ipc/index.ts
   const ipcIndexPath = resolve("main-process/ipc/index.ts");
   if (existsSync(ipcIndexPath)) {
     let content = readFileSync(ipcIndexPath, "utf-8");
@@ -395,9 +395,9 @@ function generateProject(projectName: string) {
       delete pkg.bin;
       pkg.scripts = { dev: pkg.scripts.dev, build: pkg.scripts.build };
       if (flags.includes("--local")) {
-        pkg.dependencies["@revolution/core"] = `link:${resolve(templateRoot, "../../packages/core")}`;
+        pkg.dependencies["@x-elevolution/core"] = `link:${resolve(templateRoot, "../../packages/core")}`;
       } else {
-        pkg.dependencies["@revolution/core"] = "^0.2.0";
+        pkg.dependencies["@x-elevolution/core"] = "^0.2.0";
       }
       content = JSON.stringify(pkg, null, 2);
     }
@@ -405,84 +405,3 @@ function generateProject(projectName: string) {
     write(resolve(dir, file), content);
     fileCount++;
   }
-
-  silent = false;
-  log.blank();
-  log.step(`Scaffolded ${c.bold}${fileCount}${c.reset} files into ${c.cyan}./${projectName}${c.reset}`);
-  log.blank();
-  console.log(`  ${c.dim}Next steps:${c.reset}`);
-  log.blank();
-  console.log(`    ${c.cyan}${c.reset} cd ${projectName}`);
-  console.log(`    ${c.cyan}${c.reset} pnpm install`);
-  console.log(`    ${c.cyan}${c.reset} pnpm dev`);
-  log.blank();
-}
-
-// ---- 帮助 ----
-
-function printHelp() {
-  console.log(`
-  ${c.bold}${c.cyan}⚡ Revolution CLI${c.reset}
-
-  ${c.dim}Usage:${c.reset}
-    ${c.cyan}revolution create${c.reset} <name>         Create a new project
-    ${c.cyan}revolution add window${c.reset} <name>     Add a window
-    ${c.cyan}revolution add plugin${c.reset} <name>     Add a plugin
-    ${c.cyan}revolution add ipc${c.reset} <name>        Add an IPC module
-    ${c.cyan}revolution gen:ipc${c.reset}               Generate renderer IPC types
-
-  ${c.dim}Examples:${c.reset}
-    ${c.dim}${c.reset} revolution create my-app
-    ${c.dim}${c.reset} revolution add window settings
-    ${c.dim}${c.reset} revolution add plugin file-manager
-  `);
-}
-
-// ---- 路由 ----
-
-switch (command) {
-  case "create":
-    if (!subCommand) {
-      console.error("Usage: revolution create <project-name>");
-      process.exit(1);
-    }
-    generateProject(subCommand);
-    break;
-
-  case "add":
-    if (!subCommand || !name) {
-      console.error("Usage: revolution add <window|plugin|ipc> <name>");
-      process.exit(1);
-    }
-    switch (subCommand) {
-      case "window":
-        generateWindow(name);
-        break;
-      case "plugin":
-        generatePlugin(name);
-        break;
-      case "ipc":
-        generateIpc(name);
-        break;
-      default:
-        console.error(`Unknown type: ${subCommand}`);
-        process.exit(1);
-    }
-    break;
-
-  case "gen:ipc":
-    execSync(`npx tsx "${resolve(__dirname, "generate-ipc-types.ts")}"`, { stdio: "inherit", cwd: process.cwd() });
-    break;
-
-  case "help":
-  case "--help":
-  case "-h":
-  case undefined:
-    printHelp();
-    break;
-
-  default:
-    console.error(`Unknown command: ${command}`);
-    printHelp();
-    process.exit(1);
-}

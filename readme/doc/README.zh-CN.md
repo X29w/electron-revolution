@@ -34,8 +34,8 @@
 
 ## 快速开始
 
-```bash
-npx @revolution/cli create my-app
+``bash
+npx @x-elevolution/cli create my-app
 cd my-app
 pnpm install
 pnpm dev
@@ -51,9 +51,9 @@ pnpm dev
 
 在主进程中定义 handler：
 
-```ts
+``ts
 // main-process/ipc/user.ts
-import { defineHandlers, defineListeners } from "@revolution/core";
+import { defineHandlers, defineListeners } from "@x-elevolution/core";
 
 export const userHandlers = defineHandlers({
   "user:get": (event, id: string) => {
@@ -73,9 +73,9 @@ export const userListeners = defineListeners({
 
 注册路由：
 
-```ts
+``ts
 // main-process/main.ts
-import { registerRoutes } from "@revolution/core";
+import { registerRoutes } from "@x-elevolution/core";
 import { userHandlers, userListeners } from "./ipc/user";
 
 registerRoutes(userHandlers.routes);
@@ -84,13 +84,13 @@ registerRoutes(userListeners.routes);
 
 生成渲染进程类型：
 
-```bash
+``bash
 pnpm gen:ipc
 ```
 
 在渲染进程中使用，享受完整类型安全：
 
-```ts
+``ts
 // renderer — 类型已自动生成！
 const user = await ipcInvoke("user:get", "123");
 //    ^? { id: string; name: string; email: string }
@@ -100,8 +100,8 @@ const user = await ipcInvoke("user:get", "123");
 
 插件是自包含的单元，可以注册 IPC 路由、窗口、命令，并通过事件通信：
 
-```ts
-import { definePlugin, defineHandlers } from "@revolution/core";
+``ts
+import { definePlugin, defineHandlers } from "@x-elevolution/core";
 
 const handlers = defineHandlers({
   "notes:create": (_, title: string, content: string) => {
@@ -136,8 +136,8 @@ export const notesPlugin = definePlugin({
 
 在主进程中安装插件：
 
-```ts
-import { installPlugin } from "@revolution/core";
+``ts
+import { installPlugin } from "@x-elevolution/core";
 import { notesPlugin } from "./plugins/notes";
 
 await installPlugin(notesPlugin);
@@ -145,8 +145,8 @@ await installPlugin(notesPlugin);
 
 ### 窗口管理
 
-```ts
-import { registerWindows, createWindow, sendToWindow, broadcastToWindows } from "@revolution/core";
+``ts
+import { registerWindows, createWindow, sendToWindow, broadcastToWindows } from "@x-elevolution/core";
 
 // 注册窗口工厂
 registerWindows({
@@ -169,8 +169,8 @@ broadcastToWindows("theme:changed", "dark");
 
 ### IPC 中间件与拦截器
 
-```ts
-import { useIpcMiddleware, addIpcInterceptor } from "@revolution/core";
+``ts
+import { useIpcMiddleware, addIpcInterceptor } from "@x-elevolution/core";
 
 // 中间件 — 可以拦截、修改或终止调用
 useIpcMiddleware((channel, type, args, next) => {
@@ -191,8 +191,8 @@ remove();
 
 ### EventBus（插件间通信）
 
-```ts
-import { EventBus } from "@revolution/core";
+``ts
+import { EventBus } from "@x-elevolution/core";
 
 EventBus.on("user:login", (user) => {
   console.log(`${user.name} 已登录`);
@@ -216,16 +216,16 @@ EventBus.once("app:first-launch", () => {
 
 | 命令 | 描述 |
 |---|---|
-| `revolution create <name>` | 创建完整项目 |
-| `revolution create <name> --local` | 创建项目并链接本地 core（开发用） |
-| `revolution add window <name>` | 生成窗口（主进程工厂 + 渲染进程页面） |
-| `revolution add plugin <name>` | 生成插件骨架 |
-| `revolution add ipc <name>` | 生成 IPC 模块（handlers + listeners） |
-| `revolution gen:ipc` | 从 handlers 自动生成渲染进程 IPC 类型 |
+| `x-elevolution create <name>` | 创建完整项目 |
+| `x-elevolution create <name> --local` | 创建项目并链接本地 core（开发用） |
+| `x-elevolution add window <name>` | 生成窗口（主进程工厂 + 渲染进程页面） |
+| `x-elevolution add plugin <name>` | 生成插件骨架 |
+| `x-elevolution add ipc <name>` | 生成 IPC 模块（handlers + listeners） |
+| `x-elevolution gen:ipc` | 自动生成渲染器 IPC 类型 |
 
 ## 项目结构（`create` 之后）
 
-````
+```
 my-app/
 ├── main-process/
 │   ├── main.ts                  # 入口文件
@@ -256,7 +256,7 @@ my-app/
 ├── vite.config.ts               # Vite 多页面配置
 ├── tsconfig.json
 └── package.json
-````
+```
 
 ## 可扩展性
 
@@ -264,8 +264,8 @@ my-app/
 
 向所有插件的 context 注入自定义字段：
 
-```ts
-import { extendPluginContext } from "@revolution/core";
+``ts
+import { extendPluginContext } from "@x-elevolution/core";
 import Store from "electron-store";
 import { dialog } from "electron";
 
@@ -283,8 +283,8 @@ extendPluginContext((ctx, meta) => {
 
 用任意实现替换内置的 console logger：
 
-```ts
-import { setLogger } from "@revolution/core";
+``ts
+import { setLogger } from "@x-elevolution/core";
 import log from "electron-log";
 
 setLogger(log);
@@ -293,8 +293,8 @@ setLogger(log);
 
 ### 插件热重载（开发模式）
 
-```ts
-import { installPluginHot } from "@revolution/core";
+``ts
+import { installPluginHot } from "@x-elevolution/core";
 import { myPlugin } from "./plugins/my-plugin";
 
 await installPluginHot(
@@ -308,8 +308,8 @@ await installPluginHot(
 
 ### 窗口生命周期钩子
 
-```ts
-import { onWindowCreated, onWindowClosed } from "@revolution/core";
+``ts
+import { onWindowCreated, onWindowClosed } from "@x-elevolution/core";
 
 onWindowCreated((name, win) => {
   console.log(`窗口 "${name}" 已创建`);
@@ -336,11 +336,11 @@ onWindowClosed((name, win) => {
 
 ## Monorepo 结构
 
-````
+```
 electron-revolution/
 ├── packages/
-│   ├── core/     → @revolution/core（运行时框架）
-│   └── cli/      → @revolution/cli（脚手架工具）
+│   ├── core/     → @x-elevolution/core（运行时框架）
+│   └── cli/      → @x-elevolution/cli（脚手架工具）
 ├── apps/
 │   └── electron-app/  → 示例应用 & CLI 模板
 ├── docs/              → 文档
