@@ -43,6 +43,8 @@ pnpm dev
 
 就这样。你已经拥有一个运行中的 Electron 应用，包含 React、Vite HMR、类型安全的 IPC 和即用的插件系统。
 
+![主应用程序](../../readme/imgs/home.png)
+
 ## 核心概念
 
 ### 类型安全的 IPC（写一次，类型到处用）
@@ -163,6 +165,8 @@ sendToWindow("main", "notification", { message: "你好！" });
 broadcastToWindows("theme:changed", "dark");
 ```
 
+![子窗口](../../readme/imgs/child-a.png)
+
 ### IPC 中间件与拦截器
 
 ```ts
@@ -201,6 +205,13 @@ EventBus.once("app:first-launch", () => {
 });
 ```
 
+### 内置 DevTools
+
+框架包含内置的 DevTools 面板，提供对 IPC 调用、插件状态和应用程序内存使用的实时可见性：
+
+![DevTools 面板](../../readme/imgs/devtools.png)
+![DevTools IPC 监控](../../readme/imgs/devtools2.png)
+
 ## CLI 命令
 
 | 命令 | 描述 |
@@ -214,7 +225,7 @@ EventBus.once("app:first-launch", () => {
 
 ## 项目结构（`create` 之后）
 
-```
+````
 my-app/
 ├── main-process/
 │   ├── main.ts                  # 入口文件
@@ -245,7 +256,7 @@ my-app/
 ├── vite.config.ts               # Vite 多页面配置
 ├── tsconfig.json
 └── package.json
-```
+````
 
 ## 可扩展性
 
@@ -325,7 +336,7 @@ onWindowClosed((name, win) => {
 
 ## Monorepo 结构
 
-```
+````
 electron-revolution/
 ├── packages/
 │   ├── core/     → @revolution/core（运行时框架）
@@ -336,7 +347,7 @@ electron-revolution/
 ├── turbo.json
 ├── pnpm-workspace.yaml
 └── package.json
-```
+````
 
 ## 贡献
 
