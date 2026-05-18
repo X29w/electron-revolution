@@ -4,7 +4,7 @@
 </p>
 
 <p align="center">
-  <a href="./README.md">English</a> |
+  <a href="../../README.md">English</a> |
   <a href="./README.zh-CN.md">简体中文</a> |
   <a href="./README.zh-TW.md">繁體中文</a> |
   <a href="./README.ja.md">日本語</a>
@@ -42,6 +42,8 @@ pnpm dev
 ```
 
 これだけです。React、Vite HMR、型安全な IPC、プラグインシステムを備えた Electron アプリが動作しています。
+
+![メインアプリケーション](../../readme/imgs/home.png)
 
 ## コアコンセプト
 
@@ -163,6 +165,8 @@ sendToWindow("main", "notification", { message: "こんにちは！" });
 broadcastToWindows("theme:changed", "dark");
 ```
 
+![子ウィンドウ](../../readme/imgs/child-a.png)
+
 ### IPC ミドルウェアとインターセプター
 
 ```ts
@@ -201,6 +205,13 @@ EventBus.once("app:first-launch", () => {
 });
 ```
 
+### 組み込み DevTools
+
+フレームワークには組み込みの DevTools パネルが含まれており、IPC 呼び出し、プラグイン状態、アプリケーションメモリ使用量をリアルタイムで確認できます：
+
+![DevTools パネル](../../readme/imgs/devtools.png)
+![DevTools IPC モニタリング](../../readme/imgs/devtools2.png)
+
 ## CLI コマンド
 
 | コマンド | 説明 |
@@ -214,7 +225,7 @@ EventBus.once("app:first-launch", () => {
 
 ## プロジェクト構造（`create` 後）
 
-```
+````
 my-app/
 ├── main-process/
 │   ├── main.ts                  # エントリーポイント
@@ -245,7 +256,7 @@ my-app/
 ├── vite.config.ts               # Vite マルチページ設定
 ├── tsconfig.json
 └── package.json
-```
+````
 
 ## 拡張性
 
@@ -325,7 +336,7 @@ onWindowClosed((name, win) => {
 
 ## モノレポ構造
 
-```
+````
 electron-revolution/
 ├── packages/
 │   ├── core/     → @revolution/core（ランタイムフレームワーク）
@@ -336,11 +347,8 @@ electron-revolution/
 ├── turbo.json
 ├── pnpm-workspace.yaml
 └── package.json
-```
+````
 
-## コントリビューション
-
-ローカル開発、コード規約、パブリッシュについては [docs/guide.md](./docs/guide.md) のコントリビューターガイドを参照してください。
 
 ## ライセンス
 

@@ -4,7 +4,7 @@
 </p>
 
 <p align="center">
-  <a href="./README.md">English</a> |
+  <a href="../../README.md">English</a> |
   <a href="./README.zh-CN.md">简体中文</a> |
   <a href="./README.zh-TW.md">繁體中文</a> |
   <a href="./README.ja.md">日本語</a>
@@ -42,6 +42,8 @@ pnpm dev
 ```
 
 就这样。你已经拥有一个运行中的 Electron 应用，包含 React、Vite HMR、类型安全的 IPC 和即用的插件系统。
+
+![主应用程序](../../readme/imgs/home.png)
 
 ## 核心概念
 
@@ -163,6 +165,8 @@ sendToWindow("main", "notification", { message: "你好！" });
 broadcastToWindows("theme:changed", "dark");
 ```
 
+![子窗口](../../readme/imgs/child-a.png)
+
 ### IPC 中间件与拦截器
 
 ```ts
@@ -201,6 +205,13 @@ EventBus.once("app:first-launch", () => {
 });
 ```
 
+### 内置 DevTools
+
+框架包含内置的 DevTools 面板，提供对 IPC 调用、插件状态和应用程序内存使用的实时可见性：
+
+![DevTools 面板](../../readme/imgs/devtools.png)
+![DevTools IPC 监控](../../readme/imgs/devtools2.png)
+
 ## CLI 命令
 
 | 命令 | 描述 |
@@ -214,7 +225,7 @@ EventBus.once("app:first-launch", () => {
 
 ## 项目结构（`create` 之后）
 
-```
+````
 my-app/
 ├── main-process/
 │   ├── main.ts                  # 入口文件
@@ -245,7 +256,7 @@ my-app/
 ├── vite.config.ts               # Vite 多页面配置
 ├── tsconfig.json
 └── package.json
-```
+````
 
 ## 可扩展性
 
@@ -325,7 +336,7 @@ onWindowClosed((name, win) => {
 
 ## Monorepo 结构
 
-```
+````
 electron-revolution/
 ├── packages/
 │   ├── core/     → @revolution/core（运行时框架）
@@ -336,11 +347,8 @@ electron-revolution/
 ├── turbo.json
 ├── pnpm-workspace.yaml
 └── package.json
-```
+````
 
-## 贡献
-
-请参阅 [docs/guide.md](./docs/guide.md) 了解贡献者指南，包括本地开发、代码规范和发布流程。
 
 ## 许可证
 

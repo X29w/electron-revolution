@@ -5,9 +5,9 @@
 
 <p align="center">
   <a href="./README.md">English</a> |
-  <a href="./README.zh-CN.md">简体中文</a> |
-  <a href="./README.zh-TW.md">繁體中文</a> |
-  <a href="./README.ja.md">日本語</a>
+  <a href="./readme/doc/README.zh-CN.md">简体中文</a> |
+  <a href="./readme/doc/README.zh-TW.md">繁體中文</a> |
+  <a href="./readme/doc/README.ja.md">日本語</a>
 </p>
 
 <p align="center">
@@ -42,6 +42,8 @@ pnpm dev
 ```
 
 That's it. You have a running Electron app with React, Vite HMR, type-safe IPC, and a plugin system ready to go.
+
+![Main Application](./readme/imgs/home.png)
 
 ## Core Concepts
 
@@ -163,6 +165,8 @@ sendToWindow("main", "notification", { message: "Hello!" });
 broadcastToWindows("theme:changed", "dark");
 ```
 
+![Child Window](./readme/imgs/child-a.png)
+
 ### IPC Middleware & Interceptors
 
 ```ts
@@ -201,6 +205,13 @@ EventBus.once("app:first-launch", () => {
 });
 ```
 
+### Built-in DevTools
+
+The framework includes a built-in DevTools panel that provides real-time visibility into IPC calls, plugin state, and application memory usage:
+
+![DevTools Panel](./readme/imgs/devtools.png)
+![DevTools IPC Monitoring](./readme/imgs/devtools2.png)
+
 ## CLI Commands
 
 | Command | Description |
@@ -214,7 +225,7 @@ EventBus.once("app:first-launch", () => {
 
 ## Project Structure (After `create`)
 
-```
+````
 my-app/
 ├── main-process/
 │   ├── main.ts                  # Entry point
@@ -245,7 +256,7 @@ my-app/
 ├── vite.config.ts               # Vite multi-page config
 ├── tsconfig.json
 └── package.json
-```
+````
 
 ## Extensibility
 
@@ -325,7 +336,7 @@ onWindowClosed((name, win) => {
 
 ## Monorepo Structure
 
-```
+````
 electron-revolution/
 ├── packages/
 │   ├── core/     → @revolution/core (runtime framework)
@@ -336,11 +347,8 @@ electron-revolution/
 ├── turbo.json
 ├── pnpm-workspace.yaml
 └── package.json
-```
+````
 
-## Contributing
-
-See [docs/guide.md](./docs/guide.md) for the contributor guide covering local development, code conventions, and publishing.
 
 ## License
 

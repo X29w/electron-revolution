@@ -100,7 +100,7 @@ const App: FC = () => {
               🛠 DevTools
             </button>
             <a
-              href="https://github.com"
+              href="https://github.com/X29w/electron-revolution"
               className="px-5 py-2.5 text-white/50 border border-white/5 rounded-lg text-sm font-medium hover:text-white/70 hover:border-white/10 transition-all"
             >
               Documentation →
