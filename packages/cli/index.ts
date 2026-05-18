@@ -77,17 +77,18 @@ function write(path: string, content: string) {
  * @description [ja] ウィンドウを生成（メインプロセスファクトリ + レンダラーページ）
  */
 function generateWindow(windowName: string) {
-  console.log(`\n  ⚡ Adding window: ${windowName}\n`);
+  log.title(`Adding window: ${c.bold}${windowName}`);
 
   const factoryName = `create${toPascalCase(windowName)}Window`;
 
+  // 1. 生成窗口工厂
   write(
     resolve("main-process/windows", `${windowName}.ts`),
     `import { BrowserWindow } from "electron";
 import { IS_DEV, PRELOAD_PATH, VITE_DEV_SERVER_URL } from "../constant";
 import { getRendererPath } from "../utils/renderer-path";
 
-export function ${factoryName}(): BrowserWindow {
+export const ${factoryName} = (): BrowserWindow => {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
@@ -104,23 +105,20 @@ export function ${factoryName}(): BrowserWindow {
   }
 
   return win;
-}
+};
 `
   );
 
+  // 2. 生成渲染进程文件
   const rendererDir = `renderer-process/windows/${windowName}`;
 
   write(
     resolve(rendererDir, "App.tsx"),
-    `import { FC } from "react";
-
-const App: FC = () => {
-  return (
-    <div className="w-full h-full flex items-center justify-center">
-      <h1 className="text-2xl font-bold">${toPascalCase(windowName)}</h1>
-    </div>
-  );
-};
+    `const App = () => (
+  <div className="w-full h-full flex items-center justify-center">
+    <h1 className="text-2xl font-bold">${toPascalCase(windowName)}</h1>
+  </div>
+);
 
 export default App;
 `
@@ -128,16 +126,11 @@ export default App;
 
   write(
     resolve(rendererDir, "main.tsx"),
-    `import React from "react";
-import ReactDOM from "react-dom/client";
+    `import ReactDOM from "react-dom/client";
 import App from "./App";
 import "../../shared/styles/index.css";
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+ReactDOM.createRoot(document.getElementById("root")!).render(<App />);
 `
   );
 
@@ -158,15 +151,42 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 `
   );
 
-  console.log(`
-  Next steps:
-  1. Add to main-process/windows/index.ts:
-     import { ${factoryName} } from "./${windowName}";
-     // Add to windows: "${windowName}": ${factoryName}
+  // 3. 自动注册到 windows/index.ts
+  const windowsIndexPath = resolve("main-process/windows/index.ts");
+  if (existsSync(windowsIndexPath)) {
+    let content = readFileSync(windowsIndexPath, "utf-8");
+    // 添加 import
+    const importLine = `import { ${factoryName} } from "./${windowName}";`;
+    if (!content.includes(importLine)) {
+      content = importLine + "\n" + content;
+    }
+    // 添加到 windows 对象
+    const insertTarget = "} as const;";
+    if (content.includes(insertTarget) && !content.includes(`"${windowName}"`)) {
+      content = content.replace(insertTarget, `  "${windowName}": ${factoryName},\n${insertTarget}`);
+    }
+    writeFileSync(windowsIndexPath, content);
+    log.step("Registered in windows/index.ts");
+  }
 
-  2. Add to vite.config.ts rollupOptions.input:
-     "${windowName}": resolve(__dirname, "renderer-process/windows/${windowName}/index.html")
-  `);
+  // 4. 自动注册到 vite.config.ts
+  const viteConfigPath = resolve("vite.config.ts");
+  if (existsSync(viteConfigPath)) {
+    let content = readFileSync(viteConfigPath, "utf-8");
+    const viteEntry = `        "${windowName}": resolve(__dirname, "renderer-process/windows/${windowName}/index.html"),`;
+    if (!content.includes(`"${windowName}"`)) {
+      // 在最后一个 resolve(__dirname 行后面插入
+      const lines = content.split("\n");
+      const lastResolveIdx = lines.findLastIndex((l: string) => l.includes("resolve(") && l.includes("index.html"));
+      if (lastResolveIdx !== -1) {
+        lines.splice(lastResolveIdx + 1, 0, viteEntry);
+        writeFileSync(viteConfigPath, lines.join("\n"));
+        log.step("Registered in vite.config.ts");
+      }
+    }
+  }
+
+  log.blank();
 }
 
 /**
@@ -176,10 +196,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
  * @description [ja] プラグインスキャフォールドを生成
  */
 function generatePlugin(pluginName: string) {
-  console.log(`\n  ⚡ Adding plugin: ${pluginName}\n`);
+  log.title(`Adding plugin: ${c.bold}${pluginName}`);
 
   const varName = `${toCamelCase(pluginName)}Plugin`;
 
+  // 1. 生成插件文件
   write(
     resolve(`main-process/plugins/${pluginName}`, "index.ts"),
     `/**
@@ -189,7 +210,7 @@ function generatePlugin(pluginName: string) {
  * @description [ja] プラグイン: ${pluginName}
  */
 
-import { definePlugin, defineHandlers, defineListeners } from "../../core";
+import { definePlugin, defineHandlers, defineListeners } from "@revolution/core";
 
 const handlers = defineHandlers({
   "${pluginName}:hello": (_, name: string) => {
@@ -223,14 +244,36 @@ export const ${varName} = definePlugin({
 `
   );
 
-  console.log(`
-  Next steps:
-  1. Install in main-process/main.ts:
-     import { ${varName} } from "./plugins/${pluginName}";
-     await installPlugin(${varName});
+  // 2. 自动注册到 main.ts
+  const mainPath = resolve("main-process/main.ts");
+  if (existsSync(mainPath)) {
+    let content = readFileSync(mainPath, "utf-8");
+    const importLine = `import { ${varName} } from "./plugins/${pluginName}";`;
+    const installLine = `  await installPlugin(${varName});`;
 
-  2. Run \`pnpm gen:ipc\` to update renderer types
-  `);
+    if (!content.includes(importLine)) {
+      // 在最后一个 import 行后面插入
+      const lines = content.split("\n");
+      const lastImportIdx = lines.findLastIndex((l: string) => l.startsWith("import "));
+      if (lastImportIdx !== -1) {
+        lines.splice(lastImportIdx + 1, 0, importLine);
+      }
+      content = lines.join("\n");
+    }
+
+    if (!content.includes(installLine)) {
+      // 在 createWindow("main") 之前插入
+      content = content.replace(
+        `createWindow("main");`,
+        `${installLine}\n\n  createWindow("main");`
+      );
+    }
+
+    writeFileSync(mainPath, content);
+    log.step("Registered in main.ts");
+  }
+
+  log.blank();
 }
 
 /**
@@ -240,11 +283,12 @@ export const ${varName} = definePlugin({
  * @description [ja] IPC モジュールを生成
  */
 function generateIpc(moduleName: string) {
-  console.log(`\n  ⚡ Adding IPC module: ${moduleName}\n`);
+  log.title(`Adding IPC module: ${c.bold}${moduleName}`);
 
   const handlersName = `${toCamelCase(moduleName)}Handlers`;
   const listenersName = `${toCamelCase(moduleName)}Listeners`;
 
+  // 1. 生成 IPC 文件
   write(
     resolve("main-process/ipc", `${moduleName}.ts`),
     `/**
@@ -254,7 +298,7 @@ function generateIpc(moduleName: string) {
  * @description [ja] IPC: ${toPascalCase(moduleName)}
  */
 
-import { defineHandlers, defineListeners } from "../core/ipc";
+import { defineHandlers, defineListeners } from "@revolution/core";
 
 export const ${handlersName} = defineHandlers({
   "${moduleName}:get": (_, id: string) => {
@@ -280,15 +324,44 @@ export const ${listenersName} = defineListeners({
 `
   );
 
-  console.log(`
-  Next steps:
-  1. Register in main-process/ipc/index.ts:
-     import { ${handlersName}, ${listenersName} } from "./${moduleName}";
-     registerRoutes(${handlersName}.routes);
-     registerRoutes(${listenersName}.routes);
+  // 2. 自动注册到 ipc/index.ts
+  const ipcIndexPath = resolve("main-process/ipc/index.ts");
+  if (existsSync(ipcIndexPath)) {
+    let content = readFileSync(ipcIndexPath, "utf-8");
+    const importLine = `import { ${handlersName}, ${listenersName} } from "./${moduleName}";`;
+    const registerLines = `  registerRoutes(${handlersName}.routes);\n  registerRoutes(${listenersName}.routes);`;
 
-  2. Run \`pnpm gen:ipc\` to update renderer types
-  `);
+    if (!content.includes(importLine)) {
+      // 在最后一个 import 行后面插入
+      const lines = content.split("\n");
+      const lastImportIdx = lines.findLastIndex((l: string) => l.startsWith("import "));
+      if (lastImportIdx !== -1) {
+        lines.splice(lastImportIdx + 1, 0, importLine);
+      }
+      content = lines.join("\n");
+    }
+
+    if (!content.includes(handlersName)) {
+      // 在 registerAllIpc 函数的最后一个 registerRoutes 调用后面插入
+      const lines = content.split("\n");
+      const lastRegisterIdx = lines.findLastIndex((l: string) => l.includes("registerRoutes("));
+      if (lastRegisterIdx !== -1) {
+        lines.splice(lastRegisterIdx + 1, 0, registerLines);
+      } else {
+        // 如果没有 registerRoutes，在函数体的 }; 前插入
+        const closingIdx = lines.findLastIndex((l: string) => l.trim() === "};");
+        if (closingIdx !== -1) {
+          lines.splice(closingIdx, 0, registerLines);
+        }
+      }
+      content = lines.join("\n");
+    }
+
+    writeFileSync(ipcIndexPath, content);
+    log.step("Registered in ipc/index.ts");
+  }
+
+  log.blank();
 }
 
 /**

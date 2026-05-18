@@ -8,6 +8,7 @@
 export const TEMPLATE_FILES = [
   // 配置文件
   "package.json",
+  "pnpm-workspace.yaml",
   "tsconfig.json",
   "tsconfig.node.json",
   "vite.config.ts",
