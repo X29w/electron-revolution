@@ -1,0 +1,25 @@
+{
+  "name": "@revolution/core",
+  "version": "0.2.0",
+  "description": "Revolution - Functional, plugin-based Electron framework core",
+  "type": "module",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./ipc": "./ipc.ts",
+    "./window": "./window.ts",
+    "./plugin": "./plugin.ts",
+    "./event-bus": "./event-bus.ts",
+    "./logger": "./logger.ts"
+  },
+  "keywords": [
+    "electron",
+    "framework",
+    "plugin",
+    "ipc",
+    "type-safe",
+    "functional"
+  ],
+  "license": "MIT"
+}

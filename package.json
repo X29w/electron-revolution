@@ -1,38 +1,13 @@
 {
-  "name": "electron-cli-revolution",
+  "name": "electron-revolution",
   "private": true,
-  "version": "0.1.0",
-  "type": "module",
+  "packageManager": "pnpm@9.15.0",
   "scripts": {
-    "dev": "chcp 65001 && vite",
-    "build": "tsc && vite build && electron-builder",
-    "postinstall": "npx electron-fix start",
-    "rebuild": "electron-rebuild"
-  },
-  "dependencies": {
-    "@tailwindcss/vite": "^4.1.17",
-    "axios": "^1.13.2",
-    "bsdiff-node": "^2.5.0",
-    "electron-log": "^5.4.3",
-    "electron-store": "^11.0.2",
-    "electron-updater": "^6.6.2",
-    "react": "^19.2.1",
-    "react-dom": "^19.2.1",
-    "reflect-metadata": "^0.2.2",
-    "tailwindcss": "^4.1.17"
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.3.8",
-    "@types/react": "^19.2.7",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^5.1.1",
-    "electron": "^37.2.5",
-    "electron-builder": "^26.0.12",
-    "electron-rebuild": "^3.2.9",
-    "typescript": "^5.9.3",
-    "vite": "^6.3.5",
-    "vite-plugin-electron": "^0.29.0",
-    "vite-plugin-electron-renderer": "^0.14.6"
-  },
-  "main": "dist/main-process/index.js"
+    "turbo": "^2.5.0"
+  }
 }
