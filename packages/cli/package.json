@@ -1,7 +1,7 @@
 {
   "name": "@x-elevolution/cli",
   "version": "0.2.0",
-  "description": "Revolution CLI — scaffold Electron projects with plugin architecture",
+  "description": "X-Elevolution CLI — scaffold Electron projects with plugin architecture",
   "type": "module",
   "bin": {
     "x-elevolution": "./bin.mjs"

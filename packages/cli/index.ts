@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 /**
- * @description [zh-CN] Revolution CLI — 代码生成工具，支持创建项目、窗口、插件、IPC 模块
- * @description [zh-TW] Revolution CLI — 程式碼生成工具，支援建立專案、視窗、插件、IPC 模組
- * @description [en] Revolution CLI — code generator for creating projects, windows, plugins, and IPC modules
- * @description [ja] Revolution CLI — プロジェクト、ウィンドウ、プラグイン、IPC モジュールを生成するコードジェネレーター
+ * @description [zh-CN] X-Elevolution CLI — 代码生成工具，支持创建项目、窗口、插件、IPC 模块
+ * @description [zh-TW] X-Elevolution CLI — 程式碼生成工具，支援建立專案、視窗、插件、IPC 模組
+ * @description [en] X-Elevolution CLI — code generator for creating projects, windows, plugins, and IPC modules
+ * @description [ja] X-Elevolution CLI — プロジェクト、ウィンドウ、プラグイン、IPC モジュールを生成するコードジェネレーター
  */
 
 import { resolve, dirname } from "node:path";
@@ -324,7 +324,7 @@ export const ${listenersName} = defineListeners({
 `
   );
 
-  // 2. 自動注册到 ipc/index.ts
+  // 2. 自动注册到 ipc/index.ts
   const ipcIndexPath = resolve("main-process/ipc/index.ts");
   if (existsSync(ipcIndexPath)) {
     let content = readFileSync(ipcIndexPath, "utf-8");
@@ -405,3 +405,84 @@ function generateProject(projectName: string) {
     write(resolve(dir, file), content);
     fileCount++;
   }
+
+  silent = false;
+  log.blank();
+  log.step(`Scaffolded ${c.bold}${fileCount}${c.reset} files into ${c.cyan}./${projectName}${c.reset}`);
+  log.blank();
+  console.log(`  ${c.dim}Next steps:${c.reset}`);
+  log.blank();
+  console.log(`    ${c.cyan}${c.reset} cd ${projectName}`);
+  console.log(`    ${c.cyan}${c.reset} pnpm install`);
+  console.log(`    ${c.cyan}${c.reset} pnpm dev`);
+  log.blank();
+}
+
+// ---- 帮助 ----
+
+function printHelp() {
+  console.log(`
+  ${c.bold}${c.cyan}⚡ X-Elevolution CLI${c.reset}
+
+  ${c.dim}Usage:${c.reset}
+    ${c.cyan}x-elevolution create${c.reset} <name>         Create a new project
+    ${c.cyan}x-elevolution add window${c.reset} <name>     Add a window
+    ${c.cyan}x-elevolution add plugin${c.reset} <name>     Add a plugin
+    ${c.cyan}x-elevolution add ipc${c.reset} <name>        Add an IPC module
+    ${c.cyan}x-elevolution gen:ipc${c.reset}               Generate renderer IPC types
+
+  ${c.dim}Examples:${c.reset}
+    ${c.dim}${c.reset} x-elevolution create my-app
+    ${c.dim}${c.reset} x-elevolution add window settings
+    ${c.dim}${c.reset} x-elevolution add plugin file-manager
+  `);
+}
+
+// ---- 路由 ----
+
+switch (command) {
+  case "create":
+    if (!subCommand) {
+      console.error("Usage: x-elevolution create <project-name>");
+      process.exit(1);
+    }
+    generateProject(subCommand);
+    break;
+
+  case "add":
+    if (!subCommand || !name) {
+      console.error("Usage: x-elevolution add <window|plugin|ipc> <name>");
+      process.exit(1);
+    }
+    switch (subCommand) {
+      case "window":
+        generateWindow(name);
+        break;
+      case "plugin":
+        generatePlugin(name);
+        break;
+      case "ipc":
+        generateIpc(name);
+        break;
+      default:
+        console.error(`Unknown type: ${subCommand}`);
+        process.exit(1);
+    }
+    break;
+
+  case "gen:ipc":
+    execSync(`npx tsx "${resolve(__dirname, "generate-ipc-types.ts")}"`, { stdio: "inherit", cwd: process.cwd() });
+    break;
+
+  case "help":
+  case "--help":
+  case "-h":
+  case undefined:
+    printHelp();
+    break;
+
+  default:
+    console.error(`Unknown command: ${command}`);
+    printHelp();
+    process.exit(1);
+}

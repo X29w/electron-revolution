@@ -1,10 +1,10 @@
 <p align="center">
-  <h1 align="center">⚡ Electron Revolution</h1>
+  <h1 align="center">⚡ Electron X-Elevolution</h1>
   <p align="center">純函數式、插件化的 Electron 框架，型別安全的 IPC，零樣板程式碼。</p>
 </p>
 
 <p align="center">
-  <a href="../../README.md">English</a> |
+  <a href="./README.md">English</a> |
   <a href="./README.zh-CN.md">简体中文</a> |
   <a href="./README.zh-TW.md">繁體中文</a> |
   <a href="./README.ja.md">日本語</a>
@@ -20,11 +20,11 @@
 
 ---
 
-## 為什麼選擇 Revolution？
+## 為什麼選擇 X-Elevolution？
 
-建構 Electron 應用不應該意味著與樣板程式碼、不安全的 IPC 通道或糾纏的類別層次結構搏鬥。Revolution 誕生於真實的開發痛點：
+建構 Electron 應用不應該意味著與樣板程式碼、不安全的 IPC 通道或糾纏的類別層次結構搏鬥。X-Elevolution 誕生於真實的開發痛點：
 
-| 痛點 | Revolution 的解決方案 |
+| 痛點 | X-Elevolution 的解決方案 |
 |---|---|
 | IPC 通道是字串型別，容易出錯 | **寫一次 handler → 型別自動生成到渲染程序** |
 | 基於類別的框架僵硬且難以測試 | **純函數式 — 全程箭頭函數** |
@@ -34,7 +34,7 @@
 
 ## 快速開始
 
-``bash
+```bash
 npx @x-elevolution/cli create my-app
 cd my-app
 pnpm install
@@ -43,15 +43,13 @@ pnpm dev
 
 就這樣。你已經擁有一個執行中的 Electron 應用，包含 React、Vite HMR、型別安全的 IPC 和即用的插件系統。
 
-![主應用程式](../../readme/imgs/home.png)
-
 ## 核心概念
 
 ### 型別安全的 IPC（寫一次，型別到處用）
 
 在主程序中定義 handler：
 
-``ts
+```ts
 // main-process/ipc/user.ts
 import { defineHandlers, defineListeners } from "@x-elevolution/core";
 
@@ -73,7 +71,7 @@ export const userListeners = defineListeners({
 
 註冊路由：
 
-``ts
+```ts
 // main-process/main.ts
 import { registerRoutes } from "@x-elevolution/core";
 import { userHandlers, userListeners } from "./ipc/user";
@@ -84,13 +82,13 @@ registerRoutes(userListeners.routes);
 
 生成渲染程序型別：
 
-``bash
+```bash
 pnpm gen:ipc
 ```
 
 在渲染程序中使用，享受完整型別安全：
 
-``ts
+```ts
 // renderer — 型別已自動生成！
 const user = await ipcInvoke("user:get", "123");
 //    ^? { id: string; name: string; email: string }
@@ -100,7 +98,7 @@ const user = await ipcInvoke("user:get", "123");
 
 插件是自包含的單元，可以註冊 IPC 路由、視窗、命令，並透過事件通訊：
 
-``ts
+```ts
 import { definePlugin, defineHandlers } from "@x-elevolution/core";
 
 const handlers = defineHandlers({
@@ -136,7 +134,7 @@ export const notesPlugin = definePlugin({
 
 在主程序中安裝插件：
 
-``ts
+```ts
 import { installPlugin } from "@x-elevolution/core";
 import { notesPlugin } from "./plugins/notes";
 
@@ -145,7 +143,7 @@ await installPlugin(notesPlugin);
 
 ### 視窗管理
 
-``ts
+```ts
 import { registerWindows, createWindow, sendToWindow, broadcastToWindows } from "@x-elevolution/core";
 
 // 註冊視窗工廠
@@ -165,11 +163,9 @@ sendToWindow("main", "notification", { message: "你好！" });
 broadcastToWindows("theme:changed", "dark");
 ```
 
-![子視窗](../../readme/imgs/child-a.png)
-
 ### IPC 中介軟體與攔截器
 
-``ts
+```ts
 import { useIpcMiddleware, addIpcInterceptor } from "@x-elevolution/core";
 
 // 中介軟體 — 可以攔截、修改或終止呼叫
@@ -191,7 +187,7 @@ remove();
 
 ### EventBus（插件間通訊）
 
-``ts
+```ts
 import { EventBus } from "@x-elevolution/core";
 
 EventBus.on("user:login", (user) => {
@@ -205,23 +201,16 @@ EventBus.once("app:first-launch", () => {
 });
 ```
 
-### 內建 DevTools
-
-框架包含內建的 DevTools 面板，提供對 IPC 呼叫、插件狀態和應用程式記憶體使用的即時可見性：
-
-![DevTools 面板](../../readme/imgs/devtools.png)
-![DevTools IPC 監控](../../readme/imgs/devtools2.png)
-
 ## CLI 命令
 
 | 命令 | 描述 |
 |---|---|
 | `x-elevolution create <name>` | 建立完整專案 |
-| `x-elevolution create <name> --local` | 建立專案並連結本機 core（開發用） |
-| `x-elevolution add window <name>` | 產生視窗（主處理程序工廠 + 渲染處理程序頁面） |
-| `x-elevolution add plugin <name>` | 產生外掛程式骨架 |
-| `x-elevolution add ipc <name>` | 產生 IPC 模組（handlers + listeners） |
-| `x-elevolution gen:ipc` | 自動產生渲染器 IPC 類型 |
+| `x-elevolution create <name> --local` | 建立專案並連結本地 core（開發用） |
+| `x-elevolution add window <name>` | 生成視窗（主程序工廠 + 渲染程序頁面） |
+| `x-elevolution add plugin <name>` | 生成插件骨架 |
+| `x-elevolution add ipc <name>` | 生成 IPC 模組（handlers + listeners） |
+| `x-elevolution gen:ipc` | 從 handlers 自動生成渲染程序 IPC 型別 |
 
 ## 專案結構（`create` 之後）
 
@@ -264,7 +253,7 @@ my-app/
 
 向所有插件的 context 注入自訂欄位：
 
-``ts
+```ts
 import { extendPluginContext } from "@x-elevolution/core";
 import Store from "electron-store";
 import { dialog } from "electron";
@@ -283,7 +272,7 @@ extendPluginContext((ctx, meta) => {
 
 用任意實作替換內建的 console logger：
 
-``ts
+```ts
 import { setLogger } from "@x-elevolution/core";
 import log from "electron-log";
 
@@ -293,7 +282,7 @@ setLogger(log);
 
 ### 插件熱重載（開發模式）
 
-``ts
+```ts
 import { installPluginHot } from "@x-elevolution/core";
 import { myPlugin } from "./plugins/my-plugin";
 
@@ -308,7 +297,7 @@ await installPluginHot(
 
 ### 視窗生命週期鉤子
 
-``ts
+```ts
 import { onWindowCreated, onWindowClosed } from "@x-elevolution/core";
 
 onWindowCreated((name, win) => {
@@ -337,7 +326,7 @@ onWindowClosed((name, win) => {
 ## Monorepo 結構
 
 ```
-electron-revolution/
+x-elevolution/
 ├── packages/
 │   ├── core/     → @x-elevolution/core（執行時框架）
 │   └── cli/      → @x-elevolution/cli（腳手架工具）
@@ -347,8 +336,11 @@ electron-revolution/
 ├── turbo.json
 ├── pnpm-workspace.yaml
 └── package.json
-````
+```
 
+## 貢獻
+
+請參閱 [docs/guide.md](./docs/guide.md) 了解貢獻者指南，包括本地開發、程式碼規範和發佈流程。
 
 ## 授權條款
 

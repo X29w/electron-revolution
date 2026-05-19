@@ -45,7 +45,7 @@ export const devtoolsPlugin = definePlugin({
   meta: {
     name: "devtools",
     version: "1.0.0",
-    description: "Built-in visual debug panel for Revolution",
+    description: "Built-in visual debug panel for X-Elevolution",
   },
 
   api: { getIpcLog: () => [...ipcLog] },

@@ -1,13 +1,13 @@
 <p align="center">
-  <h1 align="center">⚡ Electron Revolution</h1>
+  <h1 align="center">⚡ Electron X-Elevolution</h1>
   <p align="center">A purely functional, plugin-based Electron framework with type-safe IPC and zero boilerplate.</p>
 </p>
 
 <p align="center">
   <a href="./README.md">English</a> |
-  <a href="./readme/doc/README.zh-CN.md">简体中文</a> |
-  <a href="./readme/doc/README.zh-TW.md">繁體中文</a> |
-  <a href="./readme/doc/README.ja.md">日本語</a>
+  <a href="./README.zh-CN.md">简体中文</a> |
+  <a href="./README.zh-TW.md">繁體中文</a> |
+  <a href="./README.ja.md">日本語</a>
 </p>
 
 <p align="center">
@@ -20,11 +20,11 @@
 
 ---
 
-## Why Revolution?
+## Why X-Elevolution?
 
-Building Electron apps shouldn't mean wrestling with boilerplate, unsafe IPC channels, or tangled class hierarchies. Revolution was born from real frustration:
+Building Electron apps shouldn't mean wrestling with boilerplate, unsafe IPC channels, or tangled class hierarchies. X-Elevolution was born from real frustration:
 
-| Pain Point | Revolution's Answer |
+| Pain Point | X-Elevolution's Answer |
 |---|---|
 | IPC channels are stringly-typed and error-prone | **Write handlers once → types auto-generated for renderer** |
 | Class-based frameworks are rigid and hard to test | **Purely functional — arrow functions all the way** |
@@ -43,15 +43,13 @@ pnpm dev
 
 That's it. You have a running Electron app with React, Vite HMR, type-safe IPC, and a plugin system ready to go.
 
-![Main Application](./readme/imgs/home.png)
-
 ## Core Concepts
 
 ### Type-Safe IPC (Write Once, Types Everywhere)
 
 Define handlers in the main process:
 
-``ts
+```ts
 // main-process/ipc/user.ts
 import { defineHandlers, defineListeners } from "@x-elevolution/core";
 
@@ -165,8 +163,6 @@ sendToWindow("main", "notification", { message: "Hello!" });
 broadcastToWindows("theme:changed", "dark");
 ```
 
-![Child Window](./readme/imgs/child-a.png)
-
 ### IPC Middleware & Interceptors
 
 ```ts
@@ -204,13 +200,6 @@ EventBus.once("app:first-launch", () => {
   // Runs only once
 });
 ```
-
-### Built-in DevTools
-
-The framework includes a built-in DevTools panel that provides real-time visibility into IPC calls, plugin state, and application memory usage:
-
-![DevTools Panel](./readme/imgs/devtools.png)
-![DevTools IPC Monitoring](./readme/imgs/devtools2.png)
 
 ## CLI Commands
 
@@ -337,18 +326,21 @@ onWindowClosed((name, win) => {
 ## Monorepo Structure
 
 ```
-electron-revolution/
+x-elevolution/
 ├── packages/
-│   ├── core/     → @x-elevolution/core（runtime framework）
-│   └── cli/      → @x-elevolution/cli（scaffolding tool）
+│   ├── core/     → @x-elevolution/core (runtime framework)
+│   └── cli/      → @x-elevolution/cli (scaffolding tool)
 ├── apps/
 │   └── electron-app/  → Example app & CLI template
 ├── docs/              → Documentation
 ├── turbo.json
 ├── pnpm-workspace.yaml
 └── package.json
-````
+```
 
+## Contributing
+
+See [docs/guide.md](./docs/guide.md) for the contributor guide covering local development, code conventions, and publishing.
 
 ## License
 

@@ -1,10 +1,10 @@
 <p align="center">
-  <h1 align="center">⚡ Electron Revolution</h1>
+  <h1 align="center">⚡ Electron X-Elevolution</h1>
   <p align="center">純粋関数型・プラグインベースの Electron フレームワーク。型安全な IPC、ボイラープレートゼロ。</p>
 </p>
 
 <p align="center">
-  <a href="../../README.md">English</a> |
+  <a href="./README.md">English</a> |
   <a href="./README.zh-CN.md">简体中文</a> |
   <a href="./README.zh-TW.md">繁體中文</a> |
   <a href="./README.ja.md">日本語</a>
@@ -20,11 +20,11 @@
 
 ---
 
-## なぜ Revolution？
+## なぜ X-Elevolution？
 
-Electron アプリの構築は、ボイラープレート、安全でない IPC チャンネル、複雑なクラス階層との格闘であるべきではありません。Revolution は実際の開発の痛みから生まれました：
+Electron アプリの構築は、ボイラープレート、安全でない IPC チャンネル、複雑なクラス階層との格闘であるべきではありません。X-Elevolution は実際の開発の痛みから生まれました：
 
-| 課題 | Revolution の解決策 |
+| 課題 | X-Elevolution の解決策 |
 |---|---|
 | IPC チャンネルが文字列型で間違いやすい | **ハンドラーを一度書く → 型がレンダラーに自動生成** |
 | クラスベースのフレームワークは硬直的でテストしにくい | **純粋関数型 — すべてアロー関数** |
@@ -34,7 +34,7 @@ Electron アプリの構築は、ボイラープレート、安全でない IPC 
 
 ## クイックスタート
 
-```
+```bash
 npx @x-elevolution/cli create my-app
 cd my-app
 pnpm install
@@ -43,15 +43,13 @@ pnpm dev
 
 これだけです。React、Vite HMR、型安全な IPC、プラグインシステムを備えた Electron アプリが動作しています。
 
-![メインアプリケーション](../../readme/imgs/home.png)
-
 ## コアコンセプト
 
 ### 型安全な IPC（一度書けば、型はどこでも）
 
 メインプロセスでハンドラーを定義：
 
-```
+```ts
 // main-process/ipc/user.ts
 import { defineHandlers, defineListeners } from "@x-elevolution/core";
 
@@ -73,7 +71,7 @@ export const userListeners = defineListeners({
 
 ルートを登録：
 
-```
+```ts
 // main-process/main.ts
 import { registerRoutes } from "@x-elevolution/core";
 import { userHandlers, userListeners } from "./ipc/user";
@@ -84,13 +82,13 @@ registerRoutes(userListeners.routes);
 
 レンダラーの型を生成：
 
-```
+```bash
 pnpm gen:ipc
 ```
 
 レンダラーで完全な型安全性を享受：
 
-```
+```ts
 // renderer — 型は自動生成済み！
 const user = await ipcInvoke("user:get", "123");
 //    ^? { id: string; name: string; email: string }
@@ -100,7 +98,7 @@ const user = await ipcInvoke("user:get", "123");
 
 プラグインは自己完結型のユニットで、IPC ルート、ウィンドウ、コマンドを登録し、イベントで通信できます：
 
-```
+```ts
 import { definePlugin, defineHandlers } from "@x-elevolution/core";
 
 const handlers = defineHandlers({
@@ -136,7 +134,7 @@ export const notesPlugin = definePlugin({
 
 メインプロセスでプラグインをインストール：
 
-```
+```ts
 import { installPlugin } from "@x-elevolution/core";
 import { notesPlugin } from "./plugins/notes";
 
@@ -145,7 +143,7 @@ await installPlugin(notesPlugin);
 
 ### ウィンドウ管理
 
-```
+```ts
 import { registerWindows, createWindow, sendToWindow, broadcastToWindows } from "@x-elevolution/core";
 
 // ウィンドウファクトリを登録
@@ -165,11 +163,9 @@ sendToWindow("main", "notification", { message: "こんにちは！" });
 broadcastToWindows("theme:changed", "dark");
 ```
 
-![子ウィンドウ](../../readme/imgs/child-a.png)
-
 ### IPC ミドルウェアとインターセプター
 
-```
+```ts
 import { useIpcMiddleware, addIpcInterceptor } from "@x-elevolution/core";
 
 // ミドルウェア — 呼び出しを傍受、変更、または中止可能
@@ -191,7 +187,7 @@ remove();
 
 ### EventBus（プラグイン間通信）
 
-```
+```ts
 import { EventBus } from "@x-elevolution/core";
 
 EventBus.on("user:login", (user) => {
@@ -205,13 +201,6 @@ EventBus.once("app:first-launch", () => {
 });
 ```
 
-### 組み込み DevTools
-
-フレームワークには組み込みの DevTools パネルが含まれており、IPC 呼び出し、プラグイン状態、アプリケーションメモリ使用量をリアルタイムで確認できます：
-
-![DevTools パネル](../../readme/imgs/devtools.png)
-![DevTools IPC モニタリング](../../readme/imgs/devtools2.png)
-
 ## CLI コマンド
 
 | コマンド | 説明 |
@@ -221,7 +210,7 @@ EventBus.once("app:first-launch", () => {
 | `x-elevolution add window <name>` | ウィンドウを生成（メインファクトリ + レンダラーページ） |
 | `x-elevolution add plugin <name>` | プラグインスキャフォールドを生成 |
 | `x-elevolution add ipc <name>` | IPC モジュールを生成（handlers + listeners） |
-| `x-elevolution gen:ipc` | レンダラー IPC 型を自動生成 |
+| `x-elevolution gen:ipc` | ハンドラーからレンダラー IPC 型を自動生成 |
 
 ## プロジェクト構造（`create` 後）
 
@@ -264,7 +253,7 @@ my-app/
 
 すべてのプラグインの context にカスタムフィールドを注入：
 
-```
+```ts
 import { extendPluginContext } from "@x-elevolution/core";
 import Store from "electron-store";
 import { dialog } from "electron";
@@ -283,7 +272,7 @@ extendPluginContext((ctx, meta) => {
 
 組み込みの console logger を任意の実装に置換：
 
-```
+```ts
 import { setLogger } from "@x-elevolution/core";
 import log from "electron-log";
 
@@ -293,7 +282,7 @@ setLogger(log);
 
 ### プラグインホットリロード（開発モード）
 
-```
+```ts
 import { installPluginHot } from "@x-elevolution/core";
 import { myPlugin } from "./plugins/my-plugin";
 
@@ -308,7 +297,7 @@ await installPluginHot(
 
 ### ウィンドウライフサイクルフック
 
-```
+```ts
 import { onWindowCreated, onWindowClosed } from "@x-elevolution/core";
 
 onWindowCreated((name, win) => {
@@ -337,7 +326,7 @@ onWindowClosed((name, win) => {
 ## モノレポ構造
 
 ```
-electron-revolution/
+x-elevolution/
 ├── packages/
 │   ├── core/     → @x-elevolution/core（ランタイムフレームワーク）
 │   └── cli/      → @x-elevolution/cli（スキャフォールディングツール）
@@ -347,8 +336,11 @@ electron-revolution/
 ├── turbo.json
 ├── pnpm-workspace.yaml
 └── package.json
-````
+```
 
+## コントリビューション
+
+ローカル開発、コード規約、パブリッシュについては [docs/guide.md](./docs/guide.md) のコントリビューターガイドを参照してください。
 
 ## ライセンス
 

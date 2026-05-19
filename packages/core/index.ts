@@ -1,8 +1,8 @@
 /**
- * @description [zh-CN] Revolution Core — 插件化 Electron 框架核心导出
- * @description [zh-TW] Revolution Core — 插件化 Electron 框架核心匯出
- * @description [en] Revolution Core — pluggable Electron framework core exports
- * @description [ja] Revolution Core — プラグイン化 Electron フレームワークのコアエクスポート
+ * @description [zh-CN] X-Elevolution Core — 插件化 Electron 框架核心导出
+ * @description [zh-TW] X-Elevolution Core — 插件化 Electron 框架核心匯出
+ * @description [en] X-Elevolution Core — pluggable Electron framework core exports
+ * @description [ja] X-Elevolution Core — プラグイン化 Electron フレームワークのコアエクスポート
  */
 
 export {

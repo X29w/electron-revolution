@@ -40,7 +40,7 @@ const App: FC = () => {
       <header className="drag-region flex items-center justify-between px-6 h-12 border-b border-white/5">
         <div className="flex items-center gap-2">
           <span className="text-lg">⚡</span>
-          <span className="text-sm font-medium tracking-wide text-white/80">Revolution</span>
+          <span className="text-sm font-medium tracking-wide text-white/80">X-Elevolution</span>
         </div>
         <div className="no-drag-region flex items-center gap-2">
           <button
@@ -78,7 +78,7 @@ const App: FC = () => {
         <div className="relative">
           <div className="flex items-center gap-3 mb-4">
             <span className="text-4xl">⚡</span>
-            <h1 className="text-4xl font-bold tracking-tight">Revolution</h1>
+            <h1 className="text-4xl font-bold tracking-tight">X-Elevolution</h1>
           </div>
           <p className="text-lg text-white/50 max-w-md leading-relaxed">
             A functional, plugin-based Electron framework
@@ -100,7 +100,7 @@ const App: FC = () => {
               🛠 DevTools
             </button>
             <a
-              href="https://github.com/X29w/electron-revolution"
+              href="https://github.com"
               className="px-5 py-2.5 text-white/50 border border-white/5 rounded-lg text-sm font-medium hover:text-white/70 hover:border-white/10 transition-all"
             >
               Documentation →
