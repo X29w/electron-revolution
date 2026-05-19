@@ -350,7 +350,7 @@ x-elevolution/
 
 ## 貢獻
 
-請參閱 [開發指南](../../development/guide.md) 了解貢獻者指南，包括本地開發、程式碼規範和發佈流程。
+請參閱 [開發指南](../../development/guide/guide.zh-TW.md) 了解貢獻者指南，包括本地開發、程式碼規範和發佈流程。
 
 ## 授權條款
 

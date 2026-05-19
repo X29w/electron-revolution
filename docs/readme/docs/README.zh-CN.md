@@ -350,7 +350,7 @@ x-elevolution/
 
 ## 贡献
 
-请参阅 [开发指南](../../development/guide.md) 了解贡献者指南，包括本地开发、代码规范和发布流程。
+请参阅 [开发指南](../../development/guide/guide.zh-CN.md) 了解贡献者指南，包括本地开发、代码规范和发布流程。
 
 ## 许可证
 

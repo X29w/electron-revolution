@@ -350,7 +350,7 @@ x-elevolution/
 
 ## Contributing
 
-See [docs/development/guide.md](./docs/development/guide.md) for the contributor guide covering local development, code conventions, and publishing.
+See [docs/development/guide](./docs/development/guide/guide.md) for the contributor guide covering local development, code conventions, and publishing.
 
 ## License
 
