@@ -5,9 +5,9 @@
 
 <p align="center">
   <a href="./README.md">English</a> |
-  <a href="./README.zh-CN.md">简体中文</a> |
-  <a href="./README.zh-TW.md">繁體中文</a> |
-  <a href="./README.ja.md">日本語</a>
+  <a href="./docs/readme/docs/README.zh-CN.md">简体中文</a> |
+  <a href="./docs/readme/docs/README.zh-TW.md">繁體中文</a> |
+  <a href="./docs/readme/docs/README.ja.md">日本語</a>
 </p>
 
 <p align="center">
@@ -42,6 +42,16 @@ pnpm dev
 ```
 
 That's it. You have a running Electron app with React, Vite HMR, type-safe IPC, and a plugin system ready to go.
+
+## Screenshots
+
+| Main Window | Child Window |
+|:-----------:|:------------:|
+| ![Home](./docs/readme/imgs/home.png) | ![Child-A](./docs/readme/imgs/child-a.png) |
+
+| DevTools - Overview | DevTools - IPC Log |
+|:-------------------:|:------------------:|
+| ![DevTools](./docs/readme/imgs/devtools.png) | ![DevTools2](./docs/readme/imgs/devtools2.png) |
 
 ## Core Concepts
 
@@ -340,7 +350,7 @@ x-elevolution/
 
 ## Contributing
 
-See [docs/guide.md](./docs/guide.md) for the contributor guide covering local development, code conventions, and publishing.
+See [docs/development/guide.md](./docs/development/guide.md) for the contributor guide covering local development, code conventions, and publishing.
 
 ## License
 

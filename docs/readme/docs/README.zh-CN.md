@@ -4,7 +4,7 @@
 </p>
 
 <p align="center">
-  <a href="./README.md">English</a> |
+  <a href="../../../README.md">English</a> |
   <a href="./README.zh-CN.md">简体中文</a> |
   <a href="./README.zh-TW.md">繁體中文</a> |
   <a href="./README.ja.md">日本語</a>
@@ -42,6 +42,16 @@ pnpm dev
 ```
 
 就这样。你已经拥有一个运行中的 Electron 应用，包含 React、Vite HMR、类型安全的 IPC 和即用的插件系统。
+
+## 截图
+
+| 主窗口 | 子窗口 |
+|:------:|:------:|
+| ![Home](../imgs/home.png) | ![Child-A](../imgs/child-a.png) |
+
+| DevTools - 概览 | DevTools - IPC 日志 |
+|:---------------:|:-------------------:|
+| ![DevTools](../imgs/devtools.png) | ![DevTools2](../imgs/devtools2.png) |
 
 ## 核心概念
 
@@ -340,7 +350,7 @@ x-elevolution/
 
 ## 贡献
 
-请参阅 [docs/guide.md](./docs/guide.md) 了解贡献者指南，包括本地开发、代码规范和发布流程。
+请参阅 [开发指南](../../development/guide.md) 了解贡献者指南，包括本地开发、代码规范和发布流程。
 
 ## 许可证
 

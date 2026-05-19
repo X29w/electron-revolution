@@ -4,7 +4,7 @@
 </p>
 
 <p align="center">
-  <a href="./README.md">English</a> |
+  <a href="../../../README.md">English</a> |
   <a href="./README.zh-CN.md">简体中文</a> |
   <a href="./README.zh-TW.md">繁體中文</a> |
   <a href="./README.ja.md">日本語</a>
@@ -42,6 +42,16 @@ pnpm dev
 ```
 
 これだけです。React、Vite HMR、型安全な IPC、プラグインシステムを備えた Electron アプリが動作しています。
+
+## スクリーンショット
+
+| メインウィンドウ | 子ウィンドウ |
+|:---------------:|:------------:|
+| ![Home](../imgs/home.png) | ![Child-A](../imgs/child-a.png) |
+
+| DevTools - 概要 | DevTools - IPC ログ |
+|:---------------:|:-------------------:|
+| ![DevTools](../imgs/devtools.png) | ![DevTools2](../imgs/devtools2.png) |
 
 ## コアコンセプト
 
@@ -340,7 +350,7 @@ x-elevolution/
 
 ## コントリビューション
 
-ローカル開発、コード規約、パブリッシュについては [docs/guide.md](./docs/guide.md) のコントリビューターガイドを参照してください。
+ローカル開発、コード規約、パブリッシュについては [開発ガイド](../../development/guide.md) のコントリビューターガイドを参照してください。
 
 ## ライセンス
 
