@@ -59,7 +59,7 @@ const App: FC = () => {
         <div className="mb-8">
           <h1 className="text-2xl font-bold tracking-tight mb-2">Code Examples</h1>
           <p className="text-sm text-white/40">
-            See how Revolution's core APIs work in practice.
+            See how X-Elevolution's core APIs work in practice.
           </p>
         </div>
 

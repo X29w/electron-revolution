@@ -1,10 +1,10 @@
 <p align="center">
-  <h1 align="center">⚡ Electron Revolution</h1>
+  <h1 align="center">⚡ Electron X-Elevolution</h1>
   <p align="center">纯函数式、插件化的 Electron 框架，类型安全的 IPC，零样板代码。</p>
 </p>
 
 <p align="center">
-  <a href="../../README.md">English</a> |
+  <a href="../../../README.md">English</a> |
   <a href="./README.zh-CN.md">简体中文</a> |
   <a href="./README.zh-TW.md">繁體中文</a> |
   <a href="./README.ja.md">日本語</a>
@@ -20,11 +20,11 @@
 
 ---
 
-## 为什么选择 Revolution？
+## 为什么选择 X-Elevolution？
 
-构建 Electron 应用不应该意味着与样板代码、不安全的 IPC 通道或纠缠的类层次结构作斗争。Revolution 诞生于真实的开发痛点：
+构建 Electron 应用不应该意味着与样板代码、不安全的 IPC 通道或纠缠的类层次结构作斗争。X-Elevolution 诞生于真实的开发痛点：
 
-| 痛点 | Revolution 的解决方案 |
+| 痛点 | X-Elevolution 的解决方案 |
 |---|---|
 | IPC 通道是字符串类型，容易出错 | **写一次 handler → 类型自动生成到渲染进程** |
 | 基于类的框架僵硬且难以测试 | **纯函数式 — 全程箭头函数** |
@@ -35,7 +35,7 @@
 ## 快速开始
 
 ```bash
-npx @revolution/cli create my-app
+npx @x-elevolution/cli create my-app
 cd my-app
 pnpm install
 pnpm dev
@@ -43,7 +43,15 @@ pnpm dev
 
 就这样。你已经拥有一个运行中的 Electron 应用，包含 React、Vite HMR、类型安全的 IPC 和即用的插件系统。
 
-![主应用程序](../../readme/imgs/home.png)
+## 截图
+
+| 主窗口 | 子窗口 |
+|:------:|:------:|
+| ![Home](../imgs/home.png) | ![Child-A](../imgs/child-a.png) |
+
+| DevTools - 概览 | DevTools - IPC 日志 |
+|:---------------:|:-------------------:|
+| ![DevTools](../imgs/devtools.png) | ![DevTools2](../imgs/devtools2.png) |
 
 ## 核心概念
 
@@ -53,7 +61,7 @@ pnpm dev
 
 ```ts
 // main-process/ipc/user.ts
-import { defineHandlers, defineListeners } from "@revolution/core";
+import { defineHandlers, defineListeners } from "@x-elevolution/core";
 
 export const userHandlers = defineHandlers({
   "user:get": (event, id: string) => {
@@ -75,7 +83,7 @@ export const userListeners = defineListeners({
 
 ```ts
 // main-process/main.ts
-import { registerRoutes } from "@revolution/core";
+import { registerRoutes } from "@x-elevolution/core";
 import { userHandlers, userListeners } from "./ipc/user";
 
 registerRoutes(userHandlers.routes);
@@ -101,7 +109,7 @@ const user = await ipcInvoke("user:get", "123");
 插件是自包含的单元，可以注册 IPC 路由、窗口、命令，并通过事件通信：
 
 ```ts
-import { definePlugin, defineHandlers } from "@revolution/core";
+import { definePlugin, defineHandlers } from "@x-elevolution/core";
 
 const handlers = defineHandlers({
   "notes:create": (_, title: string, content: string) => {
@@ -137,7 +145,7 @@ export const notesPlugin = definePlugin({
 在主进程中安装插件：
 
 ```ts
-import { installPlugin } from "@revolution/core";
+import { installPlugin } from "@x-elevolution/core";
 import { notesPlugin } from "./plugins/notes";
 
 await installPlugin(notesPlugin);
@@ -146,7 +154,7 @@ await installPlugin(notesPlugin);
 ### 窗口管理
 
 ```ts
-import { registerWindows, createWindow, sendToWindow, broadcastToWindows } from "@revolution/core";
+import { registerWindows, createWindow, sendToWindow, broadcastToWindows } from "@x-elevolution/core";
 
 // 注册窗口工厂
 registerWindows({
@@ -165,12 +173,10 @@ sendToWindow("main", "notification", { message: "你好！" });
 broadcastToWindows("theme:changed", "dark");
 ```
 
-![子窗口](../../readme/imgs/child-a.png)
-
 ### IPC 中间件与拦截器
 
 ```ts
-import { useIpcMiddleware, addIpcInterceptor } from "@revolution/core";
+import { useIpcMiddleware, addIpcInterceptor } from "@x-elevolution/core";
 
 // 中间件 — 可以拦截、修改或终止调用
 useIpcMiddleware((channel, type, args, next) => {
@@ -192,7 +198,7 @@ remove();
 ### EventBus（插件间通信）
 
 ```ts
-import { EventBus } from "@revolution/core";
+import { EventBus } from "@x-elevolution/core";
 
 EventBus.on("user:login", (user) => {
   console.log(`${user.name} 已登录`);
@@ -205,27 +211,20 @@ EventBus.once("app:first-launch", () => {
 });
 ```
 
-### 内置 DevTools
-
-框架包含内置的 DevTools 面板，提供对 IPC 调用、插件状态和应用程序内存使用的实时可见性：
-
-![DevTools 面板](../../readme/imgs/devtools.png)
-![DevTools IPC 监控](../../readme/imgs/devtools2.png)
-
 ## CLI 命令
 
 | 命令 | 描述 |
 |---|---|
-| `revolution create <name>` | 创建完整项目 |
-| `revolution create <name> --local` | 创建项目并链接本地 core（开发用） |
-| `revolution add window <name>` | 生成窗口（主进程工厂 + 渲染进程页面） |
-| `revolution add plugin <name>` | 生成插件骨架 |
-| `revolution add ipc <name>` | 生成 IPC 模块（handlers + listeners） |
-| `revolution gen:ipc` | 从 handlers 自动生成渲染进程 IPC 类型 |
+| `x-elevolution create <name>` | 创建完整项目 |
+| `x-elevolution create <name> --local` | 创建项目并链接本地 core（开发用） |
+| `x-elevolution add window <name>` | 生成窗口（主进程工厂 + 渲染进程页面） |
+| `x-elevolution add plugin <name>` | 生成插件骨架 |
+| `x-elevolution add ipc <name>` | 生成 IPC 模块（handlers + listeners） |
+| `x-elevolution gen:ipc` | 从 handlers 自动生成渲染进程 IPC 类型 |
 
 ## 项目结构（`create` 之后）
 
-````
+```
 my-app/
 ├── main-process/
 │   ├── main.ts                  # 入口文件
@@ -256,7 +255,7 @@ my-app/
 ├── vite.config.ts               # Vite 多页面配置
 ├── tsconfig.json
 └── package.json
-````
+```
 
 ## 可扩展性
 
@@ -265,7 +264,7 @@ my-app/
 向所有插件的 context 注入自定义字段：
 
 ```ts
-import { extendPluginContext } from "@revolution/core";
+import { extendPluginContext } from "@x-elevolution/core";
 import Store from "electron-store";
 import { dialog } from "electron";
 
@@ -284,7 +283,7 @@ extendPluginContext((ctx, meta) => {
 用任意实现替换内置的 console logger：
 
 ```ts
-import { setLogger } from "@revolution/core";
+import { setLogger } from "@x-elevolution/core";
 import log from "electron-log";
 
 setLogger(log);
@@ -294,7 +293,7 @@ setLogger(log);
 ### 插件热重载（开发模式）
 
 ```ts
-import { installPluginHot } from "@revolution/core";
+import { installPluginHot } from "@x-elevolution/core";
 import { myPlugin } from "./plugins/my-plugin";
 
 await installPluginHot(
@@ -309,7 +308,7 @@ await installPluginHot(
 ### 窗口生命周期钩子
 
 ```ts
-import { onWindowCreated, onWindowClosed } from "@revolution/core";
+import { onWindowCreated, onWindowClosed } from "@x-elevolution/core";
 
 onWindowCreated((name, win) => {
   console.log(`窗口 "${name}" 已创建`);
@@ -336,19 +335,22 @@ onWindowClosed((name, win) => {
 
 ## Monorepo 结构
 
-````
-electron-revolution/
+```
+x-elevolution/
 ├── packages/
-│   ├── core/     → @revolution/core（运行时框架）
-│   └── cli/      → @revolution/cli（脚手架工具）
+│   ├── core/     → @x-elevolution/core（运行时框架）
+│   └── cli/      → @x-elevolution/cli（脚手架工具）
 ├── apps/
 │   └── electron-app/  → 示例应用 & CLI 模板
 ├── docs/              → 文档
 ├── turbo.json
 ├── pnpm-workspace.yaml
 └── package.json
-````
+```
 
+## 贡献
+
+请参阅 [开发指南](../../development/guide/guide.zh-CN.md) 了解贡献者指南，包括本地开发、代码规范和发布流程。
 
 ## 许可证
 

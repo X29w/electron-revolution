@@ -1,13 +1,13 @@
 <p align="center">
-  <h1 align="center">⚡ Electron Revolution</h1>
+  <h1 align="center">⚡ Electron X-Elevolution</h1>
   <p align="center">A purely functional, plugin-based Electron framework with type-safe IPC and zero boilerplate.</p>
 </p>
 
 <p align="center">
   <a href="./README.md">English</a> |
-  <a href="./readme/doc/README.zh-CN.md">简体中文</a> |
-  <a href="./readme/doc/README.zh-TW.md">繁體中文</a> |
-  <a href="./readme/doc/README.ja.md">日本語</a>
+  <a href="./docs/readme/docs/README.zh-CN.md">简体中文</a> |
+  <a href="./docs/readme/docs/README.zh-TW.md">繁體中文</a> |
+  <a href="./docs/readme/docs/README.ja.md">日本語</a>
 </p>
 
 <p align="center">
@@ -20,11 +20,11 @@
 
 ---
 
-## Why Revolution?
+## Why X-Elevolution?
 
-Building Electron apps shouldn't mean wrestling with boilerplate, unsafe IPC channels, or tangled class hierarchies. Revolution was born from real frustration:
+Building Electron apps shouldn't mean wrestling with boilerplate, unsafe IPC channels, or tangled class hierarchies. X-Elevolution was born from real frustration:
 
-| Pain Point | Revolution's Answer |
+| Pain Point | X-Elevolution's Answer |
 |---|---|
 | IPC channels are stringly-typed and error-prone | **Write handlers once → types auto-generated for renderer** |
 | Class-based frameworks are rigid and hard to test | **Purely functional — arrow functions all the way** |
@@ -35,7 +35,7 @@ Building Electron apps shouldn't mean wrestling with boilerplate, unsafe IPC cha
 ## Quick Start
 
 ```bash
-npx @revolution/cli create my-app
+npx @x-elevolution/cli create my-app
 cd my-app
 pnpm install
 pnpm dev
@@ -43,7 +43,15 @@ pnpm dev
 
 That's it. You have a running Electron app with React, Vite HMR, type-safe IPC, and a plugin system ready to go.
 
-![Main Application](./readme/imgs/home.png)
+## Screenshots
+
+| Main Window | Child Window |
+|:-----------:|:------------:|
+| ![Home](./docs/readme/imgs/home.png) | ![Child-A](./docs/readme/imgs/child-a.png) |
+
+| DevTools - Overview | DevTools - IPC Log |
+|:-------------------:|:------------------:|
+| ![DevTools](./docs/readme/imgs/devtools.png) | ![DevTools2](./docs/readme/imgs/devtools2.png) |
 
 ## Core Concepts
 
@@ -53,7 +61,7 @@ Define handlers in the main process:
 
 ```ts
 // main-process/ipc/user.ts
-import { defineHandlers, defineListeners } from "@revolution/core";
+import { defineHandlers, defineListeners } from "@x-elevolution/core";
 
 export const userHandlers = defineHandlers({
   "user:get": (event, id: string) => {
@@ -75,7 +83,7 @@ Register them:
 
 ```ts
 // main-process/main.ts
-import { registerRoutes } from "@revolution/core";
+import { registerRoutes } from "@x-elevolution/core";
 import { userHandlers, userListeners } from "./ipc/user";
 
 registerRoutes(userHandlers.routes);
@@ -101,7 +109,7 @@ const user = await ipcInvoke("user:get", "123");
 Plugins are self-contained units that can register IPC routes, windows, commands, and communicate via events:
 
 ```ts
-import { definePlugin, defineHandlers } from "@revolution/core";
+import { definePlugin, defineHandlers } from "@x-elevolution/core";
 
 const handlers = defineHandlers({
   "notes:create": (_, title: string, content: string) => {
@@ -137,7 +145,7 @@ export const notesPlugin = definePlugin({
 Install plugins in your main process:
 
 ```ts
-import { installPlugin } from "@revolution/core";
+import { installPlugin } from "@x-elevolution/core";
 import { notesPlugin } from "./plugins/notes";
 
 await installPlugin(notesPlugin);
@@ -146,7 +154,7 @@ await installPlugin(notesPlugin);
 ### Window Management
 
 ```ts
-import { registerWindows, createWindow, sendToWindow, broadcastToWindows } from "@revolution/core";
+import { registerWindows, createWindow, sendToWindow, broadcastToWindows } from "@x-elevolution/core";
 
 // Register window factories
 registerWindows({
@@ -165,12 +173,10 @@ sendToWindow("main", "notification", { message: "Hello!" });
 broadcastToWindows("theme:changed", "dark");
 ```
 
-![Child Window](./readme/imgs/child-a.png)
-
 ### IPC Middleware & Interceptors
 
 ```ts
-import { useIpcMiddleware, addIpcInterceptor } from "@revolution/core";
+import { useIpcMiddleware, addIpcInterceptor } from "@x-elevolution/core";
 
 // Middleware — can intercept, modify, or abort calls
 useIpcMiddleware((channel, type, args, next) => {
@@ -192,7 +198,7 @@ remove();
 ### EventBus (Inter-Plugin Communication)
 
 ```ts
-import { EventBus } from "@revolution/core";
+import { EventBus } from "@x-elevolution/core";
 
 EventBus.on("user:login", (user) => {
   console.log(`${user.name} logged in`);
@@ -205,27 +211,20 @@ EventBus.once("app:first-launch", () => {
 });
 ```
 
-### Built-in DevTools
-
-The framework includes a built-in DevTools panel that provides real-time visibility into IPC calls, plugin state, and application memory usage:
-
-![DevTools Panel](./readme/imgs/devtools.png)
-![DevTools IPC Monitoring](./readme/imgs/devtools2.png)
-
 ## CLI Commands
 
 | Command | Description |
 |---|---|
-| `revolution create <name>` | Scaffold a complete project |
-| `revolution create <name> --local` | Scaffold with local core link (for development) |
-| `revolution add window <name>` | Generate window (main factory + renderer page) |
-| `revolution add plugin <name>` | Generate plugin scaffold |
-| `revolution add ipc <name>` | Generate IPC module with handlers & listeners |
-| `revolution gen:ipc` | Auto-generate renderer IPC types from handlers |
+| `x-elevolution create <name>` | Scaffold a complete project |
+| `x-elevolution create <name> --local` | Scaffold with local core link (for development) |
+| `x-elevolution add window <name>` | Generate window (main factory + renderer page) |
+| `x-elevolution add plugin <name>` | Generate plugin scaffold |
+| `x-elevolution add ipc <name>` | Generate IPC module with handlers & listeners |
+| `x-elevolution gen:ipc` | Auto-generate renderer IPC types from handlers |
 
 ## Project Structure (After `create`)
 
-````
+```
 my-app/
 ├── main-process/
 │   ├── main.ts                  # Entry point
@@ -256,7 +255,7 @@ my-app/
 ├── vite.config.ts               # Vite multi-page config
 ├── tsconfig.json
 └── package.json
-````
+```
 
 ## Extensibility
 
@@ -265,7 +264,7 @@ my-app/
 Inject custom fields into all plugin contexts:
 
 ```ts
-import { extendPluginContext } from "@revolution/core";
+import { extendPluginContext } from "@x-elevolution/core";
 import Store from "electron-store";
 import { dialog } from "electron";
 
@@ -284,7 +283,7 @@ extendPluginContext((ctx, meta) => {
 Replace the built-in console logger with any implementation:
 
 ```ts
-import { setLogger } from "@revolution/core";
+import { setLogger } from "@x-elevolution/core";
 import log from "electron-log";
 
 setLogger(log);
@@ -294,7 +293,7 @@ setLogger(log);
 ### Plugin Hot-Reload (Dev Mode)
 
 ```ts
-import { installPluginHot } from "@revolution/core";
+import { installPluginHot } from "@x-elevolution/core";
 import { myPlugin } from "./plugins/my-plugin";
 
 await installPluginHot(
@@ -309,7 +308,7 @@ await installPluginHot(
 ### Window Lifecycle Hooks
 
 ```ts
-import { onWindowCreated, onWindowClosed } from "@revolution/core";
+import { onWindowCreated, onWindowClosed } from "@x-elevolution/core";
 
 onWindowCreated((name, win) => {
   console.log(`Window "${name}" created`);
@@ -336,19 +335,22 @@ onWindowClosed((name, win) => {
 
 ## Monorepo Structure
 
-````
-electron-revolution/
+```
+x-elevolution/
 ├── packages/
-│   ├── core/     → @revolution/core (runtime framework)
-│   └── cli/      → @revolution/cli (scaffolding tool)
+│   ├── core/     → @x-elevolution/core (runtime framework)
+│   └── cli/      → @x-elevolution/cli (scaffolding tool)
 ├── apps/
 │   └── electron-app/  → Example app & CLI template
 ├── docs/              → Documentation
 ├── turbo.json
 ├── pnpm-workspace.yaml
 └── package.json
-````
+```
 
+## Contributing
+
+See [docs/development/guide](./docs/development/guide/guide.md) for the contributor guide covering local development, code conventions, and publishing.
 
 ## License
 

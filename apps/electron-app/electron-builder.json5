@@ -1,9 +1,9 @@
 // @see - https://www.electron.build/configuration/configuration
 {
   "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
-  "appId": "com.electron-revolution",
+  "appId": "com.x-elevolution",
   "asar": true,
-  "productName": "Revolution",
+  "productName": "X-Elevolution",
   "directories": {
     "output": "release/${version}"
   },

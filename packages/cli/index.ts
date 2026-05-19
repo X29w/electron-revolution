@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 /**
- * @description [zh-CN] Revolution CLI — 代码生成工具，支持创建项目、窗口、插件、IPC 模块
- * @description [zh-TW] Revolution CLI — 程式碼生成工具，支援建立專案、視窗、插件、IPC 模組
- * @description [en] Revolution CLI — code generator for creating projects, windows, plugins, and IPC modules
- * @description [ja] Revolution CLI — プロジェクト、ウィンドウ、プラグイン、IPC モジュールを生成するコードジェネレーター
+ * @description [zh-CN] X-Elevolution CLI — 代码生成工具，支持创建项目、窗口、插件、IPC 模块
+ * @description [zh-TW] X-Elevolution CLI — 程式碼生成工具，支援建立專案、視窗、插件、IPC 模組
+ * @description [en] X-Elevolution CLI — code generator for creating projects, windows, plugins, and IPC modules
+ * @description [ja] X-Elevolution CLI — プロジェクト、ウィンドウ、プラグイン、IPC モジュールを生成するコードジェネレーター
  */
 
 import { resolve, dirname } from "node:path";
@@ -210,7 +210,7 @@ function generatePlugin(pluginName: string) {
  * @description [ja] プラグイン: ${pluginName}
  */
 
-import { definePlugin, defineHandlers, defineListeners } from "@revolution/core";
+import { definePlugin, defineHandlers, defineListeners } from "@x-elevolution/core";
 
 const handlers = defineHandlers({
   "${pluginName}:hello": (_, name: string) => {
@@ -298,7 +298,7 @@ function generateIpc(moduleName: string) {
  * @description [ja] IPC: ${toPascalCase(moduleName)}
  */
 
-import { defineHandlers, defineListeners } from "@revolution/core";
+import { defineHandlers, defineListeners } from "@x-elevolution/core";
 
 export const ${handlersName} = defineHandlers({
   "${moduleName}:get": (_, id: string) => {
@@ -395,9 +395,9 @@ function generateProject(projectName: string) {
       delete pkg.bin;
       pkg.scripts = { dev: pkg.scripts.dev, build: pkg.scripts.build };
       if (flags.includes("--local")) {
-        pkg.dependencies["@revolution/core"] = `link:${resolve(templateRoot, "../../packages/core")}`;
+        pkg.dependencies["@x-elevolution/core"] = `link:${resolve(templateRoot, "../../packages/core")}`;
       } else {
-        pkg.dependencies["@revolution/core"] = "^0.2.0";
+        pkg.dependencies["@x-elevolution/core"] = "^0.2.0";
       }
       content = JSON.stringify(pkg, null, 2);
     }
@@ -422,19 +422,19 @@ function generateProject(projectName: string) {
 
 function printHelp() {
   console.log(`
-  ${c.bold}${c.cyan}⚡ Revolution CLI${c.reset}
+  ${c.bold}${c.cyan}⚡ X-Elevolution CLI${c.reset}
 
   ${c.dim}Usage:${c.reset}
-    ${c.cyan}revolution create${c.reset} <name>         Create a new project
-    ${c.cyan}revolution add window${c.reset} <name>     Add a window
-    ${c.cyan}revolution add plugin${c.reset} <name>     Add a plugin
-    ${c.cyan}revolution add ipc${c.reset} <name>        Add an IPC module
-    ${c.cyan}revolution gen:ipc${c.reset}               Generate renderer IPC types
+    ${c.cyan}x-elevolution create${c.reset} <name>         Create a new project
+    ${c.cyan}x-elevolution add window${c.reset} <name>     Add a window
+    ${c.cyan}x-elevolution add plugin${c.reset} <name>     Add a plugin
+    ${c.cyan}x-elevolution add ipc${c.reset} <name>        Add an IPC module
+    ${c.cyan}x-elevolution gen:ipc${c.reset}               Generate renderer IPC types
 
   ${c.dim}Examples:${c.reset}
-    ${c.dim}${c.reset} revolution create my-app
-    ${c.dim}${c.reset} revolution add window settings
-    ${c.dim}${c.reset} revolution add plugin file-manager
+    ${c.dim}${c.reset} x-elevolution create my-app
+    ${c.dim}${c.reset} x-elevolution add window settings
+    ${c.dim}${c.reset} x-elevolution add plugin file-manager
   `);
 }
 
@@ -443,7 +443,7 @@ function printHelp() {
 switch (command) {
   case "create":
     if (!subCommand) {
-      console.error("Usage: revolution create <project-name>");
+      console.error("Usage: x-elevolution create <project-name>");
       process.exit(1);
     }
     generateProject(subCommand);
@@ -451,7 +451,7 @@ switch (command) {
 
   case "add":
     if (!subCommand || !name) {
-      console.error("Usage: revolution add <window|plugin|ipc> <name>");
+      console.error("Usage: x-elevolution add <window|plugin|ipc> <name>");
       process.exit(1);
     }
     switch (subCommand) {

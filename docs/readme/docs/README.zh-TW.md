@@ -1,10 +1,10 @@
 <p align="center">
-  <h1 align="center">⚡ Electron Revolution</h1>
+  <h1 align="center">⚡ Electron X-Elevolution</h1>
   <p align="center">純函數式、插件化的 Electron 框架，型別安全的 IPC，零樣板程式碼。</p>
 </p>
 
 <p align="center">
-  <a href="../../README.md">English</a> |
+  <a href="../../../README.md">English</a> |
   <a href="./README.zh-CN.md">简体中文</a> |
   <a href="./README.zh-TW.md">繁體中文</a> |
   <a href="./README.ja.md">日本語</a>
@@ -20,11 +20,11 @@
 
 ---
 
-## 為什麼選擇 Revolution？
+## 為什麼選擇 X-Elevolution？
 
-建構 Electron 應用不應該意味著與樣板程式碼、不安全的 IPC 通道或糾纏的類別層次結構搏鬥。Revolution 誕生於真實的開發痛點：
+建構 Electron 應用不應該意味著與樣板程式碼、不安全的 IPC 通道或糾纏的類別層次結構搏鬥。X-Elevolution 誕生於真實的開發痛點：
 
-| 痛點 | Revolution 的解決方案 |
+| 痛點 | X-Elevolution 的解決方案 |
 |---|---|
 | IPC 通道是字串型別，容易出錯 | **寫一次 handler → 型別自動生成到渲染程序** |
 | 基於類別的框架僵硬且難以測試 | **純函數式 — 全程箭頭函數** |
@@ -35,7 +35,7 @@
 ## 快速開始
 
 ```bash
-npx @revolution/cli create my-app
+npx @x-elevolution/cli create my-app
 cd my-app
 pnpm install
 pnpm dev
@@ -43,7 +43,15 @@ pnpm dev
 
 就這樣。你已經擁有一個執行中的 Electron 應用，包含 React、Vite HMR、型別安全的 IPC 和即用的插件系統。
 
-![主應用程式](../../readme/imgs/home.png)
+## 截圖
+
+| 主視窗 | 子視窗 |
+|:------:|:------:|
+| ![Home](../imgs/home.png) | ![Child-A](../imgs/child-a.png) |
+
+| DevTools - 概覽 | DevTools - IPC 日誌 |
+|:---------------:|:-------------------:|
+| ![DevTools](../imgs/devtools.png) | ![DevTools2](../imgs/devtools2.png) |
 
 ## 核心概念
 
@@ -53,7 +61,7 @@ pnpm dev
 
 ```ts
 // main-process/ipc/user.ts
-import { defineHandlers, defineListeners } from "@revolution/core";
+import { defineHandlers, defineListeners } from "@x-elevolution/core";
 
 export const userHandlers = defineHandlers({
   "user:get": (event, id: string) => {
@@ -75,7 +83,7 @@ export const userListeners = defineListeners({
 
 ```ts
 // main-process/main.ts
-import { registerRoutes } from "@revolution/core";
+import { registerRoutes } from "@x-elevolution/core";
 import { userHandlers, userListeners } from "./ipc/user";
 
 registerRoutes(userHandlers.routes);
@@ -101,7 +109,7 @@ const user = await ipcInvoke("user:get", "123");
 插件是自包含的單元，可以註冊 IPC 路由、視窗、命令，並透過事件通訊：
 
 ```ts
-import { definePlugin, defineHandlers } from "@revolution/core";
+import { definePlugin, defineHandlers } from "@x-elevolution/core";
 
 const handlers = defineHandlers({
   "notes:create": (_, title: string, content: string) => {
@@ -137,7 +145,7 @@ export const notesPlugin = definePlugin({
 在主程序中安裝插件：
 
 ```ts
-import { installPlugin } from "@revolution/core";
+import { installPlugin } from "@x-elevolution/core";
 import { notesPlugin } from "./plugins/notes";
 
 await installPlugin(notesPlugin);
@@ -146,7 +154,7 @@ await installPlugin(notesPlugin);
 ### 視窗管理
 
 ```ts
-import { registerWindows, createWindow, sendToWindow, broadcastToWindows } from "@revolution/core";
+import { registerWindows, createWindow, sendToWindow, broadcastToWindows } from "@x-elevolution/core";
 
 // 註冊視窗工廠
 registerWindows({
@@ -165,12 +173,10 @@ sendToWindow("main", "notification", { message: "你好！" });
 broadcastToWindows("theme:changed", "dark");
 ```
 
-![子視窗](../../readme/imgs/child-a.png)
-
 ### IPC 中介軟體與攔截器
 
 ```ts
-import { useIpcMiddleware, addIpcInterceptor } from "@revolution/core";
+import { useIpcMiddleware, addIpcInterceptor } from "@x-elevolution/core";
 
 // 中介軟體 — 可以攔截、修改或終止呼叫
 useIpcMiddleware((channel, type, args, next) => {
@@ -192,7 +198,7 @@ remove();
 ### EventBus（插件間通訊）
 
 ```ts
-import { EventBus } from "@revolution/core";
+import { EventBus } from "@x-elevolution/core";
 
 EventBus.on("user:login", (user) => {
   console.log(`${user.name} 已登入`);
@@ -205,27 +211,20 @@ EventBus.once("app:first-launch", () => {
 });
 ```
 
-### 內建 DevTools
-
-框架包含內建的 DevTools 面板，提供對 IPC 呼叫、插件狀態和應用程式記憶體使用的即時可見性：
-
-![DevTools 面板](../../readme/imgs/devtools.png)
-![DevTools IPC 監控](../../readme/imgs/devtools2.png)
-
 ## CLI 命令
 
 | 命令 | 描述 |
 |---|---|
-| `revolution create <name>` | 建立完整專案 |
-| `revolution create <name> --local` | 建立專案並連結本地 core（開發用） |
-| `revolution add window <name>` | 生成視窗（主程序工廠 + 渲染程序頁面） |
-| `revolution add plugin <name>` | 生成插件骨架 |
-| `revolution add ipc <name>` | 生成 IPC 模組（handlers + listeners） |
-| `revolution gen:ipc` | 從 handlers 自動生成渲染程序 IPC 型別 |
+| `x-elevolution create <name>` | 建立完整專案 |
+| `x-elevolution create <name> --local` | 建立專案並連結本地 core（開發用） |
+| `x-elevolution add window <name>` | 生成視窗（主程序工廠 + 渲染程序頁面） |
+| `x-elevolution add plugin <name>` | 生成插件骨架 |
+| `x-elevolution add ipc <name>` | 生成 IPC 模組（handlers + listeners） |
+| `x-elevolution gen:ipc` | 從 handlers 自動生成渲染程序 IPC 型別 |
 
 ## 專案結構（`create` 之後）
 
-````
+```
 my-app/
 ├── main-process/
 │   ├── main.ts                  # 進入點
@@ -256,7 +255,7 @@ my-app/
 ├── vite.config.ts               # Vite 多頁面設定
 ├── tsconfig.json
 └── package.json
-````
+```
 
 ## 可擴展性
 
@@ -265,7 +264,7 @@ my-app/
 向所有插件的 context 注入自訂欄位：
 
 ```ts
-import { extendPluginContext } from "@revolution/core";
+import { extendPluginContext } from "@x-elevolution/core";
 import Store from "electron-store";
 import { dialog } from "electron";
 
@@ -284,7 +283,7 @@ extendPluginContext((ctx, meta) => {
 用任意實作替換內建的 console logger：
 
 ```ts
-import { setLogger } from "@revolution/core";
+import { setLogger } from "@x-elevolution/core";
 import log from "electron-log";
 
 setLogger(log);
@@ -294,7 +293,7 @@ setLogger(log);
 ### 插件熱重載（開發模式）
 
 ```ts
-import { installPluginHot } from "@revolution/core";
+import { installPluginHot } from "@x-elevolution/core";
 import { myPlugin } from "./plugins/my-plugin";
 
 await installPluginHot(
@@ -309,7 +308,7 @@ await installPluginHot(
 ### 視窗生命週期鉤子
 
 ```ts
-import { onWindowCreated, onWindowClosed } from "@revolution/core";
+import { onWindowCreated, onWindowClosed } from "@x-elevolution/core";
 
 onWindowCreated((name, win) => {
   console.log(`視窗 "${name}" 已建立`);
@@ -336,19 +335,22 @@ onWindowClosed((name, win) => {
 
 ## Monorepo 結構
 
-````
-electron-revolution/
+```
+x-elevolution/
 ├── packages/
-│   ├── core/     → @revolution/core（執行時框架）
-│   └── cli/      → @revolution/cli（腳手架工具）
+│   ├── core/     → @x-elevolution/core（執行時框架）
+│   └── cli/      → @x-elevolution/cli（腳手架工具）
 ├── apps/
 │   └── electron-app/  → 範例應用 & CLI 範本
 ├── docs/              → 文件
 ├── turbo.json
 ├── pnpm-workspace.yaml
 └── package.json
-````
+```
 
+## 貢獻
+
+請參閱 [開發指南](../../development/guide/guide.zh-TW.md) 了解貢獻者指南，包括本地開發、程式碼規範和發佈流程。
 
 ## 授權條款
 

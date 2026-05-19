@@ -13,11 +13,11 @@ export const createMainWindow = (): BrowserWindow => {
   const win = new BrowserWindow({
     width: 1280,
     height: 800,
-    frame:false,
     webPreferences: {
       preload: PRELOAD_PATH,
       contextIsolation: true,
     },
+    frame: false
   });
 
   if (IS_DEV) {
