@@ -380,13 +380,28 @@ function generateProject(projectName: string) {
   }
 
   const templateRoot = resolve(__dirname, "../../apps/electron-app");
+
+  // 尝试从内联 templates.json 读取（npm 发布后使用）
+  let inlineTemplates: Record<string, string> | null = null;
+  const templatesJsonPath = resolve(__dirname, "templates.json");
+  if (!existsSync(templateRoot) && existsSync(templatesJsonPath)) {
+    inlineTemplates = JSON.parse(readFileSync(templatesJsonPath, "utf-8"));
+  }
+
   let fileCount = 0;
   silent = true;
 
   for (const file of TEMPLATE_FILES) {
-    const src = resolve(templateRoot, file);
-    if (!existsSync(src)) continue;
-    let content = readFileSync(src, "utf-8");
+    let content: string | undefined;
+
+    if (inlineTemplates) {
+      content = inlineTemplates[file];
+    } else {
+      const src = resolve(templateRoot, file);
+      if (existsSync(src)) content = readFileSync(src, "utf-8");
+    }
+
+    if (!content) continue;
 
     if (file === "package.json") {
       const pkg = JSON.parse(content);
@@ -395,7 +410,8 @@ function generateProject(projectName: string) {
       delete pkg.bin;
       pkg.scripts = { dev: pkg.scripts.dev, build: pkg.scripts.build };
       if (flags.includes("--local")) {
-        pkg.dependencies["@x-industry/elevolution-core"] = `link:${resolve(templateRoot, "../../packages/core")}`;
+        const localCorePath = resolve(__dirname, "../../packages/core");
+        pkg.dependencies["@x-industry/elevolution-core"] = `link:${localCorePath}`;
       } else {
         pkg.dependencies["@x-industry/elevolution-core"] = "^0.2.0";
       }
