@@ -1,10 +1,10 @@
-# @x-elevolution/cli — 文件
+# @x-industry/elevolution-cli — 文件
 
-`@x-elevolution/cli` 腳手架和程式碼生成工具的完整文件。
+`@x-industry/elevolution-cli` 腳手架和程式碼生成工具的完整文件。
 
 **版本：** 0.2.0  
 **授權條款：** MIT  
-**安裝：** `npm install -g @x-elevolution/cli` 或透過 `npx @x-elevolution/cli` 使用
+**安裝：** `npm install -g @x-industry/elevolution-cli` 或透過 `npx @x-industry/elevolution-cli` 使用
 
 ---
 
@@ -13,11 +13,11 @@
 - [概述](#概述)
 - [安裝](#安裝)
 - [命令](#命令)
-  - [create](#x-elevolution-create-name)
-  - [add window](#x-elevolution-add-window-name)
-  - [add plugin](#x-elevolution-add-plugin-name)
-  - [add ipc](#x-elevolution-add-ipc-name)
-  - [gen:ipc](#x-elevolution-genipc)
+  - [create](#elevolution-create-name)
+  - [add window](#elevolution-add-window-name)
+  - [add plugin](#elevolution-add-plugin-name)
+  - [add ipc](#elevolution-add-ipc-name)
+  - [gen:ipc](#elevolution-genipc)
 - [範本系統](#範本系統)
 - [`create` 內部工作原理](#create-內部工作原理)
 - [生成檔案詳情](#生成檔案詳情)
@@ -28,9 +28,9 @@
 
 ## 概述
 
-`@x-elevolution/cli` 是一個程式碼生成工具，功能包括：
+`@x-industry/elevolution-cli` 是一個程式碼生成工具，功能包括：
 
-1. **搭建完整的 Electron 專案**，採用 X-Elevolution 架構
+1. **搭建完整的 Electron 專案**，採用 Elevolution 架構
 2. **生成視窗**（主程序工廠 + 渲染程序頁面 + HTML 進入點）
 3. **生成插件**，包含正確的結構和樣板程式碼
 4. **生成 IPC 模組**，包含 handler 和 listener 定義
@@ -44,34 +44,34 @@ CLI 旨在消除重複的設定工作，並強制保持一致的專案結構。
 
 ```bash
 # 透過 npx 直接使用（推薦）
-npx @x-elevolution/cli create my-app
+npx @x-industry/elevolution-cli create my-app
 
 # 或全域安裝
-npm install -g @x-elevolution/cli
-x-elevolution create my-app
+npm install -g @x-industry/elevolution-cli
+elevolution create my-app
 
 # 或作為開發依賴安裝
-pnpm add -D @x-elevolution/cli
+pnpm add -D @x-industry/elevolution-cli
 ```
 
 ---
 
 ## 命令
 
-### `x-elevolution create <name>`
+### `elevolution create <name>`
 
 搭建一個完整的、可執行的 Electron 專案。
 
 ```bash
-x-elevolution create my-app
-x-elevolution create my-app --local
+elevolution create my-app
+elevolution create my-app --local
 ```
 
 **參數：**
 - `<name>` — 專案目錄名稱（同時用作 package name）
 
 **旗標：**
-- `--local` — 將 `@x-elevolution/core` 連結到本地 monorepo 路徑而非 npm 版本。用於開發。
+- `--local` — 將 `@x-industry/elevolution-core` 連結到本地 monorepo 路徑而非 npm 版本。用於開發。
 
 **生成內容：**
 
@@ -122,13 +122,13 @@ my-app/
 
 ---
 
-### `x-elevolution add window <name>`
+### `elevolution add window <name>`
 
 生成一個新視窗，包含主程序工廠和渲染程序頁面。
 
 ```bash
-x-elevolution add window settings
-x-elevolution add window file-browser
+elevolution add window settings
+elevolution add window file-browser
 ```
 
 **參數：**
@@ -143,13 +143,13 @@ x-elevolution add window file-browser
 
 ---
 
-### `x-elevolution add plugin <name>`
+### `elevolution add plugin <name>`
 
 生成插件腳手架，包含 IPC handler、listener 和正確的結構。
 
 ```bash
-x-elevolution add plugin file-manager
-x-elevolution add plugin auth
+elevolution add plugin file-manager
+elevolution add plugin auth
 ```
 
 **參數：**
@@ -159,13 +159,13 @@ x-elevolution add plugin auth
 
 ---
 
-### `x-elevolution add ipc <name>`
+### `elevolution add ipc <name>`
 
 生成一個 IPC 模組，包含 handler 和 listener 定義。
 
 ```bash
-x-elevolution add ipc user
-x-elevolution add ipc notification
+elevolution add ipc user
+elevolution add ipc notification
 ```
 
 **參數：**
@@ -175,12 +175,12 @@ x-elevolution add ipc notification
 
 ---
 
-### `x-elevolution gen:ipc`
+### `elevolution gen:ipc`
 
 從主程序 handler 實作自動生成渲染程序 IPC 型別定義。
 
 ```bash
-x-elevolution gen:ipc
+elevolution gen:ipc
 ```
 
 **工作原理：**
@@ -204,7 +204,7 @@ CLI 的 `create` 命令從 monorepo 中的範例應用（`apps/electron-app/`）
 
 1. 將檔案新增到 `apps/electron-app/`
 2. 將相對路徑新增到 `packages/cli/template-files.ts` 的 `TEMPLATE_FILES` 中
-3. 使用 `x-elevolution create test-project --local` 測試
+3. 使用 `elevolution create test-project --local` 測試
 
 ### 範本轉換
 
@@ -213,7 +213,7 @@ CLI 的 `create` 命令從 monorepo 中的範例應用（`apps/electron-app/`）
 - 將 `version` 設定為 `0.1.0`
 - 移除 `bin` 欄位
 - 僅保留 `dev` 和 `build` 腳本
-- 將 `@x-elevolution/core` 依賴設定為 `^0.2.0`（使用 `--local` 時為本地連結）
+- 將 `@x-industry/elevolution-core` 依賴設定為 `^0.2.0`（使用 `--local` 時為本地連結）
 
 ---
 

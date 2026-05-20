@@ -1,6 +1,6 @@
 # コントリビューターガイド
 
-このガイドでは、`x-elevolution` monorepo のローカル開発、コード規約、パブリッシュワークフローについて説明します。
+このガイドでは、`elevolution` monorepo のローカル開発、コード規約、パブリッシュワークフローについて説明します。
 
 ## 前提条件
 
@@ -11,10 +11,10 @@
 ## リポジトリ構造
 
 ```
-x-elevolution/
+elevolution/
 ├── packages/
-│   ├── core/          → @x-elevolution/core（ランタイムフレームワーク、npm に公開）
-│   └── cli/           → @x-elevolution/cli（スキャフォールディングツール、npm に公開）
+│   ├── core/          → @x-industry/elevolution-core（ランタイムフレームワーク、npm に公開）
+│   └── cli/           → @x-industry/elevolution-cli（スキャフォールディングツール、npm に公開）
 ├── apps/
 │   └── electron-app/  → サンプルアプリ（CLI テンプレートソースも兼ねる）
 ├── docs/              → ドキュメント
@@ -27,8 +27,8 @@ x-elevolution/
 
 ```bash
 # リポジトリをクローン
-git clone https://github.com/user/x-elevolution.git
-cd x-elevolution
+git clone https://github.com/user/elevolution.git
+cd elevolution
 
 # 依存関係をインストール
 pnpm install
@@ -41,7 +41,7 @@ pnpm dev
 
 ## 開発ワークフロー
 
-### `@x-elevolution/core` の開発
+### `@x-industry/elevolution-core` の開発
 
 core パッケージは `packages/core/` にあります。ビルドステップはなく、TypeScript ソースを直接エクスポートします（`"main": "./index.ts"` で消費）。
 
@@ -71,7 +71,7 @@ pnpm dev
 4. サンプルアプリでテスト（`apps/electron-app`）
 5. ドキュメントを更新
 
-### `@x-elevolution/cli` の開発
+### `@x-industry/elevolution-cli` の開発
 
 CLI パッケージは `packages/cli/` にあります。
 
@@ -81,7 +81,7 @@ cd packages/cli
 node bin.mjs create test-project --local
 
 # またはワークスペースルートから
-pnpm --filter @x-elevolution/cli exec node bin.mjs --help
+pnpm --filter @x-industry/elevolution-cli exec node bin.mjs --help
 ```
 
 **モジュール構造：**
@@ -245,7 +245,7 @@ npm publish --access public
 - [ ] ドキュメントが更新されている（README + docs/）
 - [ ] 両方の `package.json` ファイルのバージョン番号が更新されている
 - [ ] サンプルアプリが `pnpm dev` で正常に実行できる
-- [ ] `x-elevolution create test --local` が実行可能なプロジェクトを生成できる
+- [ ] `elevolution create test --local` が実行可能なプロジェクトを生成できる
 
 ## Turborepo パイプライン
 
@@ -283,4 +283,4 @@ pnpm install
 
 ### IPC 型が生成されない
 
-プロジェクトルート（またはアプリディレクトリ）から `pnpm gen:ipc` を実行してください。すべてのハンドラーファイルが `@x-elevolution/core` の `defineHandlers` / `defineListeners` を使用していることを確認してください。
+プロジェクトルート（またはアプリディレクトリ）から `pnpm gen:ipc` を実行してください。すべてのハンドラーファイルが `@x-industry/elevolution-core` の `defineHandlers` / `defineListeners` を使用していることを確認してください。

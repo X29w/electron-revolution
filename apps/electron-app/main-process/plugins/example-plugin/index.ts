@@ -5,7 +5,7 @@
  * @description [ja] サンプルプラグイン — 純粋関数でプラグインを書く方法を示す
  */
 
-import { definePlugin, defineHandlers, defineListeners } from "@x-elevolution/core";
+import { definePlugin, defineHandlers, defineListeners } from "@x-industry/elevolution-core";
 
 const handlers = defineHandlers({
   "example:greet": (_, name: string) => `Hello, ${name}!`,

@@ -1,6 +1,6 @@
 # 貢獻者指南
 
-本指南涵蓋 `x-elevolution` monorepo 的本地開發、程式碼規範和發佈流程。
+本指南涵蓋 `elevolution` monorepo 的本地開發、程式碼規範和發佈流程。
 
 ## 前置條件
 
@@ -11,10 +11,10 @@
 ## 倉庫結構
 
 ```
-x-elevolution/
+elevolution/
 ├── packages/
-│   ├── core/          → @x-elevolution/core（執行時框架，發佈到 npm）
-│   └── cli/           → @x-elevolution/cli（腳手架工具，發佈到 npm）
+│   ├── core/          → @x-industry/elevolution-core（執行時框架，發佈到 npm）
+│   └── cli/           → @x-industry/elevolution-cli（腳手架工具，發佈到 npm）
 ├── apps/
 │   └── electron-app/  → 範例應用（同時作為 CLI 範本來源）
 ├── docs/              → 文件
@@ -27,8 +27,8 @@ x-elevolution/
 
 ```bash
 # 複製倉庫
-git clone https://github.com/user/x-elevolution.git
-cd x-elevolution
+git clone https://github.com/user/elevolution.git
+cd elevolution
 
 # 安裝依賴
 pnpm install
@@ -41,7 +41,7 @@ pnpm dev
 
 ## 開發工作流
 
-### 開發 `@x-elevolution/core`
+### 開發 `@x-industry/elevolution-core`
 
 core 套件位於 `packages/core/`。它沒有建構步驟——直接匯出 TypeScript 原始碼（透過 `"main": "./index.ts"` 消費）。
 
@@ -71,7 +71,7 @@ pnpm dev
 4. 在範例應用中測試（`apps/electron-app`）
 5. 更新文件
 
-### 開發 `@x-elevolution/cli`
+### 開發 `@x-industry/elevolution-cli`
 
 CLI 套件位於 `packages/cli/`。
 
@@ -81,7 +81,7 @@ cd packages/cli
 node bin.mjs create test-project --local
 
 # 或從工作區根目錄
-pnpm --filter @x-elevolution/cli exec node bin.mjs --help
+pnpm --filter @x-industry/elevolution-cli exec node bin.mjs --help
 ```
 
 **模組結構：**
@@ -245,7 +245,7 @@ npm publish --access public
 - [ ] 文件已更新（README + docs/）
 - [ ] 兩個 `package.json` 檔案的版本號已升級
 - [ ] 範例應用透過 `pnpm dev` 可以正常執行
-- [ ] `x-elevolution create test --local` 能生成可執行的專案
+- [ ] `elevolution create test --local` 能生成可執行的專案
 
 ## Turborepo 管道
 
@@ -283,4 +283,4 @@ pnpm install
 
 ### IPC 型別未生成
 
-從專案根目錄（或應用目錄）執行 `pnpm gen:ipc`。確保所有 handler 檔案使用了 `@x-elevolution/core` 中的 `defineHandlers` / `defineListeners`。
+從專案根目錄（或應用目錄）執行 `pnpm gen:ipc`。確保所有 handler 檔案使用了 `@x-industry/elevolution-core` 中的 `defineHandlers` / `defineListeners`。

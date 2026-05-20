@@ -3,7 +3,7 @@
  * @description [en] DevTools plugin — visual debug panel
  */
 
-import { definePlugin, defineHandlers, useIpcMiddleware, getInstalledPlugins, getRegisteredWindows, EventBus } from "@x-elevolution/core";
+import { definePlugin, defineHandlers, useIpcMiddleware, getInstalledPlugins, getRegisteredWindows, EventBus } from "@x-industry/elevolution-core";
 
 interface IpcLogEntry {
   timestamp: number;
@@ -45,7 +45,7 @@ export const devtoolsPlugin = definePlugin({
   meta: {
     name: "devtools",
     version: "1.0.0",
-    description: "Built-in visual debug panel for X-Elevolution",
+    description: "Built-in visual debug panel for Elevolution",
   },
 
   api: { getIpcLog: () => [...ipcLog] },

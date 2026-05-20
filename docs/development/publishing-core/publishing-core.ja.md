@@ -1,10 +1,10 @@
-# @x-elevolution/core — API リファレンス
+# @x-industry/elevolution-core — API リファレンス
 
-`@x-elevolution/core` パッケージの完全な API ドキュメントです。
+`@x-industry/elevolution-core` パッケージの完全な API ドキュメントです。
 
 **バージョン：** 0.2.0  
 **ライセンス：** MIT  
-**インストール：** `pnpm add @x-elevolution/core`
+**インストール：** `pnpm add @x-industry/elevolution-core`
 
 ---
 
@@ -53,7 +53,7 @@
 
 ## IPC モジュール
 
-インポート：`import { ... } from "@x-elevolution/core"` または `import { ... } from "@x-elevolution/core/ipc"`
+インポート：`import { ... } from "@x-industry/elevolution-core"` または `import { ... } from "@x-industry/elevolution-core/ipc"`
 
 ### defineHandlers
 
@@ -74,7 +74,7 @@ const defineHandlers: <T extends Record<string, HandleFn>>(handlers: T) => {
 **例：**
 
 ```ts
-import { defineHandlers } from "@x-elevolution/core";
+import { defineHandlers } from "@x-industry/elevolution-core";
 
 export const fileHandlers = defineHandlers({
   "file:read": (event, path: string) => {
@@ -109,7 +109,7 @@ const defineListeners: <T extends Record<string, OnFn>>(listeners: T) => {
 **例：**
 
 ```ts
-import { defineListeners } from "@x-elevolution/core";
+import { defineListeners } from "@x-industry/elevolution-core";
 
 export const appListeners = defineListeners({
   "app:log": (event, level: string, message: string) => {
@@ -169,7 +169,7 @@ type IpcMiddleware = (
 **例：**
 
 ```ts
-import { useIpcMiddleware } from "@x-elevolution/core";
+import { useIpcMiddleware } from "@x-industry/elevolution-core";
 
 // ロギングミドルウェア
 useIpcMiddleware((channel, type, args, next) => {
@@ -205,7 +205,7 @@ type IpcInterceptor = (channel: string, type: "handle" | "on") => void;
 
 ## ウィンドウモジュール
 
-インポート：`import { ... } from "@x-elevolution/core"` または `import { ... } from "@x-elevolution/core/window"`
+インポート：`import { ... } from "@x-industry/elevolution-core"` または `import { ... } from "@x-industry/elevolution-core/window"`
 
 ### registerWindow
 
@@ -309,7 +309,7 @@ const onWindowClosed: (hook: WindowHook) => void
 
 ## プラグインモジュール
 
-インポート：`import { ... } from "@x-elevolution/core"` または `import { ... } from "@x-elevolution/core/plugin"`
+インポート：`import { ... } from "@x-industry/elevolution-core"` または `import { ... } from "@x-industry/elevolution-core/plugin"`
 
 ### definePlugin
 
@@ -406,7 +406,7 @@ const executeCommand: (id: string) => void
 
 ## EventBus
 
-インポート：`import { EventBus } from "@x-elevolution/core"` または `import { EventBus } from "@x-elevolution/core/event-bus"`
+インポート：`import { EventBus } from "@x-industry/elevolution-core"` または `import { EventBus } from "@x-industry/elevolution-core/event-bus"`
 
 プラグイン間通信、コマンドトリガー、ライフサイクルイベント用のグローバルイベントバスです。
 
@@ -428,13 +428,13 @@ const executeCommand: (id: string) => void
 
 ## ロガー
 
-インポート：`import { logger, setLogger } from "@x-elevolution/core"` または `import { ... } from "@x-elevolution/core/logger"`
+インポート：`import { logger, setLogger } from "@x-industry/elevolution-core"` または `import { ... } from "@x-industry/elevolution-core/logger"`
 
 ### logger（インスタンス）
 
 現在のロガーインスタンス。Proxy で実装されているため、`setLogger` でロガーを置換すると即座に反映されます。
 
-**デフォルト動作：** `[x-elevolution]` プレフィックス付きでコンソールに出力。
+**デフォルト動作：** `[elevolution]` プレフィックス付きでコンソールに出力。
 
 ### setLogger
 
@@ -448,7 +448,7 @@ const setLogger: (newLogger: Logger) => void
 
 ## ホットリロード
 
-インポート：`import { installPluginHot, stopAllHotReload } from "@x-elevolution/core"` または `import { ... } from "@x-elevolution/core/hot-reload"`
+インポート：`import { installPluginHot, stopAllHotReload } from "@x-industry/elevolution-core"` または `import { ... } from "@x-industry/elevolution-core/hot-reload"`
 
 ### installPluginHot
 
@@ -547,10 +547,10 @@ export interface Logger {
 パッケージはサブパスエクスポートによる細粒度インポートをサポートしています：
 
 ```ts
-import { ... } from "@x-elevolution/core";          // すべて
-import { ... } from "@x-elevolution/core/ipc";      // IPC のみ
-import { ... } from "@x-elevolution/core/window";   // ウィンドウのみ
-import { ... } from "@x-elevolution/core/plugin";   // プラグインのみ
-import { EventBus } from "@x-elevolution/core/event-bus";
-import { logger, setLogger } from "@x-elevolution/core/logger";
+import { ... } from "@x-industry/elevolution-core";          // すべて
+import { ... } from "@x-industry/elevolution-core/ipc";      // IPC のみ
+import { ... } from "@x-industry/elevolution-core/window";   // ウィンドウのみ
+import { ... } from "@x-industry/elevolution-core/plugin";   // プラグインのみ
+import { EventBus } from "@x-industry/elevolution-core/event-bus";
+import { logger, setLogger } from "@x-industry/elevolution-core/logger";
 ```

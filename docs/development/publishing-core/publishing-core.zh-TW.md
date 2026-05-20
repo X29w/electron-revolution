@@ -1,10 +1,10 @@
-# @x-elevolution/core — API 參考文件
+# @x-industry/elevolution-core — API 參考文件
 
-`@x-elevolution/core` 套件的完整 API 文件。
+`@x-industry/elevolution-core` 套件的完整 API 文件。
 
 **版本：** 0.2.0  
 **授權條款：** MIT  
-**安裝：** `pnpm add @x-elevolution/core`
+**安裝：** `pnpm add @x-industry/elevolution-core`
 
 ---
 
@@ -53,7 +53,7 @@
 
 ## IPC 模組
 
-匯入方式：`import { ... } from "@x-elevolution/core"` 或 `import { ... } from "@x-elevolution/core/ipc"`
+匯入方式：`import { ... } from "@x-industry/elevolution-core"` 或 `import { ... } from "@x-industry/elevolution-core/ipc"`
 
 ### defineHandlers
 
@@ -74,7 +74,7 @@ const defineHandlers: <T extends Record<string, HandleFn>>(handlers: T) => {
 **範例：**
 
 ```ts
-import { defineHandlers } from "@x-elevolution/core";
+import { defineHandlers } from "@x-industry/elevolution-core";
 
 export const fileHandlers = defineHandlers({
   "file:read": (event, path: string) => {
@@ -109,7 +109,7 @@ const defineListeners: <T extends Record<string, OnFn>>(listeners: T) => {
 **範例：**
 
 ```ts
-import { defineListeners } from "@x-elevolution/core";
+import { defineListeners } from "@x-industry/elevolution-core";
 
 export const appListeners = defineListeners({
   "app:log": (event, level: string, message: string) => {
@@ -132,7 +132,7 @@ const defineSenders: <T extends Record<string, (...args: any[]) => void>>(sender
 **範例：**
 
 ```ts
-import { defineSenders } from "@x-elevolution/core";
+import { defineSenders } from "@x-industry/elevolution-core";
 
 export const appSenders = defineSenders({
   "app:notification": (title: string, body: string) => {},
@@ -154,7 +154,7 @@ const registerRoutes: (routes: IpcRoute[]) => void
 **範例：**
 
 ```ts
-import { registerRoutes } from "@x-elevolution/core";
+import { registerRoutes } from "@x-industry/elevolution-core";
 import { fileHandlers } from "./ipc/file";
 import { appListeners } from "./ipc/app";
 
@@ -176,7 +176,7 @@ const unregisterRoutes: (routes: IpcRoute[]) => void
 **範例：**
 
 ```ts
-import { unregisterRoutes } from "@x-elevolution/core";
+import { unregisterRoutes } from "@x-industry/elevolution-core";
 import { fileHandlers } from "./ipc/file";
 
 // 移除所有檔案處理器
@@ -207,7 +207,7 @@ type IpcMiddleware = (
 **範例：**
 
 ```ts
-import { useIpcMiddleware } from "@x-elevolution/core";
+import { useIpcMiddleware } from "@x-industry/elevolution-core";
 
 // 日誌中介軟體
 useIpcMiddleware((channel, type, args, next) => {
@@ -253,7 +253,7 @@ type IpcInterceptor = (channel: string, type: "handle" | "on") => void;
 **範例：**
 
 ```ts
-import { addIpcInterceptor } from "@x-elevolution/core";
+import { addIpcInterceptor } from "@x-industry/elevolution-core";
 
 // 追蹤 IPC 呼叫頻率
 const callCounts = new Map<string, number>();
@@ -270,7 +270,7 @@ remove();
 
 ## 視窗模組
 
-匯入方式：`import { ... } from "@x-elevolution/core"` 或 `import { ... } from "@x-elevolution/core/window"`
+匯入方式：`import { ... } from "@x-industry/elevolution-core"` 或 `import { ... } from "@x-industry/elevolution-core/window"`
 
 ### registerWindow
 
@@ -290,7 +290,7 @@ type WindowFactory = () => BrowserWindow;
 **範例：**
 
 ```ts
-import { registerWindow } from "@x-elevolution/core";
+import { registerWindow } from "@x-industry/elevolution-core";
 
 registerWindow("settings", () => {
   return new BrowserWindow({
@@ -312,7 +312,7 @@ const registerWindows: (windows: Record<string, WindowFactory>) => void
 **範例：**
 
 ```ts
-import { registerWindows } from "@x-elevolution/core";
+import { registerWindows } from "@x-industry/elevolution-core";
 
 registerWindows({
   main: createMainWindow,
@@ -344,7 +344,7 @@ const createWindow: (name: string) => BrowserWindow
 **範例：**
 
 ```ts
-import { createWindow } from "@x-elevolution/core";
+import { createWindow } from "@x-industry/elevolution-core";
 
 const win = createWindow("main");
 win.show();
@@ -393,7 +393,7 @@ const sendToWindow: (name: string, channel: string, ...args: any[]) => void
 **範例：**
 
 ```ts
-import { sendToWindow } from "@x-elevolution/core";
+import { sendToWindow } from "@x-industry/elevolution-core";
 
 sendToWindow("main", "user:updated", { id: "123", name: "Alice" });
 ```
@@ -409,7 +409,7 @@ const broadcastToWindows: (channel: string, ...args: any[]) => void
 **範例：**
 
 ```ts
-import { broadcastToWindows } from "@x-elevolution/core";
+import { broadcastToWindows } from "@x-industry/elevolution-core";
 
 broadcastToWindows("theme:changed", "dark");
 broadcastToWindows("app:notification", { title: "Update", body: "New version available" });
@@ -431,7 +431,7 @@ type WindowHook = (name: string, win: BrowserWindow) => void;
 **範例：**
 
 ```ts
-import { onWindowCreated } from "@x-elevolution/core";
+import { onWindowCreated } from "@x-industry/elevolution-core";
 
 // 開發環境下注入 DevTools
 onWindowCreated((name, win) => {
@@ -457,7 +457,7 @@ const onWindowClosed: (hook: WindowHook) => void
 **範例：**
 
 ```ts
-import { onWindowClosed } from "@x-elevolution/core";
+import { onWindowClosed } from "@x-industry/elevolution-core";
 
 onWindowClosed((name, win) => {
   console.log(`Window "${name}" was closed`);
@@ -471,7 +471,7 @@ onWindowClosed((name, win) => {
 
 ## 插件模組
 
-匯入方式：`import { ... } from "@x-elevolution/core"` 或 `import { ... } from "@x-elevolution/core/plugin"`
+匯入方式：`import { ... } from "@x-industry/elevolution-core"` 或 `import { ... } from "@x-industry/elevolution-core/plugin"`
 
 ### definePlugin
 
@@ -502,7 +502,7 @@ type PluginSetup = (ctx: PluginContext) => void | (() => void) | Promise<void | 
 **範例：**
 
 ```ts
-import { definePlugin } from "@x-elevolution/core";
+import { definePlugin } from "@x-industry/elevolution-core";
 
 export const myPlugin = definePlugin({
   meta: {
@@ -600,7 +600,7 @@ const executeCommand: (id: string) => void
 
 ## EventBus
 
-匯入方式：`import { EventBus } from "@x-elevolution/core"` 或 `import { EventBus } from "@x-elevolution/core/event-bus"`
+匯入方式：`import { EventBus } from "@x-industry/elevolution-core"` 或 `import { EventBus } from "@x-industry/elevolution-core/event-bus"`
 
 全域事件匯流排，用於插件間通訊、命令觸發和生命週期事件。
 
@@ -666,7 +666,7 @@ EventBus.onError(handler: (event: string, error: unknown) => void): void
 
 ## 日誌器
 
-匯入方式：`import { logger, setLogger } from "@x-elevolution/core"` 或 `import { ... } from "@x-elevolution/core/logger"`
+匯入方式：`import { logger, setLogger } from "@x-industry/elevolution-core"` 或 `import { ... } from "@x-industry/elevolution-core/logger"`
 
 ### logger（實例）
 
@@ -676,7 +676,7 @@ EventBus.onError(handler: (event: string, error: unknown) => void): void
 const logger: Logger
 ```
 
-**預設行為：** 以 `[x-elevolution]` 前綴輸出到主控台。
+**預設行為：** 以 `[elevolution]` 前綴輸出到主控台。
 
 ### setLogger
 
@@ -690,7 +690,7 @@ const setLogger: (newLogger: Logger) => void
 
 ## 熱重載
 
-匯入方式：`import { installPluginHot, stopAllHotReload } from "@x-elevolution/core"` 或 `import { ... } from "@x-elevolution/core/hot-reload"`
+匯入方式：`import { installPluginHot, stopAllHotReload } from "@x-industry/elevolution-core"` 或 `import { ... } from "@x-industry/elevolution-core/hot-reload"`
 
 ### installPluginHot
 
@@ -789,10 +789,10 @@ export interface Logger {
 該套件透過子路徑匯出支援細粒度匯入：
 
 ```ts
-import { ... } from "@x-elevolution/core";          // 全部
-import { ... } from "@x-elevolution/core/ipc";      // 僅 IPC
-import { ... } from "@x-elevolution/core/window";   // 僅視窗
-import { ... } from "@x-elevolution/core/plugin";   // 僅插件
-import { EventBus } from "@x-elevolution/core/event-bus";
-import { logger, setLogger } from "@x-elevolution/core/logger";
+import { ... } from "@x-industry/elevolution-core";          // 全部
+import { ... } from "@x-industry/elevolution-core/ipc";      // 僅 IPC
+import { ... } from "@x-industry/elevolution-core/window";   // 僅視窗
+import { ... } from "@x-industry/elevolution-core/plugin";   // 僅插件
+import { EventBus } from "@x-industry/elevolution-core/event-bus";
+import { logger, setLogger } from "@x-industry/elevolution-core/logger";
 ```

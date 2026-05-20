@@ -1,8 +1,8 @@
 /**
- * @description [zh-CN] X-Elevolution Core — 插件化 Electron 框架核心导出
- * @description [zh-TW] X-Elevolution Core — 插件化 Electron 框架核心匯出
- * @description [en] X-Elevolution Core — pluggable Electron framework core exports
- * @description [ja] X-Elevolution Core — プラグイン化 Electron フレームワークのコアエクスポート
+ * @description [zh-CN] Elevolution Core — 插件化 Electron 框架核心导出
+ * @description [zh-TW] Elevolution Core — 插件化 Electron 框架核心匯出
+ * @description [en] Elevolution Core — pluggable Electron framework core exports
+ * @description [ja] Elevolution Core — プラグイン化 Electron フレームワークのコアエクスポート
  */
 
 export {

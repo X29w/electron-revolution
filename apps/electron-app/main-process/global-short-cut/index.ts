@@ -6,7 +6,7 @@
  */
 
 import { BrowserWindow, globalShortcut } from "electron";
-import { logger } from "@x-elevolution/core";
+import { logger } from "@x-industry/elevolution-core";
 
 export const registerGlobalShortcut = () => {
   globalShortcut.register("CommandOrControl+Shift+I", () => {

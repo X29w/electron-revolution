@@ -6,7 +6,7 @@
  */
 
 import { app, BrowserWindow } from "electron";
-import { registerWindows, createWindow, installPlugin, setLogger } from "@x-elevolution/core";
+import { registerWindows, createWindow, installPlugin, setLogger } from "@x-industry/elevolution-core";
 import log from "electron-log";
 import { registerAllIpc } from "./ipc";
 import { registerGlobalShortcut } from "./global-short-cut";

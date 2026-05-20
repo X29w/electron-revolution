@@ -1,5 +1,5 @@
 <p align="center">
-  <h1 align="center">⚡ Electron X-Elevolution</h1>
+  <h1 align="center">⚡ Electron Elevolution</h1>
   <p align="center">纯函数式、插件化的 Electron 框架，类型安全的 IPC，零样板代码。</p>
 </p>
 
@@ -20,11 +20,11 @@
 
 ---
 
-## 为什么选择 X-Elevolution？
+## 为什么选择 Elevolution？
 
-构建 Electron 应用不应该意味着与样板代码、不安全的 IPC 通道或纠缠的类层次结构作斗争。X-Elevolution 诞生于真实的开发痛点：
+构建 Electron 应用不应该意味着与样板代码、不安全的 IPC 通道或纠缠的类层次结构作斗争。Elevolution 诞生于真实的开发痛点：
 
-| 痛点 | X-Elevolution 的解决方案 |
+| 痛点 | Elevolution 的解决方案 |
 |---|---|
 | IPC 通道是字符串类型，容易出错 | **写一次 handler → 类型自动生成到渲染进程** |
 | 基于类的框架僵硬且难以测试 | **纯函数式 — 全程箭头函数** |
@@ -35,7 +35,7 @@
 ## 快速开始
 
 ```bash
-npx @x-elevolution/cli create my-app
+npx @x-industry/elevolution-cli create my-app
 cd my-app
 pnpm install
 pnpm dev
@@ -61,7 +61,7 @@ pnpm dev
 
 ```ts
 // main-process/ipc/user.ts
-import { defineHandlers, defineListeners } from "@x-elevolution/core";
+import { defineHandlers, defineListeners } from "@x-industry/elevolution-core";
 
 export const userHandlers = defineHandlers({
   "user:get": (event, id: string) => {
@@ -83,7 +83,7 @@ export const userListeners = defineListeners({
 
 ```ts
 // main-process/main.ts
-import { registerRoutes } from "@x-elevolution/core";
+import { registerRoutes } from "@x-industry/elevolution-core";
 import { userHandlers, userListeners } from "./ipc/user";
 
 registerRoutes(userHandlers.routes);
@@ -109,7 +109,7 @@ const user = await ipcInvoke("user:get", "123");
 插件是自包含的单元，可以注册 IPC 路由、窗口、命令，并通过事件通信：
 
 ```ts
-import { definePlugin, defineHandlers } from "@x-elevolution/core";
+import { definePlugin, defineHandlers } from "@x-industry/elevolution-core";
 
 const handlers = defineHandlers({
   "notes:create": (_, title: string, content: string) => {
@@ -145,7 +145,7 @@ export const notesPlugin = definePlugin({
 在主进程中安装插件：
 
 ```ts
-import { installPlugin } from "@x-elevolution/core";
+import { installPlugin } from "@x-industry/elevolution-core";
 import { notesPlugin } from "./plugins/notes";
 
 await installPlugin(notesPlugin);
@@ -154,7 +154,7 @@ await installPlugin(notesPlugin);
 ### 窗口管理
 
 ```ts
-import { registerWindows, createWindow, sendToWindow, broadcastToWindows } from "@x-elevolution/core";
+import { registerWindows, createWindow, sendToWindow, broadcastToWindows } from "@x-industry/elevolution-core";
 
 // 注册窗口工厂
 registerWindows({
@@ -176,7 +176,7 @@ broadcastToWindows("theme:changed", "dark");
 ### IPC 中间件与拦截器
 
 ```ts
-import { useIpcMiddleware, addIpcInterceptor } from "@x-elevolution/core";
+import { useIpcMiddleware, addIpcInterceptor } from "@x-industry/elevolution-core";
 
 // 中间件 — 可以拦截、修改或终止调用
 useIpcMiddleware((channel, type, args, next) => {
@@ -198,7 +198,7 @@ remove();
 ### EventBus（插件间通信）
 
 ```ts
-import { EventBus } from "@x-elevolution/core";
+import { EventBus } from "@x-industry/elevolution-core";
 
 EventBus.on("user:login", (user) => {
   console.log(`${user.name} 已登录`);
@@ -215,12 +215,12 @@ EventBus.once("app:first-launch", () => {
 
 | 命令 | 描述 |
 |---|---|
-| `x-elevolution create <name>` | 创建完整项目 |
-| `x-elevolution create <name> --local` | 创建项目并链接本地 core（开发用） |
-| `x-elevolution add window <name>` | 生成窗口（主进程工厂 + 渲染进程页面） |
-| `x-elevolution add plugin <name>` | 生成插件骨架 |
-| `x-elevolution add ipc <name>` | 生成 IPC 模块（handlers + listeners） |
-| `x-elevolution gen:ipc` | 从 handlers 自动生成渲染进程 IPC 类型 |
+| `elevolution create <name>` | 创建完整项目 |
+| `elevolution create <name> --local` | 创建项目并链接本地 core（开发用） |
+| `elevolution add window <name>` | 生成窗口（主进程工厂 + 渲染进程页面） |
+| `elevolution add plugin <name>` | 生成插件骨架 |
+| `elevolution add ipc <name>` | 生成 IPC 模块（handlers + listeners） |
+| `elevolution gen:ipc` | 从 handlers 自动生成渲染进程 IPC 类型 |
 
 ## 项目结构（`create` 之后）
 
@@ -264,7 +264,7 @@ my-app/
 向所有插件的 context 注入自定义字段：
 
 ```ts
-import { extendPluginContext } from "@x-elevolution/core";
+import { extendPluginContext } from "@x-industry/elevolution-core";
 import Store from "electron-store";
 import { dialog } from "electron";
 
@@ -283,7 +283,7 @@ extendPluginContext((ctx, meta) => {
 用任意实现替换内置的 console logger：
 
 ```ts
-import { setLogger } from "@x-elevolution/core";
+import { setLogger } from "@x-industry/elevolution-core";
 import log from "electron-log";
 
 setLogger(log);
@@ -293,7 +293,7 @@ setLogger(log);
 ### 插件热重载（开发模式）
 
 ```ts
-import { installPluginHot } from "@x-elevolution/core";
+import { installPluginHot } from "@x-industry/elevolution-core";
 import { myPlugin } from "./plugins/my-plugin";
 
 await installPluginHot(
@@ -308,7 +308,7 @@ await installPluginHot(
 ### 窗口生命周期钩子
 
 ```ts
-import { onWindowCreated, onWindowClosed } from "@x-elevolution/core";
+import { onWindowCreated, onWindowClosed } from "@x-industry/elevolution-core";
 
 onWindowCreated((name, win) => {
   console.log(`窗口 "${name}" 已创建`);
@@ -336,10 +336,10 @@ onWindowClosed((name, win) => {
 ## Monorepo 结构
 
 ```
-x-elevolution/
+elevolution/
 ├── packages/
-│   ├── core/     → @x-elevolution/core（运行时框架）
-│   └── cli/      → @x-elevolution/cli（脚手架工具）
+│   ├── core/     → @x-industry/elevolution-core（运行时框架）
+│   └── cli/      → @x-industry/elevolution-cli（脚手架工具）
 ├── apps/
 │   └── electron-app/  → 示例应用 & CLI 模板
 ├── docs/              → 文档

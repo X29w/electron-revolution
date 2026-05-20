@@ -1,6 +1,6 @@
 # Contributor Guide
 
-This guide covers local development, code conventions, and publishing workflows for the `x-elevolution` monorepo.
+This guide covers local development, code conventions, and publishing workflows for the `elevolution` monorepo.
 
 ## Prerequisites
 
@@ -11,10 +11,10 @@ This guide covers local development, code conventions, and publishing workflows 
 ## Repository Structure
 
 ```
-x-elevolution/
+elevolution/
 ├── packages/
-│   ├── core/          → @x-elevolution/core (runtime framework, published to npm)
-│   └── cli/           → @x-elevolution/cli (scaffolding tool, published to npm)
+│   ├── core/          → @x-industry/elevolution-core (runtime framework, published to npm)
+│   └── cli/           → @x-industry/elevolution-cli (scaffolding tool, published to npm)
 ├── apps/
 │   └── electron-app/  → Example app (also serves as CLI template source)
 ├── docs/              → Documentation
@@ -27,8 +27,8 @@ x-elevolution/
 
 ```bash
 # Clone the repository
-git clone https://github.com/user/x-elevolution.git
-cd x-elevolution
+git clone https://github.com/user/elevolution.git
+cd elevolution
 
 # Install dependencies
 pnpm install
@@ -41,7 +41,7 @@ The `pnpm dev` command uses Turborepo to start the example Electron app in `apps
 
 ## Development Workflow
 
-### Developing `@x-elevolution/core`
+### Developing `@x-industry/elevolution-core`
 
 The core package is located at `packages/core/`. It has no build step — it directly exports TypeScript source (consumed via `"main": "./index.ts"`).
 
@@ -71,7 +71,7 @@ pnpm dev
 4. Test in the example app (`apps/electron-app`)
 5. Update documentation
 
-### Developing `@x-elevolution/cli`
+### Developing `@x-industry/elevolution-cli`
 
 The CLI package is located at `packages/cli/`.
 
@@ -81,7 +81,7 @@ cd packages/cli
 node bin.mjs create test-project --local
 
 # Or from workspace root
-pnpm --filter @x-elevolution/cli exec node bin.mjs --help
+pnpm --filter @x-industry/elevolution-cli exec node bin.mjs --help
 ```
 
 **Module Structure:**
@@ -245,7 +245,7 @@ npm publish --access public
 - [ ] Documentation is updated (README + docs/)
 - [ ] Version numbers are bumped in both `package.json` files
 - [ ] Example app runs successfully via `pnpm dev`
-- [ ] `x-elevolution create test --local` generates a runnable project
+- [ ] `elevolution create test --local` generates a runnable project
 
 ## Turborepo Pipeline
 
@@ -283,4 +283,4 @@ Ensure `IS_DEV` is `true` and plugins are installed with `installPluginHot` (not
 
 ### IPC types not generated
 
-Run `pnpm gen:ipc` from the project root (or app directory). Ensure all handler files use `defineHandlers` / `defineListeners` from `@x-elevolution/core`.
+Run `pnpm gen:ipc` from the project root (or app directory). Ensure all handler files use `defineHandlers` / `defineListeners` from `@x-industry/elevolution-core`.

@@ -1,5 +1,5 @@
 <p align="center">
-  <h1 align="center">⚡ Electron X-Elevolution</h1>
+  <h1 align="center">⚡ Electron Elevolution</h1>
   <p align="center">A purely functional, plugin-based Electron framework with type-safe IPC and zero boilerplate.</p>
 </p>
 
@@ -20,11 +20,11 @@
 
 ---
 
-## Why X-Elevolution?
+## Why Elevolution?
 
-Building Electron apps shouldn't mean wrestling with boilerplate, unsafe IPC channels, or tangled class hierarchies. X-Elevolution was born from real frustration:
+Building Electron apps shouldn't mean wrestling with boilerplate, unsafe IPC channels, or tangled class hierarchies. Elevolution was born from real frustration:
 
-| Pain Point | X-Elevolution's Answer |
+| Pain Point | Elevolution's Answer |
 |---|---|
 | IPC channels are stringly-typed and error-prone | **Write handlers once → types auto-generated for renderer** |
 | Class-based frameworks are rigid and hard to test | **Purely functional — arrow functions all the way** |
@@ -35,7 +35,7 @@ Building Electron apps shouldn't mean wrestling with boilerplate, unsafe IPC cha
 ## Quick Start
 
 ```bash
-npx @x-elevolution/cli create my-app
+npx @x-industry/elevolution-cli create my-app
 cd my-app
 pnpm install
 pnpm dev
@@ -61,7 +61,7 @@ Define handlers in the main process:
 
 ```ts
 // main-process/ipc/user.ts
-import { defineHandlers, defineListeners } from "@x-elevolution/core";
+import { defineHandlers, defineListeners } from "@x-industry/elevolution-core";
 
 export const userHandlers = defineHandlers({
   "user:get": (event, id: string) => {
@@ -83,7 +83,7 @@ Register them:
 
 ```ts
 // main-process/main.ts
-import { registerRoutes } from "@x-elevolution/core";
+import { registerRoutes } from "@x-industry/elevolution-core";
 import { userHandlers, userListeners } from "./ipc/user";
 
 registerRoutes(userHandlers.routes);
@@ -109,7 +109,7 @@ const user = await ipcInvoke("user:get", "123");
 Plugins are self-contained units that can register IPC routes, windows, commands, and communicate via events:
 
 ```ts
-import { definePlugin, defineHandlers } from "@x-elevolution/core";
+import { definePlugin, defineHandlers } from "@x-industry/elevolution-core";
 
 const handlers = defineHandlers({
   "notes:create": (_, title: string, content: string) => {
@@ -145,7 +145,7 @@ export const notesPlugin = definePlugin({
 Install plugins in your main process:
 
 ```ts
-import { installPlugin } from "@x-elevolution/core";
+import { installPlugin } from "@x-industry/elevolution-core";
 import { notesPlugin } from "./plugins/notes";
 
 await installPlugin(notesPlugin);
@@ -154,7 +154,7 @@ await installPlugin(notesPlugin);
 ### Window Management
 
 ```ts
-import { registerWindows, createWindow, sendToWindow, broadcastToWindows } from "@x-elevolution/core";
+import { registerWindows, createWindow, sendToWindow, broadcastToWindows } from "@x-industry/elevolution-core";
 
 // Register window factories
 registerWindows({
@@ -176,7 +176,7 @@ broadcastToWindows("theme:changed", "dark");
 ### IPC Middleware & Interceptors
 
 ```ts
-import { useIpcMiddleware, addIpcInterceptor } from "@x-elevolution/core";
+import { useIpcMiddleware, addIpcInterceptor } from "@x-industry/elevolution-core";
 
 // Middleware — can intercept, modify, or abort calls
 useIpcMiddleware((channel, type, args, next) => {
@@ -198,7 +198,7 @@ remove();
 ### EventBus (Inter-Plugin Communication)
 
 ```ts
-import { EventBus } from "@x-elevolution/core";
+import { EventBus } from "@x-industry/elevolution-core";
 
 EventBus.on("user:login", (user) => {
   console.log(`${user.name} logged in`);
@@ -215,12 +215,12 @@ EventBus.once("app:first-launch", () => {
 
 | Command | Description |
 |---|---|
-| `x-elevolution create <name>` | Scaffold a complete project |
-| `x-elevolution create <name> --local` | Scaffold with local core link (for development) |
-| `x-elevolution add window <name>` | Generate window (main factory + renderer page) |
-| `x-elevolution add plugin <name>` | Generate plugin scaffold |
-| `x-elevolution add ipc <name>` | Generate IPC module with handlers & listeners |
-| `x-elevolution gen:ipc` | Auto-generate renderer IPC types from handlers |
+| `elevolution create <name>` | Scaffold a complete project |
+| `elevolution create <name> --local` | Scaffold with local core link (for development) |
+| `elevolution add window <name>` | Generate window (main factory + renderer page) |
+| `elevolution add plugin <name>` | Generate plugin scaffold |
+| `elevolution add ipc <name>` | Generate IPC module with handlers & listeners |
+| `elevolution gen:ipc` | Auto-generate renderer IPC types from handlers |
 
 ## Project Structure (After `create`)
 
@@ -264,7 +264,7 @@ my-app/
 Inject custom fields into all plugin contexts:
 
 ```ts
-import { extendPluginContext } from "@x-elevolution/core";
+import { extendPluginContext } from "@x-industry/elevolution-core";
 import Store from "electron-store";
 import { dialog } from "electron";
 
@@ -283,7 +283,7 @@ extendPluginContext((ctx, meta) => {
 Replace the built-in console logger with any implementation:
 
 ```ts
-import { setLogger } from "@x-elevolution/core";
+import { setLogger } from "@x-industry/elevolution-core";
 import log from "electron-log";
 
 setLogger(log);
@@ -293,7 +293,7 @@ setLogger(log);
 ### Plugin Hot-Reload (Dev Mode)
 
 ```ts
-import { installPluginHot } from "@x-elevolution/core";
+import { installPluginHot } from "@x-industry/elevolution-core";
 import { myPlugin } from "./plugins/my-plugin";
 
 await installPluginHot(
@@ -308,7 +308,7 @@ await installPluginHot(
 ### Window Lifecycle Hooks
 
 ```ts
-import { onWindowCreated, onWindowClosed } from "@x-elevolution/core";
+import { onWindowCreated, onWindowClosed } from "@x-industry/elevolution-core";
 
 onWindowCreated((name, win) => {
   console.log(`Window "${name}" created`);
@@ -336,10 +336,10 @@ onWindowClosed((name, win) => {
 ## Monorepo Structure
 
 ```
-x-elevolution/
+elevolution/
 ├── packages/
-│   ├── core/     → @x-elevolution/core (runtime framework)
-│   └── cli/      → @x-elevolution/cli (scaffolding tool)
+│   ├── core/     → @x-industry/elevolution-core (runtime framework)
+│   └── cli/      → @x-industry/elevolution-cli (scaffolding tool)
 ├── apps/
 │   └── electron-app/  → Example app & CLI template
 ├── docs/              → Documentation

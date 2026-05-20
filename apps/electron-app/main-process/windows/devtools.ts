@@ -13,7 +13,7 @@ export const createDevtoolsWindow = (): BrowserWindow => {
   const win = new BrowserWindow({
     width: 900,
     height: 650,
-    title: "X-Elevolution DevTools",
+    title: "Elevolution DevTools",
     webPreferences: {
       preload: PRELOAD_PATH,
       contextIsolation: true,

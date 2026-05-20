@@ -14,10 +14,10 @@ export interface Logger {
 }
 
 const defaultLogger: Logger = {
-  info: (...args) => console.log("[x-elevolution]", ...args),
-  warn: (...args) => console.warn("[x-elevolution]", ...args),
-  error: (...args) => console.error("[x-elevolution]", ...args),
-  debug: (...args) => console.debug("[x-elevolution]", ...args),
+  info: (...args) => console.log("[elevolution]", ...args),
+  warn: (...args) => console.warn("[elevolution]", ...args),
+  error: (...args) => console.error("[elevolution]", ...args),
+  debug: (...args) => console.debug("[elevolution]", ...args),
 };
 
 let currentLogger: Logger = defaultLogger;
@@ -41,7 +41,7 @@ export const logger: Logger = new Proxy({} as Logger, {
  * @example
  * ```ts
  * import log from "electron-log";
- * import { setLogger } from "@x-elevolution/core";
+ * import { setLogger } from "@x-industry/elevolution-core";
  * setLogger(log);
  * ```
  */

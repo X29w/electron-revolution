@@ -1,10 +1,10 @@
-# @x-elevolution/core — API Reference
+# @x-industry/elevolution-core — API Reference
 
-Complete API documentation for the `@x-elevolution/core` package.
+Complete API documentation for the `@x-industry/elevolution-core` package.
 
 **Version:** 0.2.0  
 **License:** MIT  
-**Install:** `pnpm add @x-elevolution/core`
+**Install:** `pnpm add @x-industry/elevolution-core`
 
 ---
 
@@ -52,7 +52,7 @@ Complete API documentation for the `@x-elevolution/core` package.
 
 ## IPC Module
 
-Import: `import { ... } from "@x-elevolution/core"` or `import { ... } from "@x-elevolution/core/ipc"`
+Import: `import { ... } from "@x-industry/elevolution-core"` or `import { ... } from "@x-industry/elevolution-core/ipc"`
 
 ### defineHandlers
 
@@ -73,7 +73,7 @@ const defineHandlers: <T extends Record<string, HandleFn>>(handlers: T) => {
 **Example:**
 
 ```ts
-import { defineHandlers } from "@x-elevolution/core";
+import { defineHandlers } from "@x-industry/elevolution-core";
 
 export const fileHandlers = defineHandlers({
   "file:read": (event, path: string) => {
@@ -108,7 +108,7 @@ const defineListeners: <T extends Record<string, OnFn>>(listeners: T) => {
 **Example:**
 
 ```ts
-import { defineListeners } from "@x-elevolution/core";
+import { defineListeners } from "@x-industry/elevolution-core";
 
 export const appListeners = defineListeners({
   "app:log": (event, level: string, message: string) => {
@@ -131,7 +131,7 @@ const defineSenders: <T extends Record<string, (...args: any[]) => void>>(sender
 **Example:**
 
 ```ts
-import { defineSenders } from "@x-elevolution/core";
+import { defineSenders } from "@x-industry/elevolution-core";
 
 export const appSenders = defineSenders({
   "app:notification": (title: string, body: string) => {},
@@ -153,7 +153,7 @@ const registerRoutes: (routes: IpcRoute[]) => void
 **Example:**
 
 ```ts
-import { registerRoutes } from "@x-elevolution/core";
+import { registerRoutes } from "@x-industry/elevolution-core";
 import { fileHandlers } from "./ipc/file";
 import { appListeners } from "./ipc/app";
 
@@ -175,7 +175,7 @@ const unregisterRoutes: (routes: IpcRoute[]) => void
 **Example:**
 
 ```ts
-import { unregisterRoutes } from "@x-elevolution/core";
+import { unregisterRoutes } from "@x-industry/elevolution-core";
 import { fileHandlers } from "./ipc/file";
 
 // Remove all file handlers
@@ -206,7 +206,7 @@ type IpcMiddleware = (
 **Example:**
 
 ```ts
-import { useIpcMiddleware } from "@x-elevolution/core";
+import { useIpcMiddleware } from "@x-industry/elevolution-core";
 
 // Logging middleware
 useIpcMiddleware((channel, type, args, next) => {
@@ -252,7 +252,7 @@ type IpcInterceptor = (channel: string, type: "handle" | "on") => void;
 **Example:**
 
 ```ts
-import { addIpcInterceptor } from "@x-elevolution/core";
+import { addIpcInterceptor } from "@x-industry/elevolution-core";
 
 // Track IPC call frequency
 const callCounts = new Map<string, number>();
@@ -269,7 +269,7 @@ remove();
 
 ## Window Module
 
-Import: `import { ... } from "@x-elevolution/core"` or `import { ... } from "@x-elevolution/core/window"`
+Import: `import { ... } from "@x-industry/elevolution-core"` or `import { ... } from "@x-industry/elevolution-core/window"`
 
 ### registerWindow
 
@@ -289,7 +289,7 @@ type WindowFactory = () => BrowserWindow;
 **Example:**
 
 ```ts
-import { registerWindow } from "@x-elevolution/core";
+import { registerWindow } from "@x-industry/elevolution-core";
 
 registerWindow("settings", () => {
   return new BrowserWindow({
@@ -311,7 +311,7 @@ const registerWindows: (windows: Record<string, WindowFactory>) => void
 **Example:**
 
 ```ts
-import { registerWindows } from "@x-elevolution/core";
+import { registerWindows } from "@x-industry/elevolution-core";
 
 registerWindows({
   main: createMainWindow,
@@ -343,7 +343,7 @@ const createWindow: (name: string) => BrowserWindow
 **Example:**
 
 ```ts
-import { createWindow } from "@x-elevolution/core";
+import { createWindow } from "@x-industry/elevolution-core";
 
 const win = createWindow("main");
 win.show();
@@ -392,7 +392,7 @@ const sendToWindow: (name: string, channel: string, ...args: any[]) => void
 **Example:**
 
 ```ts
-import { sendToWindow } from "@x-elevolution/core";
+import { sendToWindow } from "@x-industry/elevolution-core";
 
 sendToWindow("main", "user:updated", { id: "123", name: "Alice" });
 ```
@@ -408,7 +408,7 @@ const broadcastToWindows: (channel: string, ...args: any[]) => void
 **Example:**
 
 ```ts
-import { broadcastToWindows } from "@x-elevolution/core";
+import { broadcastToWindows } from "@x-industry/elevolution-core";
 
 broadcastToWindows("theme:changed", "dark");
 broadcastToWindows("app:notification", { title: "Update", body: "New version available" });
@@ -430,7 +430,7 @@ type WindowHook = (name: string, win: BrowserWindow) => void;
 **Example:**
 
 ```ts
-import { onWindowCreated } from "@x-elevolution/core";
+import { onWindowCreated } from "@x-industry/elevolution-core";
 
 // Inject DevTools in development
 onWindowCreated((name, win) => {
@@ -456,7 +456,7 @@ const onWindowClosed: (hook: WindowHook) => void
 **Example:**
 
 ```ts
-import { onWindowClosed } from "@x-elevolution/core";
+import { onWindowClosed } from "@x-industry/elevolution-core";
 
 onWindowClosed((name, win) => {
   console.log(`Window "${name}" was closed`);
@@ -470,7 +470,7 @@ onWindowClosed((name, win) => {
 
 ## Plugin Module
 
-Import: `import { ... } from "@x-elevolution/core"` or `import { ... } from "@x-elevolution/core/plugin"`
+Import: `import { ... } from "@x-industry/elevolution-core"` or `import { ... } from "@x-industry/elevolution-core/plugin"`
 
 ### definePlugin
 
@@ -501,7 +501,7 @@ type PluginSetup = (ctx: PluginContext) => void | (() => void) | Promise<void | 
 **Example:**
 
 ```ts
-import { definePlugin } from "@x-elevolution/core";
+import { definePlugin } from "@x-industry/elevolution-core";
 
 export const myPlugin = definePlugin({
   meta: {
@@ -548,7 +548,7 @@ const installPlugin: (def: PluginDef) => Promise<void>
 **Example:**
 
 ```ts
-import { installPlugin } from "@x-elevolution/core";
+import { installPlugin } from "@x-industry/elevolution-core";
 import { myPlugin } from "./plugins/my-plugin";
 
 await installPlugin(myPlugin);
@@ -609,7 +609,7 @@ const uninstallPlugin: (name: string) => Promise<void>
 **Example:**
 
 ```ts
-import { uninstallPlugin } from "@x-elevolution/core";
+import { uninstallPlugin } from "@x-industry/elevolution-core";
 
 await uninstallPlugin("my-plugin");
 ```
@@ -630,7 +630,7 @@ type ContextExtender = (ctx: PluginContext, meta: PluginMeta) => void;
 **Example:**
 
 ```ts
-import { extendPluginContext } from "@x-elevolution/core";
+import { extendPluginContext } from "@x-industry/elevolution-core";
 import Store from "electron-store";
 import { dialog, shell } from "electron";
 
@@ -669,7 +669,7 @@ const getInstalledPlugins: () => { name: string; version: string; state: PluginS
 **Example:**
 
 ```ts
-import { getInstalledPlugins } from "@x-elevolution/core";
+import { getInstalledPlugins } from "@x-industry/elevolution-core";
 
 const plugins = getInstalledPlugins();
 // [{ name: "devtools", version: "1.0.0", state: "active" }, ...]
@@ -686,7 +686,7 @@ const executeCommand: (id: string) => void
 **Example:**
 
 ```ts
-import { executeCommand } from "@x-elevolution/core";
+import { executeCommand } from "@x-industry/elevolution-core";
 
 executeCommand("notes:clear-all");
 executeCommand("devtools:toggle");
@@ -696,7 +696,7 @@ executeCommand("devtools:toggle");
 
 ## EventBus
 
-Import: `import { EventBus } from "@x-elevolution/core"` or `import { EventBus } from "@x-elevolution/core/event-bus"`
+Import: `import { EventBus } from "@x-industry/elevolution-core"` or `import { EventBus } from "@x-industry/elevolution-core/event-bus"`
 
 A global event bus for inter-plugin communication, command triggering, and lifecycle events.
 
@@ -751,7 +751,7 @@ EventBus.onError(handler: (event: string, error: unknown) => void): void
 **Example:**
 
 ```ts
-import { EventBus } from "@x-elevolution/core";
+import { EventBus } from "@x-industry/elevolution-core";
 
 // Custom error handling
 EventBus.onError((event, error) => {
@@ -774,7 +774,7 @@ The framework automatically emits the following events:
 
 ## Logger
 
-Import: `import { logger, setLogger } from "@x-elevolution/core"` or `import { ... } from "@x-elevolution/core/logger"`
+Import: `import { logger, setLogger } from "@x-industry/elevolution-core"` or `import { ... } from "@x-industry/elevolution-core/logger"`
 
 ### logger (instance)
 
@@ -795,7 +795,7 @@ interface Logger {
 }
 ```
 
-**Default behavior:** Outputs to console with `[x-elevolution]` prefix.
+**Default behavior:** Outputs to console with `[elevolution]` prefix.
 
 ### setLogger
 
@@ -808,7 +808,7 @@ const setLogger: (newLogger: Logger) => void
 **Example:**
 
 ```ts
-import { setLogger } from "@x-elevolution/core";
+import { setLogger } from "@x-industry/elevolution-core";
 import log from "electron-log";
 
 // Use electron-log
@@ -833,7 +833,7 @@ setLogger({
 
 ## Hot Reload
 
-Import: `import { installPluginHot, stopAllHotReload } from "@x-elevolution/core"` or `import { ... } from "@x-elevolution/core/hot-reload"`
+Import: `import { installPluginHot, stopAllHotReload } from "@x-industry/elevolution-core"` or `import { ... } from "@x-industry/elevolution-core/hot-reload"`
 
 ### installPluginHot
 
@@ -862,7 +862,7 @@ const installPluginHot: (
 **Example:**
 
 ```ts
-import { installPluginHot } from "@x-elevolution/core";
+import { installPluginHot } from "@x-industry/elevolution-core";
 import { devtoolsPlugin } from "./plugins/devtools";
 
 await installPluginHot(
@@ -888,7 +888,7 @@ const stopAllHotReload: () => void
 **Example:**
 
 ```ts
-import { stopAllHotReload } from "@x-elevolution/core";
+import { stopAllHotReload } from "@x-industry/elevolution-core";
 
 app.on("before-quit", () => {
   stopAllHotReload();
@@ -969,10 +969,10 @@ export interface Logger {
 The package supports fine-grained imports via subpath exports:
 
 ```ts
-import { ... } from "@x-elevolution/core";          // Everything
-import { ... } from "@x-elevolution/core/ipc";      // IPC only
-import { ... } from "@x-elevolution/core/window";   // Window only
-import { ... } from "@x-elevolution/core/plugin";   // Plugin only
-import { EventBus } from "@x-elevolution/core/event-bus";
-import { logger, setLogger } from "@x-elevolution/core/logger";
+import { ... } from "@x-industry/elevolution-core";          // Everything
+import { ... } from "@x-industry/elevolution-core/ipc";      // IPC only
+import { ... } from "@x-industry/elevolution-core/window";   // Window only
+import { ... } from "@x-industry/elevolution-core/plugin";   // Plugin only
+import { EventBus } from "@x-industry/elevolution-core/event-bus";
+import { logger, setLogger } from "@x-industry/elevolution-core/logger";
 ```

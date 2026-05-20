@@ -1,10 +1,10 @@
-# @x-elevolution/cli — ドキュメント
+# @x-industry/elevolution-cli — ドキュメント
 
-`@x-elevolution/cli` スキャフォールディングおよびコード生成ツールの完全なドキュメントです。
+`@x-industry/elevolution-cli` スキャフォールディングおよびコード生成ツールの完全なドキュメントです。
 
 **バージョン：** 0.2.0  
 **ライセンス：** MIT  
-**インストール：** `npm install -g @x-elevolution/cli` または `npx @x-elevolution/cli` で使用
+**インストール：** `npm install -g @x-industry/elevolution-cli` または `npx @x-industry/elevolution-cli` で使用
 
 ---
 
@@ -13,11 +13,11 @@
 - [概要](#概要)
 - [インストール](#インストール)
 - [コマンド](#コマンド)
-  - [create](#x-elevolution-create-name)
-  - [add window](#x-elevolution-add-window-name)
-  - [add plugin](#x-elevolution-add-plugin-name)
-  - [add ipc](#x-elevolution-add-ipc-name)
-  - [gen:ipc](#x-elevolution-genipc)
+  - [create](#elevolution-create-name)
+  - [add window](#elevolution-add-window-name)
+  - [add plugin](#elevolution-add-plugin-name)
+  - [add ipc](#elevolution-add-ipc-name)
+  - [gen:ipc](#elevolution-genipc)
 - [テンプレートシステム](#テンプレートシステム)
 - [`create` の内部動作](#create-の内部動作)
 - [生成ファイルの詳細](#生成ファイルの詳細)
@@ -28,9 +28,9 @@
 
 ## 概要
 
-`@x-elevolution/cli` は以下の機能を持つコード生成ツールです：
+`@x-industry/elevolution-cli` は以下の機能を持つコード生成ツールです：
 
-1. **完全な Electron プロジェクトのスキャフォールディング**（X-Elevolution アーキテクチャ）
+1. **完全な Electron プロジェクトのスキャフォールディング**（Elevolution アーキテクチャ）
 2. **ウィンドウの生成**（メインプロセスファクトリ + レンダラーページ + HTML エントリー）
 3. **プラグインの生成**（正しい構造とボイラープレート付き）
 4. **IPC モジュールの生成**（ハンドラーとリスナーの定義付き）
@@ -44,34 +44,34 @@ CLI は繰り返しのセットアップ作業を排除し、一貫したプロ�
 
 ```bash
 # npx で直接使用（推奨）
-npx @x-elevolution/cli create my-app
+npx @x-industry/elevolution-cli create my-app
 
 # またはグローバルインストール
-npm install -g @x-elevolution/cli
-x-elevolution create my-app
+npm install -g @x-industry/elevolution-cli
+elevolution create my-app
 
 # または開発依存としてインストール
-pnpm add -D @x-elevolution/cli
+pnpm add -D @x-industry/elevolution-cli
 ```
 
 ---
 
 ## コマンド
 
-### `x-elevolution create <name>`
+### `elevolution create <name>`
 
 完全で実行可能な Electron プロジェクトをスキャフォールドします。
 
 ```bash
-x-elevolution create my-app
-x-elevolution create my-app --local
+elevolution create my-app
+elevolution create my-app --local
 ```
 
 **引数：**
 - `<name>` — プロジェクトディレクトリ名（パッケージ名としても使用）
 
 **フラグ：**
-- `--local` — `@x-elevolution/core` を npm バージョンではなくローカル monorepo パスにリンク。開発用。
+- `--local` — `@x-industry/elevolution-core` を npm バージョンではなくローカル monorepo パスにリンク。開発用。
 
 **生成される構造：**
 
@@ -122,13 +122,13 @@ my-app/
 
 ---
 
-### `x-elevolution add window <name>`
+### `elevolution add window <name>`
 
 メインプロセスファクトリとレンダラーページを含む新しいウィンドウを生成します。
 
 ```bash
-x-elevolution add window settings
-x-elevolution add window file-browser
+elevolution add window settings
+elevolution add window file-browser
 ```
 
 **引数：**
@@ -143,13 +143,13 @@ x-elevolution add window file-browser
 
 ---
 
-### `x-elevolution add plugin <name>`
+### `elevolution add plugin <name>`
 
 IPC ハンドラー、リスナー、正しい構造を含むプラグインスキャフォールドを生成します。
 
 ```bash
-x-elevolution add plugin file-manager
-x-elevolution add plugin auth
+elevolution add plugin file-manager
+elevolution add plugin auth
 ```
 
 **引数：**
@@ -159,13 +159,13 @@ x-elevolution add plugin auth
 
 ---
 
-### `x-elevolution add ipc <name>`
+### `elevolution add ipc <name>`
 
 ハンドラーとリスナーの定義を含む IPC モジュールを生成します。
 
 ```bash
-x-elevolution add ipc user
-x-elevolution add ipc notification
+elevolution add ipc user
+elevolution add ipc notification
 ```
 
 **引数：**
@@ -175,12 +175,12 @@ x-elevolution add ipc notification
 
 ---
 
-### `x-elevolution gen:ipc`
+### `elevolution gen:ipc`
 
 メインプロセスのハンドラー実装からレンダラー IPC 型定義を自動生成します。
 
 ```bash
-x-elevolution gen:ipc
+elevolution gen:ipc
 ```
 
 **動作原理：**
@@ -204,7 +204,7 @@ CLI の `create` コマンドは monorepo 内のサンプルアプリ（`apps/el
 
 1. `apps/electron-app/` にファイルを追加
 2. `packages/cli/template-files.ts` の `TEMPLATE_FILES` に相対パスを追加
-3. `x-elevolution create test-project --local` でテスト
+3. `elevolution create test-project --local` でテスト
 
 ### テンプレート変換
 
@@ -213,7 +213,7 @@ CLI の `create` コマンドは monorepo 内のサンプルアプリ（`apps/el
 - `version` を `0.1.0` に設定
 - `bin` フィールドを削除
 - `dev` と `build` スクリプトのみ保持
-- `@x-elevolution/core` 依存を `^0.2.0` に設定（`--local` 使用時はローカルリンク）
+- `@x-industry/elevolution-core` 依存を `^0.2.0` に設定（`--local` 使用時はローカルリンク）
 
 ---
 

@@ -1,5 +1,5 @@
 <p align="center">
-  <h1 align="center">⚡ Electron X-Elevolution</h1>
+  <h1 align="center">⚡ Electron Elevolution</h1>
   <p align="center">純粋関数型・プラグインベースの Electron フレームワーク。型安全な IPC、ボイラープレートゼロ。</p>
 </p>
 
@@ -20,11 +20,11 @@
 
 ---
 
-## なぜ X-Elevolution？
+## なぜ Elevolution？
 
-Electron アプリの構築は、ボイラープレート、安全でない IPC チャンネル、複雑なクラス階層との格闘であるべきではありません。X-Elevolution は実際の開発の痛みから生まれました：
+Electron アプリの構築は、ボイラープレート、安全でない IPC チャンネル、複雑なクラス階層との格闘であるべきではありません。Elevolution は実際の開発の痛みから生まれました：
 
-| 課題 | X-Elevolution の解決策 |
+| 課題 | Elevolution の解決策 |
 |---|---|
 | IPC チャンネルが文字列型で間違いやすい | **ハンドラーを一度書く → 型がレンダラーに自動生成** |
 | クラスベースのフレームワークは硬直的でテストしにくい | **純粋関数型 — すべてアロー関数** |
@@ -35,7 +35,7 @@ Electron アプリの構築は、ボイラープレート、安全でない IPC 
 ## クイックスタート
 
 ```bash
-npx @x-elevolution/cli create my-app
+npx @x-industry/elevolution-cli create my-app
 cd my-app
 pnpm install
 pnpm dev
@@ -61,7 +61,7 @@ pnpm dev
 
 ```ts
 // main-process/ipc/user.ts
-import { defineHandlers, defineListeners } from "@x-elevolution/core";
+import { defineHandlers, defineListeners } from "@x-industry/elevolution-core";
 
 export const userHandlers = defineHandlers({
   "user:get": (event, id: string) => {
@@ -83,7 +83,7 @@ export const userListeners = defineListeners({
 
 ```ts
 // main-process/main.ts
-import { registerRoutes } from "@x-elevolution/core";
+import { registerRoutes } from "@x-industry/elevolution-core";
 import { userHandlers, userListeners } from "./ipc/user";
 
 registerRoutes(userHandlers.routes);
@@ -109,7 +109,7 @@ const user = await ipcInvoke("user:get", "123");
 プラグインは自己完結型のユニットで、IPC ルート、ウィンドウ、コマンドを登録し、イベントで通信できます：
 
 ```ts
-import { definePlugin, defineHandlers } from "@x-elevolution/core";
+import { definePlugin, defineHandlers } from "@x-industry/elevolution-core";
 
 const handlers = defineHandlers({
   "notes:create": (_, title: string, content: string) => {
@@ -145,7 +145,7 @@ export const notesPlugin = definePlugin({
 メインプロセスでプラグインをインストール：
 
 ```ts
-import { installPlugin } from "@x-elevolution/core";
+import { installPlugin } from "@x-industry/elevolution-core";
 import { notesPlugin } from "./plugins/notes";
 
 await installPlugin(notesPlugin);
@@ -154,7 +154,7 @@ await installPlugin(notesPlugin);
 ### ウィンドウ管理
 
 ```ts
-import { registerWindows, createWindow, sendToWindow, broadcastToWindows } from "@x-elevolution/core";
+import { registerWindows, createWindow, sendToWindow, broadcastToWindows } from "@x-industry/elevolution-core";
 
 // ウィンドウファクトリを登録
 registerWindows({
@@ -176,7 +176,7 @@ broadcastToWindows("theme:changed", "dark");
 ### IPC ミドルウェアとインターセプター
 
 ```ts
-import { useIpcMiddleware, addIpcInterceptor } from "@x-elevolution/core";
+import { useIpcMiddleware, addIpcInterceptor } from "@x-industry/elevolution-core";
 
 // ミドルウェア — 呼び出しを傍受、変更、または中止可能
 useIpcMiddleware((channel, type, args, next) => {
@@ -198,7 +198,7 @@ remove();
 ### EventBus（プラグイン間通信）
 
 ```ts
-import { EventBus } from "@x-elevolution/core";
+import { EventBus } from "@x-industry/elevolution-core";
 
 EventBus.on("user:login", (user) => {
   console.log(`${user.name} がログインしました`);
@@ -215,12 +215,12 @@ EventBus.once("app:first-launch", () => {
 
 | コマンド | 説明 |
 |---|---|
-| `x-elevolution create <name>` | 完全なプロジェクトを作成 |
-| `x-elevolution create <name> --local` | ローカル core リンクでプロジェクトを作成（開発用） |
-| `x-elevolution add window <name>` | ウィンドウを生成（メインファクトリ + レンダラーページ） |
-| `x-elevolution add plugin <name>` | プラグインスキャフォールドを生成 |
-| `x-elevolution add ipc <name>` | IPC モジュールを生成（handlers + listeners） |
-| `x-elevolution gen:ipc` | ハンドラーからレンダラー IPC 型を自動生成 |
+| `elevolution create <name>` | 完全なプロジェクトを作成 |
+| `elevolution create <name> --local` | ローカル core リンクでプロジェクトを作成（開発用） |
+| `elevolution add window <name>` | ウィンドウを生成（メインファクトリ + レンダラーページ） |
+| `elevolution add plugin <name>` | プラグインスキャフォールドを生成 |
+| `elevolution add ipc <name>` | IPC モジュールを生成（handlers + listeners） |
+| `elevolution gen:ipc` | ハンドラーからレンダラー IPC 型を自動生成 |
 
 ## プロジェクト構造（`create` 後）
 
@@ -264,7 +264,7 @@ my-app/
 すべてのプラグインの context にカスタムフィールドを注入：
 
 ```ts
-import { extendPluginContext } from "@x-elevolution/core";
+import { extendPluginContext } from "@x-industry/elevolution-core";
 import Store from "electron-store";
 import { dialog } from "electron";
 
@@ -283,7 +283,7 @@ extendPluginContext((ctx, meta) => {
 組み込みの console logger を任意の実装に置換：
 
 ```ts
-import { setLogger } from "@x-elevolution/core";
+import { setLogger } from "@x-industry/elevolution-core";
 import log from "electron-log";
 
 setLogger(log);
@@ -293,7 +293,7 @@ setLogger(log);
 ### プラグインホットリロード（開発モード）
 
 ```ts
-import { installPluginHot } from "@x-elevolution/core";
+import { installPluginHot } from "@x-industry/elevolution-core";
 import { myPlugin } from "./plugins/my-plugin";
 
 await installPluginHot(
@@ -308,7 +308,7 @@ await installPluginHot(
 ### ウィンドウライフサイクルフック
 
 ```ts
-import { onWindowCreated, onWindowClosed } from "@x-elevolution/core";
+import { onWindowCreated, onWindowClosed } from "@x-industry/elevolution-core";
 
 onWindowCreated((name, win) => {
   console.log(`ウィンドウ "${name}" が作成されました`);
@@ -336,10 +336,10 @@ onWindowClosed((name, win) => {
 ## モノレポ構造
 
 ```
-x-elevolution/
+elevolution/
 ├── packages/
-│   ├── core/     → @x-elevolution/core（ランタイムフレームワーク）
-│   └── cli/      → @x-elevolution/cli（スキャフォールディングツール）
+│   ├── core/     → @x-industry/elevolution-core（ランタイムフレームワーク）
+│   └── cli/      → @x-industry/elevolution-cli（スキャフォールディングツール）
 ├── apps/
 │   └── electron-app/  → サンプルアプリ & CLI テンプレート
 ├── docs/              → ドキュメント

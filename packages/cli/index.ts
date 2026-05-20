@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 /**
- * @description [zh-CN] X-Elevolution CLI — 代码生成工具，支持创建项目、窗口、插件、IPC 模块
- * @description [zh-TW] X-Elevolution CLI — 程式碼生成工具，支援建立專案、視窗、插件、IPC 模組
- * @description [en] X-Elevolution CLI — code generator for creating projects, windows, plugins, and IPC modules
- * @description [ja] X-Elevolution CLI — プロジェクト、ウィンドウ、プラグイン、IPC モジュールを生成するコードジェネレーター
+ * @description [zh-CN] Elevolution CLI — 代码生成工具，支持创建项目、窗口、插件、IPC 模块
+ * @description [zh-TW] Elevolution CLI — 程式碼生成工具，支援建立專案、視窗、插件、IPC 模組
+ * @description [en] Elevolution CLI — code generator for creating projects, windows, plugins, and IPC modules
+ * @description [ja] Elevolution CLI — プロジェクト、ウィンドウ、プラグイン、IPC モジュールを生成するコードジェネレーター
  */
 
 import { resolve, dirname } from "node:path";
@@ -210,7 +210,7 @@ function generatePlugin(pluginName: string) {
  * @description [ja] プラグイン: ${pluginName}
  */
 
-import { definePlugin, defineHandlers, defineListeners } from "@x-elevolution/core";
+import { definePlugin, defineHandlers, defineListeners } from "@x-industry/elevolution-core";
 
 const handlers = defineHandlers({
   "${pluginName}:hello": (_, name: string) => {
@@ -298,7 +298,7 @@ function generateIpc(moduleName: string) {
  * @description [ja] IPC: ${toPascalCase(moduleName)}
  */
 
-import { defineHandlers, defineListeners } from "@x-elevolution/core";
+import { defineHandlers, defineListeners } from "@x-industry/elevolution-core";
 
 export const ${handlersName} = defineHandlers({
   "${moduleName}:get": (_, id: string) => {
@@ -395,9 +395,9 @@ function generateProject(projectName: string) {
       delete pkg.bin;
       pkg.scripts = { dev: pkg.scripts.dev, build: pkg.scripts.build };
       if (flags.includes("--local")) {
-        pkg.dependencies["@x-elevolution/core"] = `link:${resolve(templateRoot, "../../packages/core")}`;
+        pkg.dependencies["@x-industry/elevolution-core"] = `link:${resolve(templateRoot, "../../packages/core")}`;
       } else {
-        pkg.dependencies["@x-elevolution/core"] = "^0.2.0";
+        pkg.dependencies["@x-industry/elevolution-core"] = "^0.2.0";
       }
       content = JSON.stringify(pkg, null, 2);
     }
@@ -422,19 +422,19 @@ function generateProject(projectName: string) {
 
 function printHelp() {
   console.log(`
-  ${c.bold}${c.cyan}⚡ X-Elevolution CLI${c.reset}
+  ${c.bold}${c.cyan}⚡ Elevolution CLI${c.reset}
 
   ${c.dim}Usage:${c.reset}
-    ${c.cyan}x-elevolution create${c.reset} <name>         Create a new project
-    ${c.cyan}x-elevolution add window${c.reset} <name>     Add a window
-    ${c.cyan}x-elevolution add plugin${c.reset} <name>     Add a plugin
-    ${c.cyan}x-elevolution add ipc${c.reset} <name>        Add an IPC module
-    ${c.cyan}x-elevolution gen:ipc${c.reset}               Generate renderer IPC types
+    ${c.cyan}elevolution create${c.reset} <name>         Create a new project
+    ${c.cyan}elevolution add window${c.reset} <name>     Add a window
+    ${c.cyan}elevolution add plugin${c.reset} <name>     Add a plugin
+    ${c.cyan}elevolution add ipc${c.reset} <name>        Add an IPC module
+    ${c.cyan}elevolution gen:ipc${c.reset}               Generate renderer IPC types
 
   ${c.dim}Examples:${c.reset}
-    ${c.dim}${c.reset} x-elevolution create my-app
-    ${c.dim}${c.reset} x-elevolution add window settings
-    ${c.dim}${c.reset} x-elevolution add plugin file-manager
+    ${c.dim}${c.reset} elevolution create my-app
+    ${c.dim}${c.reset} elevolution add window settings
+    ${c.dim}${c.reset} elevolution add plugin file-manager
   `);
 }
 
@@ -443,7 +443,7 @@ function printHelp() {
 switch (command) {
   case "create":
     if (!subCommand) {
-      console.error("Usage: x-elevolution create <project-name>");
+      console.error("Usage: elevolution create <project-name>");
       process.exit(1);
     }
     generateProject(subCommand);
@@ -451,7 +451,7 @@ switch (command) {
 
   case "add":
     if (!subCommand || !name) {
-      console.error("Usage: x-elevolution add <window|plugin|ipc> <name>");
+      console.error("Usage: elevolution add <window|plugin|ipc> <name>");
       process.exit(1);
     }
     switch (subCommand) {

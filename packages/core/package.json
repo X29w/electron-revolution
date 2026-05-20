@@ -1,7 +1,7 @@
 {
-  "name": "@x-elevolution/core",
+  "name": "@x-industry/elevolution-core",
   "version": "0.2.0",
-  "description": "X-Elevolution - Functional, plugin-based Electron framework core",
+  "description": "Elevolution - Functional, plugin-based Electron framework core",
   "type": "module",
   "main": "./index.ts",
   "types": "./index.ts",

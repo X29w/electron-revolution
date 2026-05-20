@@ -49,7 +49,7 @@ const App: FC = () => {
       <header className="drag-region flex items-center justify-between px-4 h-10 border-b border-white/5 shrink-0">
         <div className="flex items-center gap-2">
           <span className="text-sm">🛠</span>
-          <span className="text-xs font-medium text-white/60">X-Elevolution DevTools</span>
+          <span className="text-xs font-medium text-white/60">Elevolution DevTools</span>
         </div>
         <div className="no-drag-region flex gap-2">
           <button onClick={() => { window.ipcRenderer.invoke("devtools:clearIpcLog"); refresh(); }} className="px-2 py-1 text-[10px] text-white/40 border border-white/10 rounded hover:bg-white/5 cursor-pointer">Clear Log</button>

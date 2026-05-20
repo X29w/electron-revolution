@@ -5,7 +5,7 @@
  * @description [ja] IPC モジュールエントリ — 全 IPC ルートの一括登録
  */
 
-import { registerRoutes } from "@x-elevolution/core";
+import { registerRoutes } from "@x-industry/elevolution-core";
 import { windowListeners } from "./window";
 import { storeHandlers, storeListeners } from "./store";
 
